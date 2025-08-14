@@ -1,9 +1,9 @@
-// src/components/chat/chat-header.jsx
+// src/components/chat/chat-header.jsx (Compact - No Tags)
 import { Button } from '@/components/ui/button';
 import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
 import { motion } from 'framer-motion';
-import { Menu, MoreVertical, Phone, Star, Video } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 const ChatHeader = ({ selectedPersona }) => {
   const { darkMode } = useChatStore();
@@ -12,116 +12,77 @@ const ChatHeader = ({ selectedPersona }) => {
   if (!persona) return null;
 
   return (
-    <motion.div
-      className={`${
+    <motion.header
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`flex items-center justify-between px-4 py-3 border-b ${
         darkMode
-          ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-700'
-          : 'bg-gradient-to-r from-white to-gray-50 border-gray-200'
-      } border-b backdrop-blur-lg`}
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3 }}>
-      <div className='p-4'>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center space-x-4'>
-            {/* Mobile Menu Button - Custom implementation */}
-            <Button
-              variant='ghost'
-              size='sm'
-              className={`md:hidden rounded-full ${
-                darkMode
-                  ? 'hover:bg-gray-700 text-gray-300'
-                  : 'hover:bg-gray-100 text-gray-600'
-              }`}>
-              <Menu className='w-5 h-5' />
-            </Button>
+          ? 'bg-gray-800/90 border-gray-700/60 backdrop-blur-sm'
+          : 'bg-white/90 border-gray-200/60 backdrop-blur-sm'
+      }`}>
+      {/* Mobile menu button */}
+      <Button
+        variant='ghost'
+        size='icon'
+        className='lg:hidden flex-shrink-0'>
+        <Menu className='h-5 w-5' />
+      </Button>
 
-            {/* Avatar with Status */}
-            <div className='relative'>
-              <motion.div
-                className={`w-12 h-12 rounded-2xl ${persona.accentColor} flex items-center justify-center text-white font-bold shadow-lg`}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}>
-                {persona.avatar}
-              </motion.div>
-              <div className='absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse shadow-sm'></div>
-            </div>
-
-            {/* Info */}
-            <div className='flex-1'>
-              <div className='flex items-center space-x-2'>
-                <h1
-                  className={`font-bold text-lg ${
-                    darkMode ? 'text-white' : 'text-gray-900'
-                  }`}>
-                  {persona.name}
-                </h1>
-                <Star className='w-4 h-4 text-yellow-400 fill-current' />
-              </div>
-
-              <div className='flex items-center space-x-2'>
-                <div className='w-2 h-2 bg-green-400 rounded-full animate-pulse'></div>
-                <p
-                  className={`text-sm ${
-                    darkMode ? 'text-gray-300' : 'text-gray-600'
-                  }`}>
-                  Active now • {persona.description}
-                </p>
-              </div>
-
-              {/* Expertise tags */}
-              <div className='flex items-center space-x-1 mt-1'>
-                {persona.expertise.slice(0, 3).map((skill, index) => (
-                  <span
-                    key={skill}
-                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      darkMode
-                        ? 'bg-gray-700 text-gray-300'
-                        : 'bg-blue-50 text-blue-600'
-                    }`}>
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
+      {/* Persona info - clean layout */}
+      <div className='flex items-center space-x-3 flex-1 min-w-0'>
+        {/* Avatar with online indicator */}
+        <div className='relative flex-shrink-0'>
+          <img
+            src={persona.avatarUrl}
+            alt={`${persona.name} avatar`}
+            className='w-10 h-10 rounded-full object-cover border-2 border-green-400/50'
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextElementSibling.style.display = 'flex';
+            }}
+          />
+          <div
+            className='w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xl'
+            style={{ display: 'none' }}>
+            {persona.avatar}
           </div>
+          {/* Online indicator */}
+          <div className='absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white'></div>
+        </div>
 
-          {/* Action buttons */}
-          <div className='flex items-center space-x-1'>
-            <Button
-              variant='ghost'
-              size='sm'
-              className={`rounded-full ${
-                darkMode
-                  ? 'hover:bg-gray-700 text-gray-300'
-                  : 'hover:bg-gray-100 text-gray-600'
+        {/* Name and status only */}
+        <div className='flex-1 min-w-0'>
+          <div className='flex items-center space-x-2'>
+            <h2
+              className={`font-semibold text-base truncate ${
+                darkMode ? 'text-gray-100' : 'text-gray-900'
               }`}>
-              <Video className='w-5 h-5' />
-            </Button>
-            <Button
-              variant='ghost'
-              size='sm'
-              className={`rounded-full ${
+              {persona.name}
+            </h2>
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                 darkMode
-                  ? 'hover:bg-gray-700 text-gray-300'
-                  : 'hover:bg-gray-100 text-gray-600'
+                  ? 'bg-green-900/30 text-green-400'
+                  : 'bg-green-100 text-green-600'
               }`}>
-              <Phone className='w-5 h-5' />
-            </Button>
-            <Button
-              variant='ghost'
-              size='sm'
-              className={`rounded-full ${
-                darkMode
-                  ? 'hover:bg-gray-700 text-gray-300'
-                  : 'hover:bg-gray-100 text-gray-600'
-              }`}>
-              <MoreVertical className='w-5 h-5' />
-            </Button>
+              Online
+            </span>
           </div>
         </div>
       </div>
-    </motion.div>
+
+      {/* Single info button */}
+      <Button
+        variant='ghost'
+        size='sm'
+        className={`flex-shrink-0 text-xs ${
+          darkMode
+            ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/50'
+            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'
+        }`}>
+        Info
+      </Button>
+    </motion.header>
   );
 };
 
