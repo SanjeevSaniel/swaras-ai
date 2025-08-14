@@ -1,19 +1,43 @@
-// src/store/chat-store.js (Complete store with no default selection)
+// src/store/chat-store.js (Added mentor status management)
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export const useChatStore = create(
   persist(
     (set, get) => ({
-      // State - No default persona selected
+      // State
       conversations: [],
       currentConversation: null,
       selectedPersona: null,
       darkMode: false,
+      mentorsOnline: false, // New state for mentor availability
+      mentorsLoading: true, // New state for loading status
 
       // Actions
+      setMentorsOnline: (status) => set({ mentorsOnline: status }),
+      setMentorsLoading: (loading) => set({ mentorsLoading: loading }),
+
+      // Initialize mentor status on app load
+      initializeMentorStatus: () => {
+        set({ mentorsOnline: false, mentorsLoading: true });
+
+        // Simulate loading and connection process
+        setTimeout(() => {
+          set({ mentorsLoading: false, mentorsOnline: true });
+          console.log('✅ AI Mentors are now online and ready!');
+        }, Math.random() * 2000 + 3000); // 3-5 seconds random delay
+      },
+
       setSelectedPersona: (persona) => {
         const currentState = get();
+
+        // Prevent selection if mentors are offline
+        if (!currentState.mentorsOnline && persona) {
+          console.log(
+            '⚠️ Cannot select mentor - AI mentors are currently offline',
+          );
+          return;
+        }
 
         // If deselecting (persona is null or same as current)
         if (!persona || currentState.selectedPersona === persona) {
@@ -28,7 +52,7 @@ export const useChatStore = create(
         // Selecting new persona
         set({
           selectedPersona: persona,
-          currentConversation: null, // Clear conversation when switching
+          currentConversation: null,
         });
 
         console.log(`Selected persona: ${persona}`);
@@ -37,7 +61,12 @@ export const useChatStore = create(
       setCurrentConversation: (conv) => {
         const state = get();
 
-        // Only set conversation if we have a selected persona and it matches
+        // Prevent conversation if mentors offline
+        if (!state.mentorsOnline) {
+          console.log('⚠️ Cannot start conversation - AI mentors are offline');
+          return;
+        }
+
         if (
           state.selectedPersona &&
           conv &&
@@ -52,9 +81,10 @@ export const useChatStore = create(
       addConversation: (conv) => {
         const state = get();
 
-        // Only add conversation if persona is selected
-        if (!state.selectedPersona) {
-          console.warn('Cannot add conversation without selected persona');
+        if (!state.selectedPersona || !state.mentorsOnline) {
+          console.warn(
+            'Cannot add conversation - no persona selected or mentors offline',
+          );
           return;
         }
 
@@ -120,11 +150,13 @@ export const useChatStore = create(
         conversations: state.conversations,
         selectedPersona: state.selectedPersona,
         darkMode: state.darkMode,
+        // Don't persist mentor status - should reset on each load
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
           setTimeout(() => {
             state.initializeTheme();
+            state.initializeMentorStatus(); // Initialize mentor status after rehydration
           }, 0);
         }
       },

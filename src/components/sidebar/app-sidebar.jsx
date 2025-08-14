@@ -1,18 +1,64 @@
 // src/components/sidebar/app-sidebar.jsx
-import { personas } from '@/constants/personas';
-import { useChatStore } from '@/store/chat-store';
-import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
-import AnimatedThemeToggle from './animated-theme-toggle';
-import ConversationCombobox from './conversation-combobox';
+'use client';
+
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Wifi, WifiOff, Loader2, AlertCircle } from 'lucide-react';
 import PersonaSelector from './persona-selector';
+import ConversationCombobox from './conversation-combobox';
+import AnimatedThemeToggle from './animated-theme-toggle';
+import { useChatStore } from '@/store/chat-store';
+import { personas } from '@/constants/personas';
 
 const AppSidebar = () => {
-  const { darkMode, selectedPersona, conversations } = useChatStore();
+  const {
+    darkMode,
+    selectedPersona,
+    conversations,
+    mentorsOnline,
+    mentorsLoading,
+  } = useChatStore();
+
   const currentPersona = personas[selectedPersona];
   const personaConversations = conversations.filter(
     (conv) => conv.personaId === selectedPersona,
   );
+
+  // Determine status display
+  const getStatusConfig = () => {
+    if (mentorsLoading) {
+      return {
+        icon: Loader2,
+        text: 'Connecting to AI Mentors...',
+        bgColor: darkMode
+          ? 'bg-yellow-900/20 border-yellow-700/30 text-yellow-300'
+          : 'bg-yellow-100/60 border-yellow-200/30 text-yellow-700',
+        iconAnimation: { rotate: 360 },
+        iconTransition: { duration: 1, repeat: Infinity, ease: 'linear' },
+      };
+    } else if (mentorsOnline) {
+      return {
+        icon: Wifi,
+        text: 'AI Mentors Online',
+        bgColor: darkMode
+          ? 'bg-green-900/20 border-green-700/30 text-green-300'
+          : 'bg-green-100/60 border-green-200/30 text-green-700',
+        iconAnimation: { scale: [1, 1.2, 1], opacity: [1, 0.7, 1] },
+        iconTransition: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+      };
+    } else {
+      return {
+        icon: WifiOff,
+        text: 'AI Mentors Offline',
+        bgColor: darkMode
+          ? 'bg-red-900/20 border-red-700/30 text-red-300'
+          : 'bg-red-100/60 border-red-200/30 text-red-700',
+        iconAnimation: { opacity: [1, 0.3, 1] },
+        iconTransition: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' },
+      };
+    }
+  };
+
+  const statusConfig = getStatusConfig();
 
   return (
     <div
@@ -55,32 +101,63 @@ const AppSidebar = () => {
           <AnimatedThemeToggle />
         </motion.div>
 
-        {/* Compact Status Indicator */}
-        <motion.div
-          className={`rounded-lg p-2 backdrop-blur-sm relative overflow-hidden ${
-            darkMode
-              ? 'bg-green-900/20 border border-green-700/30 text-green-300'
-              : 'bg-green-100/60 border border-green-200/30 text-green-700'
-          }`}
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.6 }}>
-          <div className='flex items-center space-x-2'>
-            <motion.div
-              className='w-2 h-2 bg-green-400 rounded-full'
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [1, 0.7, 1],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-            />
-            <span className='text-xs font-medium'>AI Mentors Online</span>
-          </div>
-        </motion.div>
+        {/* Dynamic Status Indicator with Animations */}
+        <AnimatePresence mode='wait'>
+          <motion.div
+            key={
+              mentorsLoading ? 'loading' : mentorsOnline ? 'online' : 'offline'
+            }
+            className={`rounded-lg p-2 backdrop-blur-sm relative overflow-hidden transition-all duration-300 ${statusConfig.bgColor}`}
+            initial={{ scale: 0.9, opacity: 0, y: 10 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: -10 }}
+            transition={{ delay: 0.6, duration: 0.3 }}>
+            <div className='flex items-center space-x-2'>
+              <motion.div
+                animate={statusConfig.iconAnimation}
+                transition={statusConfig.iconTransition}>
+                <statusConfig.icon className='w-4 h-4' />
+              </motion.div>
+              <span className='text-xs font-medium'>{statusConfig.text}</span>
+
+              {/* Connection progress indicator for loading state */}
+              {mentorsLoading && (
+                <div className='ml-auto'>
+                  <div className='flex space-x-1'>
+                    <motion.div
+                      className='w-1 h-1 bg-current rounded-full'
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+                    />
+                    <motion.div
+                      className='w-1 h-1 bg-current rounded-full'
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+                    />
+                    <motion.div
+                      className='w-1 h-1 bg-current rounded-full'
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Animated background effect for online state */}
+            {mentorsOnline && (
+              <motion.div
+                className='absolute inset-0 bg-gradient-to-r from-green-400/10 to-transparent'
+                animate={{ x: [-100, 100] }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Main Content */}
@@ -94,20 +171,30 @@ const AppSidebar = () => {
               Choose Mentor
             </h3>
             <motion.span
-              className={`text-xs px-1.5 py-0.5 rounded-full font-medium cursor-default ${
-                darkMode
-                  ? 'bg-purple-900/30 text-purple-400'
-                  : 'bg-purple-100 text-purple-600'
+              className={`text-xs px-1.5 py-0.5 rounded-full font-medium cursor-default transition-colors ${
+                mentorsOnline
+                  ? darkMode
+                    ? 'bg-purple-900/30 text-purple-400'
+                    : 'bg-purple-100 text-purple-600'
+                  : darkMode
+                  ? 'bg-gray-700/30 text-gray-500'
+                  : 'bg-gray-200/30 text-gray-500'
               }`}
-              animate={{
-                scale: [1, 1.05, 1],
-              }}
+              animate={
+                mentorsOnline
+                  ? {
+                      scale: [1, 1.05, 1],
+                    }
+                  : {}
+              }
               transition={{
                 duration: 3,
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}>
-              {Object.keys(personas).length} Available
+              {mentorsOnline
+                ? `${Object.keys(personas).length} Available`
+                : 'Offline'}
             </motion.span>
           </div>
         </div>
@@ -119,7 +206,7 @@ const AppSidebar = () => {
       </div>
 
       {/* Footer - Chat History */}
-      {selectedPersona && personaConversations.length > 0 && (
+      {selectedPersona && personaConversations.length > 0 && mentorsOnline && (
         <motion.div
           className={`flex-shrink-0 border-t p-3 ${
             darkMode
@@ -147,6 +234,33 @@ const AppSidebar = () => {
             </h3>
           </div>
           <ConversationCombobox />
+        </motion.div>
+      )}
+
+      {/* Offline Notice in Footer */}
+      {!mentorsOnline && !mentorsLoading && (
+        <motion.div
+          className={`flex-shrink-0 border-t p-3 ${
+            darkMode
+              ? 'border-red-700/30 bg-red-900/10'
+              : 'border-red-200/30 bg-red-50/10'
+          }`}
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.8 }}>
+          <div className='flex items-center space-x-2 text-center'>
+            <AlertCircle
+              className={`w-4 h-4 ${
+                darkMode ? 'text-red-400' : 'text-red-600'
+              }`}
+            />
+            <p
+              className={`text-xs ${
+                darkMode ? 'text-red-300' : 'text-red-700'
+              }`}>
+              Mentors are currently offline. Please try again later.
+            </p>
+          </div>
         </motion.div>
       )}
     </div>

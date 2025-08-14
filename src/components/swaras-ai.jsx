@@ -1,4 +1,4 @@
-// src/components/swaras-ai-refactored.jsx (Complete main component)
+// src/components/swaras-ai-refactored.jsx
 'use client';
 
 import { AIService } from '@/services/ai-service';
@@ -19,15 +19,19 @@ const SwarasAI = () => {
     currentConversation,
     selectedPersona,
     darkMode,
+    mentorsOnline,
+    mentorsLoading,
     setCurrentConversation,
     updateConversation,
     addConversation,
     initializeTheme,
+    initializeMentorStatus,
   } = useChatStore();
 
   useEffect(() => {
     initializeTheme();
-  }, [initializeTheme]);
+    initializeMentorStatus(); // Initialize mentor status on app load
+  }, [initializeTheme, initializeMentorStatus]);
 
   useEffect(() => {
     if (
@@ -40,6 +44,14 @@ const SwarasAI = () => {
   }, [selectedPersona, currentConversation, setCurrentConversation]);
 
   const handleSendMessage = async (messageText) => {
+    // Prevent message sending if mentors are offline
+    if (!mentorsOnline || mentorsLoading) {
+      toast.error(
+        'AI mentors are currently offline. Please wait for connection.',
+      );
+      return;
+    }
+
     if (!messageText.trim() || !selectedPersona || isTyping) return;
 
     let conversation = currentConversation;
@@ -90,6 +102,10 @@ const SwarasAI = () => {
   };
 
   const handleQuickStart = (question) => {
+    if (!mentorsOnline || mentorsLoading) {
+      toast.error('Please wait for AI mentors to come online.');
+      return;
+    }
     handleSendMessage(question);
   };
 
@@ -179,6 +195,7 @@ const SwarasAI = () => {
                       onSendMessage={handleSendMessage}
                       selectedPersona={selectedPersona}
                       isTyping={isTyping}
+                      disabled={!mentorsOnline || mentorsLoading}
                     />
                   </motion.div>
                 ) : (
@@ -197,19 +214,39 @@ const SwarasAI = () => {
           </motion.div>
         </div>
 
-        {/* Floating Status Indicators */}
+        {/* Status-based Floating Indicators */}
         <motion.div
           className='absolute top-4 right-4 flex space-x-2 z-50'
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.8, duration: 0.3 }}>
-          <div className='w-3 h-3 bg-green-400 rounded-full animate-pulse'></div>
-          <div
-            className='w-3 h-3 bg-yellow-400 rounded-full animate-pulse'
-            style={{ animationDelay: '0.2s' }}></div>
-          <div
-            className='w-3 h-3 bg-red-400 rounded-full animate-pulse'
-            style={{ animationDelay: '0.4s' }}></div>
+          <AnimatePresence mode='wait'>
+            {mentorsLoading ? (
+              <motion.div
+                key='loading'
+                className='w-3 h-3 bg-yellow-400 rounded-full animate-pulse'
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+              />
+            ) : mentorsOnline ? (
+              <motion.div
+                key='online'
+                className='w-3 h-3 bg-green-400 rounded-full animate-pulse'
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+              />
+            ) : (
+              <motion.div
+                key='offline'
+                className='w-3 h-3 bg-red-400 rounded-full animate-pulse'
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+              />
+            )}
+          </AnimatePresence>
         </motion.div>
       </motion.div>
 
