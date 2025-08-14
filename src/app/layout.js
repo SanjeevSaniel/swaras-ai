@@ -1,9 +1,9 @@
 // src/app/layout.js (Add PersonaProvider)
 import { ThemeProvider } from '@/providers/theme-provider';
-import { Inter } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const manrope = Manrope({ subsets: ['latin'], weight: '400' });
 
 export const metadata = {
   title: 'Swaras AI - Code with Legends',
@@ -23,7 +23,7 @@ const RootLayout = ({ children }) => {
           content='width=device-width, initial-scale=1'
         />
       </head>
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${manrope.className} antialiased`}>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
