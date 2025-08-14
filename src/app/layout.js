@@ -1,8 +1,7 @@
 // src/app/layout.js (Add PersonaProvider)
+import { ThemeProvider } from '@/providers/theme-provider';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ThemeProvider } from '@/providers/theme-provider';
-import { PersonaProvider } from '@/contexts/usePersona';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,7 +29,7 @@ const RootLayout = ({ children }) => {
           defaultTheme='system'
           enableSystem
           disableTransitionOnChange={false}>
-          <PersonaProvider>{children}</PersonaProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

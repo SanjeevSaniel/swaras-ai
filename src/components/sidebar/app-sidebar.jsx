@@ -1,22 +1,21 @@
 // src/components/sidebar/app-sidebar.jsx (Enhanced Modern Design)
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { personas } from '@/constants/personas';
+import { useChatStore } from '@/store/chat-store';
+import { motion } from 'framer-motion';
 import {
-  Sparkles,
-  Wifi,
-  WifiOff,
-  Loader2,
   AlertCircle,
-  Users,
+  Loader2,
   MessageSquare,
+  Sparkles,
+  Users,
+  WifiOff,
   Zap,
 } from 'lucide-react';
-import PersonaSelector from './persona-selector';
-import ConversationCombobox from './conversation-combobox';
 import AnimatedThemeToggle from './animated-theme-toggle';
-import { useChatStore } from '@/store/chat-store';
-import { personas } from '@/constants/personas';
+import ConversationCombobox from './conversation-combobox';
+import PersonaSelector from './persona-selector';
 
 const AppSidebar = () => {
   const {
