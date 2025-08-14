@@ -1,6 +1,5 @@
-// src/components/sidebar/persona-selector.jsx
-'use client'
-
+// src/components/sidebar/persona-selector.jsx (Complete updated version with all features)
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Coffee,
@@ -12,6 +11,7 @@ import {
   Lock,
   Wifi,
   WifiOff,
+  Loader2,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { personas } from '@/constants/personas';
@@ -47,6 +47,64 @@ const PersonaSelector = () => {
 
   return (
     <div className='space-y-2'>
+      {/* Compact Header with Status */}
+      <div className='mb-3'>
+        <div className='flex items-center justify-between'>
+          <h3
+            className={`text-xs font-semibold uppercase tracking-wide ${
+              darkMode ? 'text-gray-400' : 'text-gray-500'
+            }`}>
+            Choose Mentor
+          </h3>
+          <div className='flex items-center space-x-2'>
+            {/* Micro status indicator */}
+            <motion.div
+              className={`w-1.5 h-1.5 rounded-full ${
+                mentorsLoading
+                  ? 'bg-yellow-400'
+                  : mentorsOnline
+                  ? 'bg-green-400'
+                  : 'bg-red-400'
+              }`}
+              animate={{
+                scale: [1, 1.4, 1],
+                opacity: [1, 0.6, 1],
+              }}
+              transition={{
+                duration: mentorsLoading ? 0.8 : 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            />
+            <motion.span
+              className={`text-xs px-2 py-0.5 rounded-full font-medium cursor-default ${
+                mentorsOnline
+                  ? darkMode
+                    ? 'bg-purple-900/30 text-purple-400'
+                    : 'bg-purple-100 text-purple-600'
+                  : darkMode
+                  ? 'bg-gray-700/30 text-gray-500'
+                  : 'bg-gray-200/30 text-gray-500'
+              }`}
+              animate={
+                mentorsOnline
+                  ? {
+                      scale: [1, 1.02, 1],
+                    }
+                  : {}
+              }
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}>
+              {mentorsOnline ? Object.keys(personas).length : '0'}
+            </motion.span>
+          </div>
+        </div>
+      </div>
+
+      {/* Persona Cards */}
       {Object.values(personas).map((persona, index) => {
         const IconComponent = personaIcons[persona.id] || Code;
         const isSelected = selectedPersona === persona.id;
@@ -107,7 +165,7 @@ const PersonaSelector = () => {
                     }}>
                     {persona.avatar}
 
-                    {/* Status Indicator with Animation */}
+                    {/* Enhanced Status Indicator with Animation */}
                     <motion.div
                       className='absolute -top-0.5 -right-0.5 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm'
                       animate={
@@ -137,7 +195,7 @@ const PersonaSelector = () => {
                                 ease: 'linear',
                               },
                             }}>
-                            <Code className='w-2 h-2 text-gray-400' />
+                            <Loader2 className='w-2 h-2 text-yellow-500' />
                           </motion.div>
                         ) : mentorsOnline ? (
                           isSelected ? (
@@ -265,7 +323,7 @@ const PersonaSelector = () => {
                       ) : null}
                     </AnimatePresence>
 
-                    {/* Expertise Badges */}
+                    {/* Compact Expertise - Show only top 2 */}
                     <div className='flex flex-wrap gap-1'>
                       {persona.expertise
                         .slice(0, 2)
