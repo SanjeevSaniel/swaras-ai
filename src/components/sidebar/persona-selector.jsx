@@ -1,10 +1,9 @@
-// src/components/sidebar/persona-selector.jsx (Complete with toggle functionality)
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Coffee, Zap, Code, Crown, Star, Plus } from 'lucide-react';
+// src/components/sidebar/persona-selector.jsx
 import { Badge } from '@/components/ui/badge';
 import { personas } from '@/constants/personas';
 import { useChatStore } from '@/store/chat-store';
+import { motion } from 'framer-motion';
+import { Code, Coffee, Crown, Plus, Star, Zap } from 'lucide-react';
 
 const PersonaSelector = () => {
   const { selectedPersona, setSelectedPersona, darkMode } = useChatStore();
@@ -48,7 +47,7 @@ const PersonaSelector = () => {
               whileHover={{ scale: isSelected ? 0.98 : 1.02 }}>
               <div className='p-3'>
                 <div className='flex items-center space-x-3'>
-                  {/* Compact Avatar */}
+                  {/* Compact Avatar - Already interactive via parent */}
                   <motion.div
                     className={`relative w-10 h-10 rounded-xl ${persona.accentColor} flex items-center justify-center text-white text-base font-bold shadow-md flex-shrink-0`}
                     animate={
@@ -136,7 +135,7 @@ const PersonaSelector = () => {
                     {/* Click hint for selected persona */}
                     {isSelected && (
                       <motion.p
-                        className={`text-xs italic mb-1 ${
+                        className={`text-xs italic mb-1 cursor-pointer ${
                           darkMode ? 'text-gray-600' : 'text-gray-600'
                         }`}
                         initial={{ opacity: 0 }}
@@ -209,9 +208,9 @@ const PersonaSelector = () => {
         );
       })}
 
-      {/* Coming Soon Card */}
+      {/* Coming Soon Card - Added cursor-pointer */}
       <motion.div
-        className={`border border-dashed rounded-xl p-3 text-center transition-all duration-200 ${
+        className={`border border-dashed rounded-xl p-3 text-center transition-all duration-200 cursor-pointer ${
           darkMode
             ? 'border-gray-700/40 hover:border-gray-600/60'
             : 'border-gray-300/40 hover:border-gray-400/60'

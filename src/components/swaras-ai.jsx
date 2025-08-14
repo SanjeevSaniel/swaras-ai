@@ -1,19 +1,17 @@
 // src/components/swaras-ai-refactored.jsx (Complete main component)
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Toaster } from 'react-hot-toast';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useChatStore } from '@/store/chat-store';
 import { AIService } from '@/services/ai-service';
-import { personas } from '@/constants/personas';
-import AppSidebar from './sidebar/app-sidebar';
+import { useChatStore } from '@/store/chat-store';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import ChatHeader from './chat/chat-header';
-import ChatMessages from './chat/chat-messages';
 import ChatInput from './chat/chat-input';
-import WelcomeScreen from './welcome/welcome-screen';
+import ChatMessages from './chat/chat-messages';
 import EmptyPersonaState from './empty-persona-state';
-import toast from 'react-hot-toast';
+import AppSidebar from './sidebar/app-sidebar';
+import WelcomeScreen from './welcome/welcome-screen';
 
 const SwarasAI = () => {
   const [isTyping, setIsTyping] = useState(false);

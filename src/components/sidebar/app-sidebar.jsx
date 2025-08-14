@@ -1,12 +1,11 @@
-// src/components/sidebar/app-sidebar.jsx (Complete sidebar)
-import React from 'react';
+// src/components/sidebar/app-sidebar.jsx
+import { personas } from '@/constants/personas';
+import { useChatStore } from '@/store/chat-store';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
-import PersonaSelector from './persona-selector';
-import ConversationCombobox from './conversation-combobox';
 import AnimatedThemeToggle from './animated-theme-toggle';
-import { useChatStore } from '@/store/chat-store';
-import { personas } from '@/constants/personas';
+import ConversationCombobox from './conversation-combobox';
+import PersonaSelector from './persona-selector';
 
 const AppSidebar = () => {
   const { darkMode, selectedPersona, conversations } = useChatStore();
@@ -34,7 +33,7 @@ const AppSidebar = () => {
           transition={{ delay: 0.4 }}>
           <div className='flex items-center space-x-2'>
             <motion.div
-              className='w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg'
+              className='w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg cursor-pointer'
               whileHover={{ scale: 1.1, rotate: 10 }}
               whileTap={{ scale: 0.9 }}>
               <Sparkles className='w-4 h-4 text-white' />
@@ -95,7 +94,7 @@ const AppSidebar = () => {
               Choose Mentor
             </h3>
             <motion.span
-              className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
+              className={`text-xs px-1.5 py-0.5 rounded-full font-medium cursor-default ${
                 darkMode
                   ? 'bg-purple-900/30 text-purple-400'
                   : 'bg-purple-100 text-purple-600'
@@ -138,7 +137,7 @@ const AppSidebar = () => {
               <span>💬</span>
               <span>{currentPersona?.name} History</span>
               <span
-                className={`text-xs px-1 py-0.5 rounded ${
+                className={`text-xs px-1 py-0.5 rounded cursor-default ${
                   darkMode
                     ? 'bg-gray-700 text-gray-400'
                     : 'bg-gray-100 text-gray-600'
