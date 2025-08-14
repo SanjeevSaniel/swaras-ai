@@ -1,9 +1,9 @@
 // src/components/chat/chat-input.jsx
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Send, Loader2, Smile, Paperclip, Mic, Plus } from 'lucide-react';
-import { personas } from '@/constants/personas';
+import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
+import { motion } from 'framer-motion';
+import { Loader2, Mic, Paperclip, Plus, Send, Smile } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 const ChatInput = ({ onSendMessage, selectedPersona, isTyping }) => {
   const [message, setMessage] = useState('');

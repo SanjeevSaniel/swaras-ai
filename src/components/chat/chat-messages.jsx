@@ -1,12 +1,12 @@
 // src/components/chat/chat-messages.jsx
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Bot, User, Copy, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
-import { personas } from '@/constants/personas';
+import { motion } from 'framer-motion';
+import { Copy, ThumbsDown, ThumbsUp, User } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 
 const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
   const { darkMode } = useChatStore();

@@ -1,24 +1,19 @@
-// src/components/empty-persona-state.jsx (Compact version with tighter spacing)
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// src/components/empty-persona-state.jsx
+import { personas } from '@/constants/personas-dataset';
+import { useChatStore } from '@/store/chat-store';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+  ArrowLeft,
+  ArrowRight,
+  Brain,
+  Heart,
+  Lightbulb,
+  MessageSquare,
+  Rocket,
+  RotateCcw,
   Sparkles,
   Users,
-  MessageSquare,
-  Zap,
-  ArrowRight,
-  Code2,
-  RotateCcw,
-  ArrowLeft,
-  Brain,
-  Rocket,
-  Target,
-  Lightbulb,
-  Heart,
-  Star,
 } from 'lucide-react';
-import { useChatStore } from '@/store/chat-store';
-import { personas } from '@/constants/personas';
 
 const EmptyPersonaState = () => {
   const { darkMode, conversations } = useChatStore();

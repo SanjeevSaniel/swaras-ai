@@ -1,10 +1,9 @@
-// src/components/sidebar/quick-actions.jsx (New component for sidebar content)
-import React from 'react';
-import { motion } from 'framer-motion';
+// src/components/sidebar/quick-actions.jsx
 import { Button } from '@/components/ui/button';
-import { LogOut, Download, Share2, BookOpen, Zap, Coffee } from 'lucide-react';
+import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
-import { personas } from '@/constants/personas';
+import { motion } from 'framer-motion';
+import { BookOpen, Coffee, Download, LogOut, Share2, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const QuickActions = () => {

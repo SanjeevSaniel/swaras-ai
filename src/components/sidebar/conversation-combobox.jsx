@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { personas } from '@/constants/personas';
+import { personas } from '@/constants/personas-dataset';
 import { formatChatDate } from '@/lib/date-utils';
 import { cn } from '@/lib/utils';
 import { AIService } from '@/services/ai-service';

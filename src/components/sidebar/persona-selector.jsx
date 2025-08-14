@@ -1,21 +1,22 @@
-// src/components/sidebar/persona-selector.jsx (Fixed dark mode selected card styling)
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// src/components/sidebar/persona-selector.jsx
+'use client';
+
+import { Badge } from '@/components/ui/badge';
+import { personas } from '@/constants/personas-dataset';
+import { useChatStore } from '@/store/chat-store';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Coffee,
-  Zap,
   Code,
+  Coffee,
   Crown,
-  Star,
-  Plus,
+  Loader2,
   Lock,
+  Plus,
+  Star,
   Wifi,
   WifiOff,
-  Loader2,
+  Zap,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { personas } from '@/constants/personas';
-import { useChatStore } from '@/store/chat-store';
 
 const PersonaSelector = () => {
   const {

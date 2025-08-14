@@ -1,6 +1,5 @@
-import React from 'react';
+import { personas } from '@/constants/personas-dataset';
 import { motion } from 'framer-motion';
-import { personas } from '@/constants/personas';
 
 const TypingIndicator = ({ selectedPersona }) => {
   const persona = personas[selectedPersona];

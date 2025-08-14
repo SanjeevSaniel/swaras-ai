@@ -1,7 +1,7 @@
-// src/components/sidebar/app-sidebar.jsx (Enhanced Modern Design)
+// src/components/sidebar/app-sidebar.jsx
 'use client';
 
-import { personas } from '@/constants/personas';
+import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
 import { motion } from 'framer-motion';
 import {

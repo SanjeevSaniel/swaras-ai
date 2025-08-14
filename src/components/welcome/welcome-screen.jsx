@@ -1,18 +1,18 @@
-// src/components/welcome/welcome-screen.jsx (Fixed with all components)
+// src/components/welcome/welcome-screen.jsx
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
-import { personas } from '@/constants/personas';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Import all sub-components
-import WelcomeBadge from './components/WelcomeBadge';
-import WelcomeHero from './components/WelcomeHero';
-import MentorStatusCard from './components/MentorStatusCard';
-import HiteshContent from './components/HiteshContent';
-import PiyushContent from './components/PiyushContent';
 import DefaultContent from './components/DefaultContent';
+import HiteshContent from './components/HiteshContent';
+import MentorStatusCard from './components/MentorStatusCard';
+import PiyushContent from './components/PiyushContent';
+import WelcomeBadge from './components/WelcomeBadge';
 import WelcomeFooter from './components/WelcomeFooter';
+import WelcomeHero from './components/WelcomeHero';
 
 const WelcomeScreen = ({ onQuickStart }) => {
   const { selectedPersona, mentorsOnline, mentorsLoading, darkMode } =

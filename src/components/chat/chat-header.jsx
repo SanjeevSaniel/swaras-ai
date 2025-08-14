@@ -1,10 +1,9 @@
-// src/components/chat/chat-header.jsx (Remove SidebarTrigger)
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Phone, Video, MoreVertical, Star, Menu } from 'lucide-react';
+// src/components/chat/chat-header.jsx
 import { Button } from '@/components/ui/button';
-import { personas } from '@/constants/personas';
+import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
+import { motion } from 'framer-motion';
+import { Menu, MoreVertical, Phone, Star, Video } from 'lucide-react';
 
 const ChatHeader = ({ selectedPersona }) => {
   const { darkMode } = useChatStore();
