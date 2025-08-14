@@ -142,7 +142,7 @@ const AppSidebar = () => {
           <div className='flex items-center justify-between'>
             <div className='flex items-center space-x-2'>
               <motion.div
-                className={`w-6 h-6 rounded-lg ${statusConfig.bgColor} border flex items-center justify-center ${statusConfig.pulseColor}`}
+                className={`w-6 h-4 rounded-lg ${statusConfig.bgColor} border flex items-center justify-center ${statusConfig.pulseColor}`}
                 animate={statusConfig.iconAnimation}
                 transition={statusConfig.iconTransition}>
                 <statusConfig.icon
