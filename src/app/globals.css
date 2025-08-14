@@ -327,3 +327,35 @@
     left: 0;
   }
 }
+
+@keyframes gradient-shift {
+  0% { background: linear-gradient(45deg, #0f172a, #1e1b4b, #1e3a8a); }
+  25% { background: linear-gradient(90deg, #1e1b4b, #1e3a8a, #3730a3); }
+  50% { background: linear-gradient(135deg, #1e3a8a, #3730a3, #1e1b4b); }
+  75% { background: linear-gradient(180deg, #3730a3, #1e1b4b, #1e3a8a); }
+  100% { background: linear-gradient(45deg, #0f172a, #1e1b4b, #1e3a8a); }
+}
+
+@keyframes gradient-slow {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+  100% { opacity: 0.2; }
+}
+
+@keyframes gradient-reverse {
+  0% { opacity: 0.1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.1; }
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 12s ease-in-out infinite;
+}
+
+.animate-gradient-slow {
+  animation: gradient-slow 8s ease-in-out infinite;
+}
+
+.animate-gradient-reverse {
+  animation: gradient-reverse 10s ease-in-out infinite reverse;
+}
