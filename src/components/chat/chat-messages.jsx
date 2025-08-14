@@ -1,5 +1,7 @@
-// src/components/chat/chat-messages.jsx (Fixed scrolling and container height)
-import React, { useEffect, useRef } from 'react';
+// src/components/chat/chat-messages.jsx
+'use client';
+
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, User, Copy, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -114,27 +116,27 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                   </p>
                 </div>
 
-                {/* Message Actions */}
+                {/* Message Actions - Added cursor-pointer to all buttons */}
                 {message.sender === 'ai' && (
                   <div className='flex items-center space-x-2 mt-3 pt-2 border-t border-gray-200/20'>
                     <Button
                       variant='ghost'
                       size='sm'
                       onClick={() => copyToClipboard(message.content)}
-                      className='h-7 px-2 text-xs opacity-70 hover:opacity-100 transition-opacity'>
+                      className='h-7 px-2 text-xs opacity-70 hover:opacity-100 transition-opacity cursor-pointer'>
                       <Copy className='w-3 h-3 mr-1' />
                       Copy
                     </Button>
                     <Button
                       variant='ghost'
                       size='sm'
-                      className='h-7 px-2 text-xs opacity-70 hover:opacity-100 transition-opacity'>
+                      className='h-7 px-2 text-xs opacity-70 hover:opacity-100 transition-opacity cursor-pointer'>
                       <ThumbsUp className='w-3 h-3' />
                     </Button>
                     <Button
                       variant='ghost'
                       size='sm'
-                      className='h-7 px-2 text-xs opacity-70 hover:opacity-100 transition-opacity'>
+                      className='h-7 px-2 text-xs opacity-70 hover:opacity-100 transition-opacity cursor-pointer'>
                       <ThumbsDown className='w-3 h-3' />
                     </Button>
                   </div>

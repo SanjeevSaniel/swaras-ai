@@ -1,19 +1,6 @@
-// src/components/sidebar/conversation-combobox.jsx (Fixed hover colors)
+// src/components/sidebar/conversation-combobox.jsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import {
-  Check,
-  ChevronsUpDown,
-  Plus,
-  MessageCircle,
-  Clock,
-  Trash2,
-  Calendar,
-  User,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -28,10 +15,23 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useChatStore } from '@/store/chat-store';
-import { AIService } from '@/services/ai-service';
-import { formatChatDate } from '@/lib/date-utils';
 import { personas } from '@/constants/personas';
+import { formatChatDate } from '@/lib/date-utils';
+import { cn } from '@/lib/utils';
+import { AIService } from '@/services/ai-service';
+import { useChatStore } from '@/store/chat-store';
+import { motion } from 'framer-motion';
+import {
+  Calendar,
+  Check,
+  ChevronsUpDown,
+  Clock,
+  MessageCircle,
+  Plus,
+  Trash2,
+  User,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const ConversationCombobox = () => {
@@ -113,12 +113,12 @@ const ConversationCombobox = () => {
 
   return (
     <div className='space-y-2'>
-      {/* Header with New Button */}
+      {/* Header with New Button - Added cursor-pointer */}
       <div className='flex items-center justify-between'>
         <Button
           size='sm'
           onClick={startNewConversation}
-          className={`h-7 px-3 text-xs font-medium ${
+          className={`h-7 px-3 text-xs font-medium cursor-pointer ${
             darkMode
               ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-900/20'
               : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg shadow-purple-200/50'
@@ -129,7 +129,7 @@ const ConversationCombobox = () => {
 
         {filteredConversations.length > 0 && (
           <span
-            className={`text-xs px-2 py-1 rounded-full ${
+            className={`text-xs px-2 py-1 rounded-full cursor-default ${
               darkMode
                 ? 'bg-gray-700/50 text-gray-400'
                 : 'bg-gray-100 text-gray-600'
@@ -139,7 +139,7 @@ const ConversationCombobox = () => {
         )}
       </div>
 
-      {/* Fixed Combobox with Proper Hover Colors */}
+      {/* Fixed Combobox with Proper Hover Colors and Cursor Pointer */}
       <Popover
         open={open}
         onOpenChange={setOpen}>
@@ -148,7 +148,7 @@ const ConversationCombobox = () => {
             variant='outline'
             role='combobox'
             aria-expanded={open}
-            className={`w-full justify-between h-9 text-xs backdrop-blur-sm transition-colors ${
+            className={`w-full justify-between h-9 text-xs backdrop-blur-sm transition-colors cursor-pointer ${
               currentConversation &&
               currentConversation.personaId === selectedPersona
                 ? darkMode
@@ -393,7 +393,7 @@ const ConversationCombobox = () => {
                             deleteConversation(conv.id);
                             toast.success('Conversation deleted');
                           }}
-                          className='h-6 w-6 p-0 opacity-0 group-hover:opacity-100 ml-2 text-red-500 hover:text-red-600 hover:bg-red-100/50 dark:hover:bg-red-900/30'>
+                          className='h-6 w-6 p-0 opacity-0 group-hover:opacity-100 ml-2 text-red-500 hover:text-red-600 hover:bg-red-100/50 dark:hover:bg-red-900/30 cursor-pointer'>
                           <Trash2 className='w-3 h-3' />
                         </Button>
                       </CommandItem>
@@ -432,7 +432,7 @@ const ConversationCombobox = () => {
                 </span>
               </div>
               <span
-                className={`text-xs px-2 py-0.5 rounded-full ${
+                className={`text-xs px-2 py-0.5 rounded-full cursor-default ${
                   darkMode
                     ? 'bg-purple-800/50 text-purple-300'
                     : 'bg-purple-200/70 text-purple-700'

@@ -1,9 +1,10 @@
-// src/components/sidebar/animated-theme-toggle.jsx (Smaller size)
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Stars, Zap } from 'lucide-react';
+// src/components/sidebar/animated-theme-toggle.jsx
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { useChatStore } from '@/store/chat-store';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Moon, Stars, Sun, Zap } from 'lucide-react';
 
 const AnimatedThemeToggle = () => {
   const { darkMode, toggleDarkMode } = useChatStore();
@@ -16,7 +17,7 @@ const AnimatedThemeToggle = () => {
         variant='ghost'
         size='sm'
         onClick={toggleDarkMode}
-        className={`relative w-10 h-10 rounded-xl transition-all duration-300 overflow-hidden ${
+        className={`relative w-10 h-10 rounded-xl transition-all duration-300 overflow-hidden cursor-pointer ${
           darkMode
             ? 'bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-md shadow-purple-500/20'
             : 'bg-gradient-to-br from-amber-400 to-orange-400 hover:from-amber-300 hover:to-orange-300 shadow-md shadow-amber-400/20'

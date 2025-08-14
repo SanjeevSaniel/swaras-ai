@@ -1,7 +1,7 @@
-// src/app/layout.js (Root layout)
+// src/app/layout.js (Add PersonaProvider)
+import { ThemeProvider } from '@/providers/theme-provider';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ThemeProvider } from '@/providers/theme-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
