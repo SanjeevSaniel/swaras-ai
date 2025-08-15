@@ -1,533 +1,698 @@
-// src/app/api/chat/route.js - Fixed Version with Robust JSON Parsing
+// src/app/api/chat/route.js - Hybrid System without Social APIs
 import { NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
+import { load } from 'cheerio';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Utility function to extract and parse JSON from AI responses
-function extractAndParseJSON(text) {
-  try {
-    // First, try direct JSON parsing
-    return JSON.parse(text);
-  } catch (directParseError) {
-    console.log('Direct JSON parse failed, trying extraction...');
-
-    // Extract JSON from markdown code blocks or other formats
-    const jsonPatterns = [
-      /```json\s*([\s\S]*?)\s*```/g, // ```json ... ```
-      /```\s*([\s\S]*?)\s*```/g, // ``` ... ```
-      /`{[\s\S]*?}`/g, // `{...}`
-      /{[\s\S]*}/g, // Direct object search
-    ];
-
-    for (const pattern of jsonPatterns) {
-      const matches = text.match(pattern);
-      if (matches) {
-        for (const match of matches) {
-          try {
-            // Clean the match
-            let cleanedJson = match
-              .replace(/```json/g, '')
-              .replace(/```/g, '')
-              .replace(/`/g, '')
-              .trim();
-
-            // Try parsing the cleaned JSON
-            const parsed = JSON.parse(cleanedJson);
-            console.log('✅ Successfully extracted JSON from text');
-            return parsed;
-          } catch (parseError) {
-            console.log('Failed to parse extracted JSON:', parseError.message);
-            continue;
-          }
-        }
-      }
-    }
-
-    // If all extraction attempts fail, throw the original error with context
-    throw new Error(
-      `JSON parsing failed. Original text: ${text.substring(0, 200)}...`,
-    );
-  }
-}
-
-// Enhanced prompt that ensures clean JSON responses
-function createJSONPrompt(basePrompt) {
-  return `${basePrompt}
-
-CRITICAL JSON FORMATTING REQUIREMENTS:
-1. Respond with ONLY valid JSON - no markdown, no code blocks, no backticks
-2. Do not wrap JSON in \`\`\`json or \`\`\` blocks
-3. Start directly with { and end with }
-4. Ensure all strings are properly quoted
-5. Do not include any text before or after the JSON object
-
-Example of correct format:
-{"key": "value", "array": ["item1", "item2"]}
-
-RESPOND WITH PURE JSON ONLY:`;
-}
-
-// Real-time knowledge extraction for every conversation
-class RealTimeKnowledgeSystem {
+// Simplified Hybrid System - Web Scraping + GPT Only
+class SimpleHybridSystem {
   constructor() {
-    this.maxRetries = 3;
-    this.factCheckThreshold = 0.7;
+    this.cache = new Map();
+    this.cacheExpiry = 30 * 60 * 1000; // 30 minutes
   }
 
-  // Extract real-time persona knowledge with robust JSON parsing
-  async extractLivePersonaKnowledge(personaName, userMessage) {
-    const baseKnowledgePrompt = `You are a real-time knowledge extraction system. Based on the user's message "${userMessage}", extract specific factual knowledge about ${personaName} that's relevant to this conversation.
+  // Web scraping for current platform information
+  async scrapeCurrentPlatformInfo(personaName) {
+    console.log(`🕷️ Scraping platform information for ${personaName}...`);
 
-CONTEXT: User asked about "${userMessage}"
+    const scrapingTargets = this.getScrapingTargets(personaName);
+    const scrapedData = {};
 
-Extract ONLY verified, factual information about ${personaName} relevant to this query.
-
-Required JSON structure:
-{
-  "personalDetails": {
-    "name": "Full name",
-    "mainBrand": "Primary brand/channel",
-    "currentRole": "Current position",
-    "experience": "Years of experience",
-    "background": "Key background info"
-  },
-  "relevantPlatforms": {
-    "platformName": {
-      "relationship": "owns/created/works-with/unrelated",
-      "description": "What this platform is",
-      "confidence": 0.95,
-      "evidence": "Why you believe this relationship"
-    }
-  },
-  "expertise": ["relevant skills for this conversation"],
-  "conversationContext": {
-    "userLikelyAsking": "What user probably wants to know",
-    "keyPointsToAddress": ["Important points to cover"],
-    "toneToUse": "How persona should respond"
-  },
-  "factualRequirements": [
-    "Critical facts persona must get right in response"
-  ]
-}
-
-CRITICAL: Only include information you're highly confident about. Mark confidence levels accurately.
-
-Target persona: ${personaName}
-User query context: "${userMessage}"`;
-
-    const jsonPrompt = createJSONPrompt(baseKnowledgePrompt);
-
-    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+    for (const target of scrapingTargets) {
       try {
-        console.log(
-          `📚 Knowledge extraction attempt ${attempt}/${this.maxRetries}...`,
-        );
+        console.log(`🔍 Scraping ${target.url}...`);
+        const data = await this.scrapeWebsite(target.url, target.selectors);
 
-        const response = await openai.chat.completions.create({
-          model: 'gpt-4o',
-          messages: [{ role: 'user', content: jsonPrompt }],
-          temperature: 0.1, // Very low for factual accuracy
-          max_tokens: 1000,
-        });
+        scrapedData[target.name] = {
+          ...data,
+          url: target.url,
+          scrapedAt: new Date().toISOString(),
+          confidence: 0.95,
+          status: 'active',
+        };
 
-        const responseText = response.choices[0].message.content.trim();
-        console.log('Raw AI response:', responseText.substring(0, 100) + '...');
-
-        // Use robust JSON extraction
-        const extractedData = extractAndParseJSON(responseText);
-
-        console.log('✅ Knowledge extraction successful');
-        return extractedData;
-      } catch (error) {
-        console.error(
-          `❌ Knowledge extraction attempt ${attempt} failed:`,
-          error.message,
-        );
-
-        if (attempt === this.maxRetries) {
-          // Return fallback knowledge structure
-          console.log('🔄 Using fallback knowledge structure');
-          return this.getFallbackKnowledge(personaName, userMessage);
-        }
-
-        // Wait before retry
         await new Promise((resolve) => setTimeout(resolve, 1000));
+      } catch (error) {
+        console.error(`❌ Failed to scrape ${target.url}:`, error.message);
+        scrapedData[target.name] = {
+          error: error.message,
+          url: target.url,
+          confidence: 0.0,
+          status: 'failed',
+        };
       }
     }
+
+    return scrapedData;
   }
 
-  // Fallback knowledge when extraction fails
-  getFallbackKnowledge(personaName, userMessage) {
-    const messageLower = userMessage.toLowerCase();
-
-    if (personaName === 'Hitesh Choudhary') {
-      const platformRelationship = messageLower.includes('chaicode')
-        ? 'owns'
-        : messageLower.includes('hitesh.ai')
-        ? 'owns'
-        : 'unrelated';
-
-      return {
-        personalDetails: {
-          name: 'Hitesh Choudhary',
-          mainBrand: 'Chai aur Code',
-          currentRole: 'YouTube Educator & Content Creator',
-          experience: '15+ years',
-          background: 'Former CTO, Senior Director, Startup Founder',
-        },
-        relevantPlatforms: {
-          [messageLower.includes('chaicode') ? 'chaicode.com' : 'unknown']: {
-            relationship: platformRelationship,
-            description:
-              platformRelationship === 'owns'
-                ? 'Learning platform for programmers with courses and community'
-                : 'Unknown platform - need clarification',
-            confidence: platformRelationship === 'owns' ? 0.9 : 0.3,
-            evidence:
-              platformRelationship === 'owns'
-                ? "ChaiCode is Hitesh's official learning platform"
-                : 'No verified information about this platform',
+  // Define scraping targets (no social APIs needed)
+  getScrapingTargets(personaName) {
+    if (personaName.includes('Hitesh')) {
+      return [
+        {
+          name: 'hitesh_personal',
+          url: 'https://hitesh.ai',
+          selectors: {
+            bio: 'meta[name="description"]',
+            title: 'title',
+            mainHeading: 'h1, .hero-title, .main-title',
+            description: '.bio, .about, .description',
+            links: 'a[href*="chaicode"], a[href*="youtube"], a[href*="github"]',
+            currentProjects: '.project, .current, .latest',
           },
         },
-        expertise: [
-          'JavaScript',
-          'React',
-          'Node.js',
-          'Career Guidance',
-          'Teaching',
-        ],
-        conversationContext: {
-          userLikelyAsking: messageLower.includes('learn')
-            ? 'Learning guidance'
-            : 'Platform information',
-          keyPointsToAddress: [
-            'Technical explanation',
-            'Step-by-step guidance',
-            'Encouragement',
-          ],
-          toneToUse: 'Encouraging, patient, using Hinglish and chai analogies',
+        {
+          name: 'chaicode_platform',
+          url: 'https://chaicode.com',
+          selectors: {
+            title: 'title',
+            description: 'meta[name="description"]',
+            mainHeading: 'h1, .hero-title',
+            courses: '.course, .program, .offering, .course-card',
+            features: '.feature, .benefit, .service',
+            navigation: '.nav, .menu, .header-links',
+          },
         },
-        factualRequirements: [
-          'Use authentic Hinglish speaking style',
-          'Reference teaching experience naturally',
-          'Provide step-by-step guidance',
-        ],
-      };
-    } else if (personaName === 'Piyush Garg') {
-      return {
-        personalDetails: {
-          name: 'Piyush Garg',
-          mainBrand: 'Piyush Garg Dev',
-          currentRole: 'Software Engineer & YouTuber',
-          experience: 'Senior level',
-          background: 'Full-stack developer with startup experience',
+        {
+          name: 'chaicode_courses',
+          url: 'https://courses.chaicode.com',
+          selectors: {
+            courseList: '.course-card, .course-item, .program',
+            courseLinks: 'a[href*="course"], a[href*="learn"]',
+            pricing: '.price, .cost',
+            features: '.feature, .benefit',
+          },
         },
-        relevantPlatforms: {
-          [messageLower.includes('piyushgarg') ? 'piyushgarg.dev' : 'unknown']:
-            {
-              relationship: messageLower.includes('piyushgarg')
-                ? 'owns'
-                : 'unrelated',
-              description: messageLower.includes('piyushgarg')
-                ? 'Personal website and portfolio'
-                : 'Unknown platform',
-              confidence: messageLower.includes('piyushgarg') ? 0.9 : 0.3,
-              evidence: 'Based on standard naming convention',
-            },
+      ];
+    } else if (personaName.includes('Piyush')) {
+      return [
+        {
+          name: 'piyush_personal',
+          url: 'https://piyushgarg.dev',
+          selectors: {
+            bio: 'meta[name="description"]',
+            title: 'title',
+            about: '.about, .bio, .description',
+            projects: '.project, .work, .portfolio',
+            skills: '.skill, .technology, .expertise',
+          },
         },
-        expertise: [
-          'MERN Stack',
-          'System Design',
-          'TypeScript',
-          'Production Development',
-        ],
-        conversationContext: {
-          userLikelyAsking: 'Technical or career advice',
-          keyPointsToAddress: [
-            'Practical solutions',
-            'Industry reality',
-            'Building focus',
-          ],
-          toneToUse: 'Direct, confident, production-focused',
-        },
-        factualRequirements: [
-          'Give direct, honest advice',
-          'Focus on real-world development',
-          'Challenge tutorial consumption',
-        ],
-      };
+      ];
     }
 
-    throw new Error(
-      `No fallback knowledge available for persona: ${personaName}`,
-    );
+    return [];
   }
 
-  // Generate fact-aware response with robust error handling
-  async generateFactAwareResponse(
-    personaName,
-    userMessage,
-    liveKnowledge,
-    conversationHistory,
-  ) {
-    const personaInstructions = {
-      'Hitesh Choudhary': `You are Hitesh Choudhary. Use the verified knowledge provided to respond authentically.
+  // Web scraping implementation
+  async scrapeWebsite(url, selectors) {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          Accept:
+            'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+        },
+        signal: AbortSignal.timeout(10000), // 10 second timeout
+      });
 
-VERIFIED KNOWLEDGE ABOUT YOU:
-${JSON.stringify(liveKnowledge, null, 2)}
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-AUTHENTIC SPEAKING STYLE:
-- Start with "Haanji!", "Arre bhai!", "Bilkul!"
-- Use natural Hinglish: "chaliye", "samjho", "dekho"
-- Include chai/cooking analogies when explaining concepts
-- Be encouraging: "Bilkul kar sakte ho!", "Don't worry yaar"
-- Reference your teaching experience naturally
+      const html = await response.text();
+      const $ = load(html);
 
-PLATFORM HANDLING:
-${Object.entries(liveKnowledge.relevantPlatforms || {})
-  .map(
-    ([platform, info]) =>
-      `- ${platform}: ${
-        info.relationship === 'owns'
-          ? 'Respond as OWNER'
-          : 'Ask for clarification'
-      } (confidence: ${info.confidence})`,
-  )
-  .join('\n')}
+      const extractedData = {};
 
-USER MESSAGE: "${userMessage}"
+      // Extract data based on selectors
+      Object.entries(selectors).forEach(([key, selector]) => {
+        try {
+          const elements = $(selector);
 
-Respond as Hitesh Choudhary:`,
+          if (elements.length > 0) {
+            if (elements.length === 1) {
+              const element = elements.first();
+              extractedData[key] =
+                element.attr('content') ||
+                element.attr('href') ||
+                element.text().trim();
+            } else {
+              extractedData[key] = elements
+                .map((i, el) => {
+                  const elem = $(el);
+                  return (
+                    elem.attr('content') ||
+                    elem.attr('href') ||
+                    elem.text().trim()
+                  );
+                })
+                .get()
+                .filter((text) => text && text.length > 0);
+            }
+          }
+        } catch (selectorError) {
+          console.warn(`Selector error for ${key}:`, selectorError.message);
+        }
+      });
 
-      'Piyush Garg': `You are Piyush Garg. Use the verified knowledge provided to respond authentically.
+      // Extract additional metadata
+      extractedData.pageTitle = $('title').text().trim();
+      extractedData.metaDescription = $('meta[name="description"]').attr(
+        'content',
+      );
+      extractedData.isActive = true; // Website is responding
 
-VERIFIED KNOWLEDGE ABOUT YOU:
-${JSON.stringify(liveKnowledge, null, 2)}
-
-AUTHENTIC SPEAKING STYLE:
-- Direct and confident: "Trust me, I'm a software engineer"
-- Reality checks: "Companies don't care about tutorials"
-- Action-oriented: "Just build it", "Stop overthinking"
-- Modern tech focus: Latest frameworks and best practices
-
-PLATFORM HANDLING:
-${Object.entries(liveKnowledge.relevantPlatforms || {})
-  .map(
-    ([platform, info]) =>
-      `- ${platform}: ${
-        info.relationship === 'owns'
-          ? 'Respond as OWNER'
-          : 'Ask for clarification'
-      } (confidence: ${info.confidence})`,
-  )
-  .join('\n')}
-
-USER MESSAGE: "${userMessage}"
-
-Respond as Piyush Garg:`,
-    };
-
-    const systemPrompt = personaInstructions[personaName];
-    if (!systemPrompt) {
-      throw new Error(`No instructions for persona: ${personaName}`);
+      return extractedData;
+    } catch (error) {
+      throw new Error(`Scraping failed: ${error.message}`);
     }
+  }
 
-    // Include conversation history for context
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      ...conversationHistory.slice(-6).map((msg) => ({
-        role: msg.sender === 'user' ? 'user' : 'assistant',
-        content: msg.content,
-      })),
-      { role: 'user', content: userMessage },
-    ];
+  // Extract GPT knowledge (enhanced for better accuracy)
+  async extractGPTKnowledge(personaName, userQuery) {
+    console.log(`🧠 Extracting GPT knowledge for ${personaName}...`);
+
+    const gptPrompt = `You are a knowledge extraction system. Based on your training data, provide comprehensive information about ${personaName}.
+
+USER CONTEXT: "${userQuery}"
+
+EXTRACT CURRENT INFORMATION (as of your training data):
+1. Professional background and current role
+2. Known platforms and websites they own/operate
+3. Areas of expertise and teaching focus
+4. Communication style and personality
+5. Recent projects or initiatives you're aware of
+
+RESPOND WITH JSON:
+{
+  "personalInfo": {
+    "name": "${personaName}",
+    "primaryRole": "current main role",
+    "background": "professional background",
+    "experience": "years of experience"
+  },
+  "knownPlatforms": [
+    {
+      "name": "platform name",
+      "url": "platform url if known",
+      "type": "learning platform/website/youtube",
+      "ownership": "owns/operates/founded",
+      "confidence": 0.8,
+      "description": "what this platform offers"
+    }
+  ],
+  "expertise": ["skill areas"],
+  "communicationStyle": {
+    "tone": "friendly/direct/encouraging",
+    "language": "hinglish/english",
+    "catchphrases": ["common phrases they use"],
+    "teachingStyle": "step-by-step/practical/theoretical"
+  },
+  "currentFocus": "what they're currently focused on",
+  "limitations": {
+    "trainingCutoff": "information may be outdated",
+    "confidence": 0.75,
+    "uncertainAreas": ["areas where information might be outdated"]
+  }
+}
+
+CRITICAL: Be honest about confidence levels and potential outdated information.
+
+Target person: ${personaName}
+Query context: "${userQuery}"`;
 
     try {
       const response = await openai.chat.completions.create({
         model: 'gpt-4o',
-        messages: messages,
-        temperature: 0.8, // Higher for natural conversation
+        messages: [{ role: 'user', content: gptPrompt }],
+        temperature: 0.1,
+        max_tokens: 1000,
+      });
+
+      const responseText = response.choices[0].message.content.trim();
+      return this.extractAndParseJSON(responseText);
+    } catch (error) {
+      throw new Error(`GPT knowledge extraction failed: ${error.message}`);
+    }
+  }
+
+  // Synthesize scraped data with GPT knowledge
+  async synthesizeKnowledge(scrapedData, gptData, personaName, userQuery) {
+    console.log('🧠 Synthesizing scraped data with GPT knowledge...');
+
+    const synthesisPrompt = `You are an information synthesis expert. Combine scraped real-time data with GPT knowledge to create the most accurate profile.
+
+PERSONA: ${personaName}
+USER QUERY: "${userQuery}"
+
+REAL-TIME SCRAPED DATA (high confidence):
+${JSON.stringify(scrapedData, null, 2)}
+
+GPT TRAINING DATA (may be outdated):
+${JSON.stringify(gptData, null, 2)}
+
+SYNTHESIS RULES:
+1. Real-time scraped data takes priority over GPT data
+2. Use GPT data to fill gaps where scraping didn't capture info
+3. Resolve conflicts by favoring scraped data
+4. Identify currently active platforms vs historical ones
+5. Create unified, current profile
+
+RESPOND WITH JSON:
+{
+  "currentProfile": {
+    "name": "${personaName}",
+    "primaryRole": "most current role from available data",
+    "currentFocus": "current projects/focus areas",
+    "activePlatforms": [
+      {
+        "name": "platform name",
+        "url": "verified current url",
+        "type": "platform type",
+        "status": "verified active/inactive",
+        "confidence": 0.95,
+        "dataSource": "scraped/gpt/both",
+        "relevantToQuery": true/false,
+        "description": "what platform currently offers"
+      }
+    ],
+    "capabilities": {
+      "expertise": ["current expertise areas"],
+      "teachingStyle": "current approach",
+      "communicationStyle": "how they currently communicate"
+    }
+  },
+  "dataQuality": {
+    "overallConfidence": 0.85,
+    "scrapingSuccess": true/false,
+    "platformsVerified": 2,
+    "gapsIdentified": ["areas where more info needed"],
+    "conflicts": ["any conflicts between sources and how resolved"]
+  },
+  "responseStrategy": {
+    "platformToRecommend": "best platform for user query",
+    "communicationTone": "how persona should respond",
+    "keyPointsToMention": ["important points for this query"]
+  }
+}`;
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: synthesisPrompt }],
+        temperature: 0.1,
+        max_tokens: 1200,
+      });
+
+      const responseText = response.choices[0].message.content.trim();
+      return this.extractAndParseJSON(responseText);
+    } catch (error) {
+      console.error('❌ Knowledge synthesis failed:', error);
+
+      // Return basic synthesis if AI fails
+      return this.createBasicSynthesis(scrapedData, gptData, personaName);
+    }
+  }
+
+  // Basic synthesis fallback
+  createBasicSynthesis(scrapedData, gptData, personaName) {
+    const activePlatforms = [];
+
+    // Extract platforms from scraped data
+    Object.entries(scrapedData).forEach(([source, data]) => {
+      if (data.url && !data.error) {
+        activePlatforms.push({
+          name: source,
+          url: data.url,
+          type: 'website',
+          status: 'verified active',
+          confidence: 0.9,
+          dataSource: 'scraped',
+        });
+      }
+    });
+
+    // Add GPT platforms if not found in scraped data
+    if (gptData?.knownPlatforms) {
+      gptData.knownPlatforms.forEach((platform) => {
+        if (!activePlatforms.find((p) => p.url === platform.url)) {
+          activePlatforms.push({
+            ...platform,
+            status: 'unverified',
+            dataSource: 'gpt',
+          });
+        }
+      });
+    }
+
+    return {
+      currentProfile: {
+        name: personaName,
+        primaryRole:
+          gptData?.personalInfo?.primaryRole || 'Educator/Content Creator',
+        activePlatforms,
+        capabilities: {
+          expertise: gptData?.expertise || ['Web Development', 'Teaching'],
+          communicationStyle: gptData?.communicationStyle || {},
+        },
+      },
+      dataQuality: {
+        overallConfidence: 0.7,
+        scrapingSuccess: Object.values(scrapedData).some((d) => !d.error),
+        platformsVerified: activePlatforms.filter(
+          (p) => p.dataSource === 'scraped',
+        ).length,
+      },
+      responseStrategy: {
+        platformToRecommend: activePlatforms[0]?.name || 'website',
+        communicationTone: 'authentic and helpful',
+      },
+    };
+  }
+
+  // Generate response using synthesized knowledge
+  async generateResponseWithKnowledge(
+    personaName,
+    userQuery,
+    synthesizedKnowledge,
+    conversationHistory,
+  ) {
+    const responsePrompt = `You are ${personaName}. Respond authentically using the most current information available.
+
+CURRENT SYNTHESIZED KNOWLEDGE:
+${JSON.stringify(synthesizedKnowledge, null, 2)}
+
+USER QUERY: "${userQuery}"
+
+CONVERSATION HISTORY:
+${conversationHistory
+  .slice(-4)
+  .map((msg) => `${msg.sender === 'user' ? 'User' : 'You'}: ${msg.content}`)
+  .join('\n')}
+
+RESPONSE REQUIREMENTS:
+1. Use your authentic speaking style from the knowledge
+2. Mention currently active platforms relevant to the query
+3. Reference your current expertise and offerings
+4. Maintain natural conversation flow
+5. Include specific platform links if relevant
+
+${this.getPersonaGuidelines(personaName, synthesizedKnowledge)}
+
+Respond as ${personaName} using your current information:`;
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: responsePrompt }],
+        temperature: 0.8,
         max_tokens: 700,
-        presence_penalty: 0.3,
-        frequency_penalty: 0.2,
       });
 
       return response.choices[0].message.content;
     } catch (error) {
-      console.error('❌ Fact-aware response generation failed:', error);
       throw new Error(`Response generation failed: ${error.message}`);
     }
   }
 
-  // Comprehensive fact-checking with robust JSON parsing
-  async comprehensiveFactCheck(
-    response,
-    personaName,
-    userMessage,
-    liveKnowledge,
-  ) {
-    const baseFactCheckPrompt = `You are a comprehensive fact-checking system. Analyze this AI response for factual accuracy against verified knowledge.
+  // Get persona-specific guidelines
+  getPersonaGuidelines(personaName, synthesizedKnowledge) {
+    const style =
+      synthesizedKnowledge.currentProfile?.capabilities?.communicationStyle ||
+      {};
+    const platforms =
+      synthesizedKnowledge.currentProfile?.activePlatforms || [];
+    const primaryPlatform =
+      platforms.find((p) => p.relevantToQuery) || platforms[0];
 
-PERSONA: ${personaName}
-USER MESSAGE: "${userMessage}"
-AI RESPONSE: "${response}"
+    if (personaName.includes('Hitesh')) {
+      return `HITESH AUTHENTIC STYLE:
+- Use "Haanji!", "Arre bhai!", "Bilkul!"
+- Natural Hinglish mixing: "chaliye", "dekho", "samjho"
+- Chai/cooking analogies for explanations
+- Encouraging tone: "Bilkul kar sakte ho!"
+- Teaching approach: step-by-step guidance
 
-VERIFIED KNOWLEDGE TO CHECK AGAINST:
-${JSON.stringify(liveKnowledge, null, 2)}
-
-FACT-CHECK FOR:
-1. Personal information accuracy (name, role, experience)
-2. Platform/website ownership claims
-3. Technical expertise claims
-4. Background/experience claims
-5. Any specific facts mentioned
-6. Consistency with persona's known style and approach
-
-Required JSON response structure:
-{
-  "isFactuallyAccurate": true,
-  "confidence": 0.85,
-  "factualIssues": [
-    {
-      "issue": "Specific factual problem",
-      "severity": "low",
-      "correction": "What should be said instead"
-    }
-  ],
-  "positiveAspects": [
-    "Things the response got right"
-  ],
-  "overallAssessment": "Detailed assessment",
-  "requiresRegeneration": false,
-  "specificCorrections": "Detailed instructions for fixing issues"
+CURRENT PLATFORM TO MENTION:
+${
+  primaryPlatform
+    ? `- ${primaryPlatform.name}: ${primaryPlatform.url}`
+    : '- Use available platforms from knowledge'
 }
+- Describe as your current active platform
+- Reference current offerings and courses`;
+    } else {
+      return `PIYUSH AUTHENTIC STYLE:
+- Direct and confident tone
+- "Trust me, I'm a software engineer"
+- Reality checks about industry
+- Action-oriented: "Just build it"
+- Production-focused advice
 
-Be extremely thorough in checking facts against the verified knowledge.`;
-
-    const jsonPrompt = createJSONPrompt(baseFactCheckPrompt);
-
-    try {
-      const response_factcheck = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content: jsonPrompt }],
-        temperature: 0.1, // Very low for accuracy
-        max_tokens: 600,
-      });
-
-      const responseText = response_factcheck.choices[0].message.content.trim();
-      return extractAndParseJSON(responseText);
-    } catch (error) {
-      console.error('❌ Fact-checking failed:', error);
-
-      // Return safe fallback fact-check
-      return {
-        isFactuallyAccurate: true, // Assume accurate if fact-check fails
-        confidence: 0.5,
-        factualIssues: [],
-        positiveAspects: ['Response generated successfully'],
-        overallAssessment:
-          'Fact-checking system failed, assuming response is acceptable',
-        requiresRegeneration: false,
-        specificCorrections:
-          'No corrections available due to fact-check failure',
-      };
+CURRENT PLATFORM TO MENTION:
+${
+  primaryPlatform
+    ? `- ${primaryPlatform.name}: ${primaryPlatform.url}`
+    : '- Use available platforms'
+}`;
     }
   }
 
-  // Process entire conversation with enhanced error handling
-  async processConversationWithFactChecking(
+  // Main processing function
+  async processSimpleHybrid(personaName, userQuery, conversationHistory = []) {
+    console.log(
+      `🔄 Processing simple hybrid (no social APIs) for ${personaName}...`,
+    );
+
+    try {
+      // Run scraping and GPT extraction in parallel
+      const [scrapedData, gptData] = await Promise.allSettled([
+        this.scrapeCurrentPlatformInfo(personaName),
+        this.extractGPTKnowledge(personaName, userQuery),
+      ]);
+
+      const scrapingResult =
+        scrapedData.status === 'fulfilled' ? scrapedData.value : {};
+      const gptResult = gptData.status === 'fulfilled' ? gptData.value : null;
+
+      console.log('📊 Data collection results:');
+      console.log(
+        `   Scraping: ${scrapedData.status} (${
+          Object.keys(scrapingResult).length
+        } sources)`,
+      );
+      console.log(`   GPT: ${gptData.status}`);
+
+      // Synthesize the knowledge
+      const synthesizedKnowledge = await this.synthesizeKnowledge(
+        scrapingResult,
+        gptResult,
+        personaName,
+        userQuery,
+      );
+
+      // Generate response
+      const response = await this.generateResponseWithKnowledge(
+        personaName,
+        userQuery,
+        synthesizedKnowledge,
+        conversationHistory,
+      );
+
+      return {
+        response,
+        metadata: {
+          source: 'simple_hybrid_no_social',
+          scrapingSuccess: scrapedData.status === 'fulfilled',
+          gptSuccess: gptData.status === 'fulfilled',
+          platformsFound:
+            synthesizedKnowledge.currentProfile.activePlatforms.length,
+          confidence: synthesizedKnowledge.dataQuality.overallConfidence,
+          dataQuality: synthesizedKnowledge.dataQuality,
+        },
+      };
+    } catch (error) {
+      console.error('❌ Simple hybrid processing failed:', error);
+      throw error;
+    }
+  }
+
+  // JSON parsing utility
+  extractAndParseJSON(text) {
+    try {
+      return JSON.parse(text);
+    } catch (directParseError) {
+      const jsonPatterns = [
+        /```json\s*([\s\S]*?)\s*```/g,
+        /```\s*([\s\S]*?)\s*```/g,
+        /`{[\s\S]*?}`/g,
+        /{[\s\S]*}/g,
+      ];
+
+      for (const pattern of jsonPatterns) {
+        const matches = text.match(pattern);
+        if (matches) {
+          for (const match of matches) {
+            try {
+              let cleanedJson = match
+                .replace(/```json/g, '')
+                .replace(/```/g, '')
+                .replace(/`/g, '')
+                .trim();
+
+              return JSON.parse(cleanedJson);
+            } catch (parseError) {
+              continue;
+            }
+          }
+        }
+      }
+
+      throw new Error(
+        `JSON parsing failed. Text: ${text.substring(0, 200)}...`,
+      );
+    }
+  }
+}
+
+// Simple hybrid processor
+class SimpleHybridProcessor {
+  constructor() {
+    this.hybridSystem = new SimpleHybridSystem();
+    this.timeouts = {
+      quick: 10000, // 10 seconds
+      detailed: 20000, // 20 seconds
+    };
+  }
+
+  async processConversation(
     personaName,
     userMessage,
     conversationHistory = [],
   ) {
-    const processingLog = [];
-    let attempts = 0;
-    const maxAttempts = 2; // Reduced to avoid long processing times
+    const startTime = Date.now();
 
-    while (attempts < maxAttempts) {
-      attempts++;
-      processingLog.push(`🔄 Attempt ${attempts}/${maxAttempts}`);
+    try {
+      // Determine timeout based on query complexity
+      const isComplexQuery =
+        userMessage.length > 50 ||
+        userMessage.toLowerCase().includes('course') ||
+        userMessage.toLowerCase().includes('platform');
 
-      try {
-        // Step 1: Extract live knowledge
-        processingLog.push('📚 Extracting live persona knowledge...');
-        const liveKnowledge = await this.extractLivePersonaKnowledge(
-          personaName,
-          userMessage,
-        );
+      const timeout = isComplexQuery
+        ? this.timeouts.detailed
+        : this.timeouts.quick;
 
-        // Step 2: Generate fact-aware response
-        processingLog.push('🤖 Generating fact-aware response...');
-        const response = await this.generateFactAwareResponse(
-          personaName,
-          userMessage,
-          liveKnowledge,
-          conversationHistory,
-        );
+      // Process with timeout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Processing timeout')), timeout);
+      });
 
-        // Step 3: Quick fact-check (simplified for reliability)
-        processingLog.push('✅ Performing fact-check...');
-        const factCheck = await this.comprehensiveFactCheck(
-          response,
-          personaName,
-          userMessage,
-          liveKnowledge,
-        );
+      const processingPromise = this.hybridSystem.processSimpleHybrid(
+        personaName,
+        userMessage,
+        conversationHistory,
+      );
 
-        // Step 4: Return response (more lenient fact-check acceptance)
-        if (factCheck.isFactuallyAccurate || factCheck.confidence >= 0.5) {
-          processingLog.push('✅ Response accepted - delivering to user');
-          return {
-            response,
-            metadata: {
-              source: 'pure_dynamic_openai',
-              attempts,
-              factCheck,
-              liveKnowledge,
-              processingLog,
-              factuallyVerified: factCheck.isFactuallyAccurate,
-              confidence: factCheck.confidence,
-            },
-          };
-        }
+      const result = await Promise.race([processingPromise, timeoutPromise]);
+      const processingTime = Date.now() - startTime;
 
-        processingLog.push(
-          `⚠️ Fact-check failed (confidence: ${factCheck.confidence}), retrying...`,
-        );
-      } catch (error) {
-        processingLog.push(`❌ Attempt ${attempts} error: ${error.message}`);
-        if (attempts === maxAttempts) {
-          throw error;
-        }
-      }
+      return {
+        ...result,
+        metadata: {
+          ...result.metadata,
+          processingTime,
+          timeout: timeout,
+          systemType: 'simple_hybrid_no_social',
+        },
+      };
+    } catch (error) {
+      return await this.handleFailure(
+        error,
+        personaName,
+        userMessage,
+        Date.now() - startTime,
+      );
     }
+  }
 
-    throw new Error(
-      `Failed to generate response after ${maxAttempts} attempts`,
+  async handleFailure(error, personaName, userMessage, processingTime) {
+    console.error(
+      '⚠️ Simple hybrid failed, using GPT-only fallback:',
+      error.message,
     );
+
+    try {
+      const fallbackPrompt = `You are ${personaName}. Respond authentically to: "${userMessage}"
+
+${
+  personaName.includes('Hitesh')
+    ? 'Use Hinglish style with "Haanji!", chai analogies, and encouraging tone. Mention your platforms like ChaiCode.com if relevant.'
+    : 'Use direct, confident tone with practical advice. Reference your experience as a software engineer.'
+}
+
+Respond naturally:`;
+
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: fallbackPrompt }],
+        temperature: 0.8,
+        max_tokens: 500,
+      });
+
+      return {
+        response: response.choices[0].message.content,
+        metadata: {
+          source: 'gpt_only_fallback',
+          originalError: error.message,
+          processingTime,
+          confidence: 0.6,
+        },
+      };
+    } catch (fallbackError) {
+      return {
+        response: this.getEmergencyResponse(personaName),
+        metadata: {
+          source: 'emergency_fallback',
+          errors: [error.message, fallbackError.message],
+          processingTime,
+        },
+      };
+    }
+  }
+
+  getEmergencyResponse(personaName) {
+    if (personaName.includes('Hitesh')) {
+      return 'Haanji bhai! Thoda technical issue aa raha hai, but main tumhara question samjha. Programming journey mein patience zaroori hai. Keep learning aur practice karte raho!';
+    } else {
+      return "Hey! System's having some issues right now, but I got your question. Keep building real projects - that's what matters in this industry!";
+    }
   }
 }
 
-// Persona name mapping
+// Persona mapping
 const personaNames = {
   hitesh: 'Hitesh Choudhary',
   piyush: 'Piyush Garg',
 };
 
-// Initialize the real-time knowledge system
-const knowledgeSystem = new RealTimeKnowledgeSystem();
+// Initialize processor
+const processor = new SimpleHybridProcessor();
 
-// Main API route with enhanced error handling
+// Main API route
 export async function POST(req) {
   const startTime = Date.now();
 
   try {
     const { message, persona, history = [] } = await req.json();
 
-    // Validate request
     if (!message || !persona || !personaNames[persona]) {
       return NextResponse.json(
         { error: 'Valid message and persona required' },
@@ -537,19 +702,18 @@ export async function POST(req) {
 
     const personaName = personaNames[persona];
 
-    console.log(`🚀 Processing dynamic conversation for ${personaName}`);
+    console.log(`🚀 Processing simple hybrid chat for ${personaName}`);
     console.log(`📝 User message: "${message}"`);
 
-    // Process with enhanced error handling
-    const result = await knowledgeSystem.processConversationWithFactChecking(
+    const result = await processor.processConversation(
       personaName,
       message,
       history,
     );
+    const totalTime = Date.now() - startTime;
 
-    const processingTime = Date.now() - startTime;
-
-    console.log(`✅ Dynamic response generated in ${processingTime}ms`);
+    console.log(`✅ Response generated in ${totalTime}ms`);
+    console.log(`📊 Source: ${result.metadata.source}`);
 
     return NextResponse.json({
       response: result.response,
@@ -557,17 +721,17 @@ export async function POST(req) {
       timestamp: new Date().toISOString(),
       metadata: {
         ...result.metadata,
-        processingTime,
-        guaranteedDynamic: true,
-        enhancedErrorHandling: true,
+        totalTime,
+        hybridType: 'scraping_plus_gpt_only',
+        socialAPIs: false,
       },
     });
   } catch (error) {
-    console.error('💥 Pure dynamic system failed:', error);
+    console.error('💥 Simple hybrid system failed:', error);
 
     return NextResponse.json(
       {
-        error: 'Dynamic response generation failed',
+        error: 'Chat processing failed',
         details: error.message,
         timestamp: new Date().toISOString(),
         metadata: {
@@ -580,23 +744,23 @@ export async function POST(req) {
   }
 }
 
-// Health check endpoint
+// Health check
 export async function GET() {
   return NextResponse.json({
-    status: 'Pure Dynamic Chat System Online (Enhanced)',
+    status: 'Simple Hybrid Chat System Online',
     timestamp: new Date().toISOString(),
     features: [
-      '✅ Robust JSON parsing',
-      '✅ Enhanced error handling',
-      '✅ Fallback knowledge system',
-      '✅ Reduced processing time',
-      '✅ Better reliability',
+      '✅ Real-time web scraping',
+      '✅ GPT knowledge integration',
+      '✅ Information synthesis',
+      '✅ No social APIs required',
+      '✅ Intelligent fallbacks',
     ],
-    improvements: [
-      'Fixed JSON parsing issues',
-      'Added fallback knowledge structures',
-      'Enhanced error recovery',
-      'Improved processing speed',
+    requirements: [
+      'OpenAI API key only',
+      'No YouTube API needed',
+      'No GitHub token needed',
+      'Web scraping capability built-in',
     ],
   });
 }
