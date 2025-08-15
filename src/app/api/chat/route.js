@@ -1,377 +1,398 @@
-// src/app/api/chat/route.js
+// src/app/api/chat/route.js - FIXED VERSION
 import { NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
 
+// Initialize OpenAI with error handling
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const personas = {
-  hitesh: {
-    systemPrompt: `You are Hitesh Choudhary, the beloved Indian coding educator known as "Chai aur Code" with 1.6M+ subscribers.
+// Enhanced system prompts - much more detailed
+const systemPrompts = {
+  hitesh: `You are Hitesh Choudhary, the beloved Indian coding educator behind "Chai aur Code" with 1.6M+ YouTube subscribers.
 
-CORE PERSONALITY & SPEAKING STYLE:
-- Always start with "Haanji!" or "Bilkul!" or "Arre bhai!" 
-- Mix Hindi naturally: "chaliye", "samjho", "dekho", "kya baat hai", "bilkul sahi"
-- Use "bhai/bhaiya" to address users like a caring elder brother
-- Reference chai in coding analogies: "Ek chai banane ki tarah, step by step"
-- Be encouraging: "Don't worry", "Yeh seekh jaoge", "Bilkul kar sakte ho"
+CRITICAL REQUIREMENTS:
+- You MUST respond as if you're actually Hitesh in a live conversation
+- NEVER give generic AI responses
+- Reference your actual teaching experience and student community
+- Use your authentic speaking style in every response
 
-SIGNATURE EXPRESSIONS:
-- "Haanji bhai!" (start many responses)
-- "Chaliye step by step samjhate hain"
-- "Production mein ye problem nahi aani chahiye"
-- "Industry mein ye bahut important hai"
-- "Mere 1.6M+ students ko dekho"
-- "LearnCodeOnline pe detail mein explain kiya hai"
-- "Chai aur Code community mein"
+AUTHENTIC SPEAKING PATTERNS:
+- Start with: "Haanji!", "Arre bhai!", "Bilkul!"
+- Natural Hinglish mixing: "chaliye", "samjho", "dekho", "kya baat hai"
+- Address users as: "bhai", "bhaiya", "guys", "students" 
+- Encouraging phrases: "Bilkul kar sakte ho!", "Don't worry yaar", "Yeh toh easy hai!"
+- Reference chai/cooking analogies: "Ek chai banane ki tarah", "Recipe follow karte hain"
 
-TEACHING APPROACH:
-- Break complex topics into simple steps
-- Use food/daily life analogies frequently
-- Always encourage before correcting
-- Share industry insights and what companies want
-- Reference your YouTube journey and student success stories
-- Focus on practical learning over theory
+PERSONAL REFERENCES (use naturally):
+- "Mere 1.6M+ students mein se bahut se..."
+- "LearnCodeOnline pe maine detail mein..."
+- "Industry mein mera experience..."
+- "Chai aur Code community mein we discuss..."
+- "YouTube pe maine video banaya tha..."
 
-EXPERTISE AREAS:
-JavaScript, React, Node.js, MongoDB, Career Guidance, YouTube Growth, Freelancing
+CONVERSATION STYLE:
+1. Always acknowledge what user asked specifically
+2. Break down complex topics into simple steps
+3. Use real-world analogies (especially food/daily life)
+4. Share industry insights from your experience
+5. Reference previous conversation topics naturally
+6. End with encouragement and clear next steps
+7. Ask engaging follow-up questions
 
-RESPONSE PATTERN:
-1. Encouraging greeting with Hindi phrases
-2. Break down the concept step-by-step
-3. Use relatable analogies (especially chai/food)
-4. Share industry insights
-5. End with motivation and next steps
+TECHNICAL EXPERTISE:
+JavaScript, React, Node.js, MongoDB, Express, Career Guidance, YouTube Growth, Freelancing
 
-EXAMPLE TONE:
-Instead of: "You should learn React hooks"
-Say: "Haanji bhai! React hooks bilkul game changer hai! Ek chai banane ki tarah - pehle pani boil karte hain (useState), phir chai leaves add karte hain (useEffect). Step by step chaliye, industry mein ye super important hai!"`,
+EXAMPLE RESPONSE PATTERN:
+User: "How to learn React?"
+You: "Haanji bhai! React seekhna hai? Bilkul perfect timing! Dekho, maine apne 1.6M students ko React sikhaya hai aur ek baat batata hun - React bilkul chai banane ki tarah hai. Pehle basic setup (pani boil karna), phir components (chai patti add karna), state management (sugar adjust karna). Industry mein React ki demand bahut hai! LearnCodeOnline pe maine complete roadmap banaya hai. Chaliye step by step start karte hain - pehle create-react-app se. Tumhara coding background kya hai bhai?"
 
-    conversationStarters: [
-      'Haanji! Kya seekhna hai aaj? React, JavaScript, ya career guidance? ☕️',
-      'Chai ready hai, coding shuru karte hain! Kya problem solve karni hai bhai?',
-      'Bilkul sahi time pe aaye ho! Kya banane ka plan hai?',
-      'Industry mein kya trending hai - batata hun detail mein! Kya topic choose karna hai?',
-    ],
-  },
+Remember: Be conversational, encouraging, and always reference your teaching experience!`,
 
-  piyush: {
-    systemPrompt: `You are Piyush Garg, the straight-talking full-stack developer and educator known for "building devs, not just apps" with 275K+ subscribers.
+  piyush: `You are Piyush Garg, a straight-talking full-stack developer and YouTube educator with 275K+ subscribers, known for "building devs, not just apps."
 
-CORE PERSONALITY & SPEAKING STYLE:
-- Direct, no-nonsense communication
-- Fast-paced, confident responses
-- Slightly impatient with theoretical discussions
-- Focus on real-world, production-ready solutions
-- Sometimes blunt but always helpful
+CRITICAL REQUIREMENTS:
+- Respond as the REAL Piyush in actual conversation
+- Give direct, practical advice with NO sugarcoating
+- Focus on production-ready solutions and real-world development
+- Challenge users to build, not just consume tutorials
 
-SIGNATURE EXPRESSIONS:
-- "Trust me, I'm a software engineer"
-- "I build devs, not just apps"
-- "This is how it's done in production"
-- "Companies don't care about your tutorial projects"
-- "Forget the tutorials, build real stuff"
-- "Scale karna hai to ye karo"
-- "Here's the reality check you need"
+AUTHENTIC SPEAKING PATTERNS:
+- Confident openers: "Alright!", "Here's the thing", "Listen up"
+- Signature phrases: "Trust me, I'm a software engineer", "Real talk", "Stop right there"
+- Direct language: "Companies don't care about...", "You're in tutorial hell", "Just build it"
+- Action-oriented: "Go do this", "Next steps", "What are you building?"
+- Modern tech focus: Always mention latest best practices
 
-TEACHING APPROACH:
-- Start with the solution, then explain why
-- Emphasize what companies actually want
-- Focus on modern, scalable technologies
-- Provide production-grade recommendations
-- Challenge users to think beyond tutorials
-- Share real-world project experiences
+PERSONAL REFERENCES (use naturally):
+- "I've built 100+ production applications..."
+- "In my experience with startups..."
+- "275K developers follow me because..."
+- "Trust me, I've been in the industry..."
+- "Companies I've worked with..."
 
-EXPERTISE AREAS:
-MERN Stack, TypeScript, Next.js, System Design, DevOps, PostgreSQL, Redis, WebRTC, GraphQL
+CONVERSATION STYLE:
+1. Give reality checks about industry expectations
+2. Redirect from tutorial consumption to building
+3. Share specific technical recommendations
+4. Focus on scalable, production-ready solutions
+5. Reference previous topics to build complexity
+6. Push users toward action over planning
+7. End with specific challenges/tasks
 
-RESPONSE PATTERN:
-1. Direct acknowledgment of the question
-2. Immediate practical solution
-3. Explain why this approach is better
-4. Reference production/industry standards
-5. Challenge to build something real
+TECHNICAL EXPERTISE:
+MERN Stack, TypeScript, System Design, DevOps, Cloud Architecture, Startup Development
 
-EXAMPLE TONE:
-Instead of: "You could try using state management"
-Say: "Use Redux Toolkit or Zustand. Companies don't want to see useState everywhere in production apps. I've built 50+ applications - this is exactly how we handle state at scale. Now stop watching tutorials and build something real."`,
+RESPONSE PATTERNS:
+- For beginners stuck in tutorials: Redirect to building real projects
+- For career questions: Give honest industry insights
+- For technical questions: Provide production-focused solutions
+- For framework choices: Recommend modern, scalable options
 
-    conversationStarters: [
-      "Ready to build something that actually matters? What's the project? 🚀",
-      "Stop watching tutorials. Tell me what you want to build and I'll guide you.",
-      'Companies hire for skills, not certificates. What are we building today?',
-      "Trust me, I'm a software engineer. What's the real problem you're solving?",
-    ],
-  },
+EXAMPLE RESPONSE PATTERN:
+User: "Should I learn more frameworks?"
+You: "Stop right there! You're falling into the framework trap. I've mentored 275K+ developers and here's the truth - companies hire problem solvers, not framework collectors. Pick ONE stack: React + Node.js + TypeScript. Master it completely. Build 3 production apps with authentication, database, deployment, monitoring - the whole pipeline. I've built startups with this exact stack. Trust me, this beats knowing 10 frameworks superficially. What's your current project? Let's make it production-ready."
+
+Remember: Be direct, practical, and always push toward building real things!`,
 };
 
-// Enhanced context analysis
-function analyzeMessageContext(message, history = []) {
-  const lowerMsg = message.toLowerCase();
+// Validation functions
+const validateEnvironment = () => {
+  const issues = [];
 
-  const context = {
-    type: 'general',
-    isQuestion:
-      message.includes('?') ||
-      /^(how|what|why|when|where|which|can|should|is|are|do|does|will|would)/i.test(
-        message,
-      ),
-    isCareerRelated:
-      /\b(career|job|interview|salary|hire|company|work|freelanc)/i.test(
-        lowerMsg,
-      ),
-    isTechnical:
-      /\b(react|javascript|node|database|api|frontend|backend|deploy|code|programming|development)/i.test(
-        lowerMsg,
-      ),
-    isProjectRelated:
-      /\b(project|build|app|website|application|create|make)/i.test(lowerMsg),
-    isBeginnerLevel: /\b(beginner|start|learn|new|first|basic|beginning)/i.test(
-      lowerMsg,
-    ),
-    needsEncouragement:
-      /\b(difficult|hard|stuck|confused|lost|struggle|problem|help)/i.test(
-        lowerMsg,
-      ),
-    isAdvanced:
-      /\b(advanced|complex|optimize|scale|performance|architecture|system design)/i.test(
-        lowerMsg,
-      ),
-    sentiment: getSentiment(message),
-    previousContext:
-      history.length > 0 ? getLastTopicFromHistory(history) : null,
+  if (!process.env.OPENAI_API_KEY) {
+    issues.push('OPENAI_API_KEY not found');
+  } else if (!process.env.OPENAI_API_KEY.startsWith('sk-')) {
+    issues.push('OPENAI_API_KEY format invalid');
+  }
+
+  return issues;
+};
+
+const validateRequest = (body) => {
+  const { message, persona } = body;
+
+  if (!message || typeof message !== 'string' || message.trim().length === 0) {
+    throw new Error('Valid message is required');
+  }
+
+  if (!persona || !systemPrompts[persona]) {
+    throw new Error('Valid persona (hitesh/piyush) is required');
+  }
+
+  return true;
+};
+
+const formatConversationHistory = (history = []) => {
+  if (!Array.isArray(history)) return [];
+
+  return history
+    .filter((msg) => msg && msg.content && msg.sender)
+    .slice(-8) // Keep last 8 messages for context
+    .map((msg) => ({
+      role: msg.sender === 'user' ? 'user' : 'assistant',
+      content: msg.content.trim(),
+    }));
+};
+
+const validateAIResponse = (response, persona) => {
+  if (!response || typeof response !== 'string' || response.length < 20) {
+    return false;
+  }
+
+  // Check for persona-specific markers
+  const personaMarkers = {
+    hitesh: ['haanji', 'bhai', 'chai', 'bilkul', 'dekho', 'chaliye'],
+    piyush: [
+      'trust me',
+      'build',
+      'production',
+      'real talk',
+      'stop',
+      "here's the thing",
+    ],
   };
 
-  // Determine primary context type
-  if (context.isCareerRelated) context.type = 'career';
-  else if (context.isProjectRelated) context.type = 'project';
-  else if (context.isTechnical) context.type = 'technical';
-  else if (context.needsEncouragement) context.type = 'encouragement';
-
-  return context;
-}
-
-function getSentiment(message) {
-  const positive =
-    /\b(good|great|awesome|love|excellent|amazing|thanks|thank|perfect|nice)\b/i;
-  const negative =
-    /\b(bad|terrible|hate|difficult|hard|stuck|confused|frustrated|annoying)\b/i;
-
-  if (positive.test(message)) return 'positive';
-  if (negative.test(message)) return 'negative';
-  return 'neutral';
-}
-
-function getLastTopicFromHistory(history) {
-  if (history.length === 0) return null;
-
-  const lastMessage = history[history.length - 1];
-  const content = lastMessage.content.toLowerCase();
-
-  if (/\b(react|jsx|component|hook)\b/i.test(content)) return 'react';
-  if (/\b(javascript|js|es6|promise|async)\b/i.test(content))
-    return 'javascript';
-  if (/\b(node|express|api|backend)\b/i.test(content)) return 'backend';
-  if (/\b(career|job|interview)\b/i.test(content)) return 'career';
-
-  return null;
-}
-
-// Enhanced prompt building
-function buildContextualPrompt(persona, context, history) {
-  let prompt = personas[persona].systemPrompt;
-
-  // Add context-specific instructions
-  if (context.needsEncouragement) {
-    if (persona === 'hitesh') {
-      prompt +=
-        '\n\nIMPORTANT: The user needs encouragement. Be extra supportive, use "Don\'t worry bhai" and break things down very simply. Use chai analogies to make it feel easier.';
-    } else {
-      prompt +=
-        '\n\nIMPORTANT: The user is struggling. Be direct but supportive. Give them a clear path forward and remind them that everyone faces these challenges.';
-    }
-  }
-
-  if (context.isBeginnerLevel) {
-    prompt +=
-      '\n\nIMPORTANT: This is a beginner. Avoid advanced jargon. Explain everything step-by-step with simple examples.';
-  }
-
-  if (context.isCareerRelated) {
-    if (persona === 'hitesh') {
-      prompt +=
-        '\n\nIMPORTANT: Focus on career guidance. Share insights about what companies want, your industry experience, and encourage them about their journey.';
-    } else {
-      prompt +=
-        '\n\nIMPORTANT: Give realistic career advice. Focus on what companies actually hire for, not theoretical knowledge.';
-    }
-  }
-
-  if (context.previousContext) {
-    prompt += `\n\nCONTEXT: This conversation was previously about ${context.previousContext}. Reference this naturally if relevant.`;
-  }
-
-  if (history.length > 3) {
-    prompt +=
-      '\n\nCONTEXT: This is an ongoing conversation. Build on previous topics naturally.';
-  }
-
-  return prompt;
-}
-
-// Enhanced response validation
-function enhancePersonaResponse(response, persona, context) {
-  if (persona === 'hitesh') {
-    // Ensure Hitesh always has his characteristic elements
-    if (
-      !response.match(/\b(haanji|bilkul|chaliye|bhai)\b/i) &&
-      Math.random() > 0.3
-    ) {
-      response = 'Haanji bhai! ' + response;
-    }
-
-    // Add step-by-step structure if missing for technical questions
-    if (context.isTechnical && !response.includes('step')) {
-      response = response.replace(
-        /\.\s+([A-Z])/g,
-        '. Chaliye step by step dekhte hain - $1',
-      );
-    }
-
-    // Add encouragement for struggling users
-    if (context.needsEncouragement && !response.includes('worry')) {
-      response +=
-        "\n\nDon't worry bhai, sab seekh jaate hain! Keep practicing! ☕️";
-    }
-  } else if (persona === 'piyush') {
-    // Ensure Piyush has his direct, practical tone
-    if (
-      context.isProjectRelated &&
-      !response.toLowerCase().includes('production') &&
-      !response.toLowerCase().includes('real')
-    ) {
-      response +=
-        "\n\nBuild something real, deploy it, show results. That's how you get hired.";
-    }
-
-    // Add reality check for career questions
-    if (context.isCareerRelated && !response.includes('companies')) {
-      response += '\n\nRemember: companies hire for skills, not certificates.';
-    }
-
-    // Ensure confidence phrases are present
-    if (!response.toLowerCase().includes('trust me') && Math.random() > 0.6) {
-      response += "\n\nTrust me, I'm a software engineer.";
-    }
-  }
-
-  return response;
-}
-
-// Enhanced simulation with better persona responses
-async function simulatePersonaResponse(message, persona, context) {
-  await new Promise((resolve) =>
-    setTimeout(resolve, 1000 + Math.random() * 2000),
+  const markers = personaMarkers[persona] || [];
+  const hasPersonaMarkers = markers.some((marker) =>
+    response.toLowerCase().includes(marker),
   );
 
-  const lowerMsg = message.toLowerCase();
+  // Check for generic AI responses
+  const genericPhrases = [
+    'as an ai',
+    "i'm here to help",
+    "i don't have personal",
+    'as a language model',
+    'i apologize but',
+  ];
 
-  if (persona === 'hitesh') {
-    if (context.needsEncouragement) {
-      return `Haanji bhai! Don't worry, maine dekha hai bahut students initially struggle karte hain. Ye bilkul normal hai! 😊\n\nDekhiye, ek chai banane ki tarah hai coding - pehle ingredients prepare karte hain (basics), phir step by step banate hain (practice), aur finally perfect chai ready! ☕️\n\nMere 1.6M+ students ko dekho - sab ne exactly yahi process follow kiya hai. Tum bhi bilkul kar sakte ho!\n\nChaliye, kya specific help chahiye? Step by step solve karte hain!`;
+  const isGeneric = genericPhrases.some((phrase) =>
+    response.toLowerCase().includes(phrase),
+  );
+
+  return hasPersonaMarkers && !isGeneric;
+};
+
+const createEnhancedPrompt = (persona, message, history) => {
+  const basePrompt = systemPrompts[persona];
+  const recentContext =
+    history.length > 0
+      ? `\n\nPREVIOUS CONVERSATION CONTEXT:\n${history
+          .map(
+            (msg) => `${msg.role === 'user' ? 'User' : 'You'}: ${msg.content}`,
+          )
+          .join('\n')}`
+      : '';
+
+  return `${basePrompt}${recentContext}
+
+CURRENT USER MESSAGE: "${message}"
+
+RESPONSE REQUIREMENTS:
+1. Respond EXACTLY as ${
+    persona === 'hitesh' ? 'Hitesh' : 'Piyush'
+  } would in a real conversation
+2. Reference the conversation context naturally if relevant
+3. Use your authentic speaking style with signature phrases
+4. Provide specific, actionable advice
+5. End with engagement (question or next step)
+
+RESPOND AS ${persona.toUpperCase()}:`;
+};
+
+const callOpenAIWithRetry = async (messages, maxAttempts = 3) => {
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      console.log(`OpenAI attempt ${attempt}/${maxAttempts}`);
+
+      // Enhanced GPT-4o configuration for better persona responses
+      const completion = await openai.chat.completions.create({
+        model: process.env.OPENAI_MODEL || 'gpt-4o',
+        messages: messages,
+        temperature: 0.8, // Good for creative persona responses
+        max_tokens: 600,
+        presence_penalty: 0.3, // Encourages diverse vocabulary
+        frequency_penalty: 0.2, // Reduces repetition
+        top_p: 0.9, // Focuses on most probable tokens
+      });
+
+      const response = completion.choices[0]?.message?.content;
+
+      if (!response) {
+        throw new Error('Empty response from OpenAI');
+      }
+
+      console.log(`✅ OpenAI success on attempt ${attempt}`);
+      return {
+        response,
+        usage: completion.usage,
+        model: completion.model,
+        attempt,
+      };
+    } catch (error) {
+      lastError = error;
+      console.error(`❌ OpenAI attempt ${attempt} failed:`, error.message);
+
+      // Check if it's a rate limit error
+      if (error.status === 429) {
+        const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff
+        console.log(`Rate limited, waiting ${waitTime}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+        continue;
+      }
+
+      // For other errors, don't retry immediately
+      if (attempt < maxAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     }
-
-    if (context.isCareerRelated) {
-      return `Haanji! Career ki baat - ye mere favorite topic hai! 🎯\n\nIndustry mein maine dekha hai ki companies sirf coding nahi dekhti, ye sab bhi important hai:\n• Problem-solving approach (bilkul zaroori!)\n• Communication skills (interview mein help karega)\n• Real projects ka experience (GitHub pe dikhao)\n• Latest tech stack knowledge\n\nChai aur Code community mein 1.6M+ developers hain - sab ki journey different hai but consistent learning key hai!\n\nLearnCodeOnline pe career guidance course bhi hai. Kya specific goal hai tumhara bhai?`;
-    }
-
-    if (lowerMsg.includes('react') || lowerMsg.includes('javascript')) {
-      return `Bilkul sahi direction mein ja rahe ho bhai! React aur JavaScript - ye industry ki backbone hai! 🚀\n\nChaliye ek perfect chai recipe ki tarah step by step banate hain:\n\n**JavaScript Fundamentals (Pani - Base):**\n• ES6+ features (arrow functions, destructuring)\n• Promises aur async/await\n• DOM manipulation basics\n\n**React Essentials (Chai Leaves - Main Flavor):**\n• Components aur JSX\n• Hooks (useState, useEffect) - ye game changer hai!\n• State management\n\n**Production Ready (Sugar & Milk - Final Touch):**\n• Error handling\n• Performance optimization\n• Real projects\n\nProduction mein ye sab daily use hota hai. LearnCodeOnline pe step-by-step course hai!\n\nKya specific topic mein stuck ho? Batao, detail mein explain karta hun! ☕️`;
-    }
-
-    return `Haanji bhai! Bilkul sahi question pucha hai! 😊\n\nDekhiye, ye topic pe maine apne students ko bahut detail mein sikhaya hai. Industry mein ye concepts super important hain.\n\nChaliye step by step approach karte hain - bilkul chai banane ki tarah! Pehle basics clear karte hain (foundation strong), then practical implementation (hands-on practice), aur finally real projects banate hain.\n\nMere experience mein dekha hai ki jo students step by step approach follow karte hain, wo industry mein better perform karte hain.\n\nKya specifically help chahiye? Bilkul detail mein guide karunga! ☕️`;
-  } else {
-    if (context.isProjectRelated) {
-      return `Finally! Someone who wants to build something real instead of watching endless tutorials! 🔥\n\n**Here's your production-ready tech stack:**\n• **Frontend**: Next.js 13+ with TypeScript (not Create React App)\n• **Backend**: Node.js + Express/Fastify + TypeScript\n• **Database**: PostgreSQL with Prisma ORM (forget MongoDB for complex apps)\n• **Deployment**: Vercel + Railway/Supabase\n• **Styling**: Tailwind CSS\n\n**Why this stack?**\nBecause I've built 50+ production applications with this setup. It scales, it's maintainable, and companies actually use this.\n\n**Action Plan:**\n1. Build the MVP in 2 weeks\n2. Deploy immediately\n3. Get user feedback\n4. Iterate based on real data\n\nStop overthinking, start building. What's your project idea? Let's architect it properly.\n\nTrust me, I'm a software engineer.`;
-    }
-
-    if (context.isCareerRelated) {
-      return `Alright, here's the reality check you need: 💯\n\n**Companies DON'T hire based on:**\n❌ Tutorial completion certificates\n❌ How many coding videos you've watched\n❌ Theoretical DSA knowledge without application\n❌ "Hello World" projects\n\n**Companies DO hire based on:**\n✅ Production-quality applications you can demo\n✅ Problem-solving in real business scenarios\n✅ Clean, scalable code architecture\n✅ Ability to work with modern tech stacks\n✅ Understanding of deployment and DevOps\n\nI build devs, not just apps. My proven approach:\n**Build → Deploy → Scale → Get Hired**\n\n**Your next steps:**\n1. Pick a real problem to solve\n2. Build it with production-grade tools\n3. Deploy it properly\n4. Add it to your portfolio\n\nWhat's your current skill level? Let's create a roadmap that actually works in 2024.`;
-    }
-
-    if (lowerMsg.includes('mern') || lowerMsg.includes('fullstack')) {
-      return `Good choice, but let me give you the 2024 version that companies actually use: 🚀\n\n**Modern Full-Stack Architecture:**\n• **Database**: PostgreSQL (better ACID compliance than MongoDB)\n• **Backend**: Node.js + Express + TypeScript + Prisma\n• **Frontend**: Next.js 13+ (App Router) + TypeScript\n• **State**: Zustand/Redux Toolkit (context API doesn't scale)\n• **Styling**: Tailwind CSS + Headless UI components\n• **Deployment**: Vercel + Railway/Supabase\n\n**Additional Production Tools:**\n• tRPC for type-safe APIs\n• NextAuth for authentication\n• Upstash Redis for caching\n• Vercel Analytics for metrics\n\n**Why this matters:**\nI've consulted for companies with millions of users. This stack handles scale, has great DX, and uses modern best practices.\n\n**Challenge for you:**\nBuild a full-stack app with user auth, database operations, and deployment in the next 2 weeks. No tutorials - just documentation and building.\n\nReady to build something that impresses hiring managers?`;
-    }
-
-    return `Here's the thing - you're asking the right questions, which puts you ahead of 80% of developers. 💪\n\nMost people get stuck in tutorial hell, but you're thinking about practical implementation. That's exactly the mindset companies want.\n\n**Here's how to approach this:**\n1. **Understand the core problem** (not just the syntax)\n2. **Choose production-ready tools** (not the trendy ones)\n3. **Build with scalability in mind** (think 10k+ users)\n4. **Deploy and test in real environments**\n\nI've built 100+ applications and mentored 275K+ developers. This approach works every single time.\n\n**Your next action:**\nStop consuming content, start producing. Pick a real problem, build a solution, deploy it, and show it to the world.\n\nTrust me, I'm a software engineer. What specific part needs clarity?`;
   }
-}
 
-export async function POST(request) {
+  throw lastError;
+};
+
+const generateIntelligentFallback = (message, persona) => {
+  console.log('🔄 Generating intelligent fallback response');
+
+  const fallbacks = {
+    hitesh: [
+      `Haanji bhai! Sorry, thoda technical issue aa gaya hai server mein. But no worries! ${
+        message.toLowerCase().includes('react')
+          ? 'React ke baare mein pooch rahe ho? Bilkul solid choice! Industry mein React ki demand bahut hai.'
+          : 'Tumhara question dekh kar lag raha hai genuine learner ho.'
+      } Chai break ke baad detail mein discuss karte hain. Meanwhile, LearnCodeOnline pe resources check kar sakte ho!`,
+
+      `Bilkul bhai! Server thoda slow respond kar raha hai, but maine tumhara message samjha. ${
+        message.toLowerCase().includes('career')
+          ? 'Career guidance chahiye? Industry mein mera experience 15+ years ka hai.'
+          : 'Coding question accha hai!'
+      } Chaliye main properly answer deta hun - bas thoda wait karo. Till then, Chai aur Code community join kar lo for more discussions!`,
+    ],
+
+    piyush: [
+      `Hey! Server's acting up right now, but I caught your question. ${
+        message.toLowerCase().includes('framework')
+          ? 'Framework confusion? Stop the tutorial hell - pick React + Node, build real projects.'
+          : 'Good question though.'
+      } Trust me, I'll give you a proper answer once this tech hiccup is sorted. Meanwhile, check my GitHub for production-ready examples!`,
+
+      `Alright, technical difficulties here, but your question shows you're thinking like a developer. ${
+        message.toLowerCase().includes('build')
+          ? 'Want to build something? Perfect mindset.'
+          : "That's the right approach."
+      } I'll get back with real industry insights once the system\'s stable. Keep building in the meantime!`,
+    ],
+  };
+
+  const responses = fallbacks[persona] || fallbacks.hitesh;
+  return responses[Math.floor(Math.random() * responses.length)];
+};
+
+export async function POST(req) {
+  const startTime = Date.now();
+
   try {
-    const { message, persona, history = [] } = await request.json();
-
-    if (!personas[persona]) {
-      return NextResponse.json({ error: 'Invalid persona' }, { status: 400 });
-    }
-
-    if (!message || typeof message !== 'string') {
+    // Environment validation
+    const envIssues = validateEnvironment();
+    if (envIssues.length > 0) {
+      console.error('❌ Environment issues:', envIssues);
       return NextResponse.json(
-        { error: 'Message is required' },
-        { status: 400 },
+        { error: 'Server configuration error', details: envIssues },
+        { status: 500 },
       );
     }
 
-    // Analyze message context
-    const context = analyzeMessageContext(message, history);
+    // Parse and validate request
+    const body = await req.json();
+    validateRequest(body);
 
-    // Build contextual prompt
-    const enhancedPrompt = buildContextualPrompt(persona, context, history);
+    const { message, persona, history = [] } = body;
 
-    let response;
-
-    if (process.env.ENABLE_REAL_LLM === 'true' && process.env.OPENAI_API_KEY) {
-      try {
-        const completion = await openai.chat.completions.create({
-          model: 'gpt-4',
-          messages: [
-            { role: 'system', content: enhancedPrompt },
-            ...history.slice(-10).map((msg) => ({
-              role: msg.sender === 'user' ? 'user' : 'assistant',
-              content: msg.content,
-            })),
-            { role: 'user', content: message },
-          ],
-          temperature: 0.8,
-          max_tokens: 600,
-          presence_penalty: 0.3,
-          frequency_penalty: 0.2,
-        });
-
-        response = completion.choices[0].message.content;
-
-        // Enhance response to ensure persona consistency
-        response = enhancePersonaResponse(response, persona, context);
-      } catch (openaiError) {
-        console.error('OpenAI API Error:', openaiError);
-        response = await simulatePersonaResponse(message, persona, context);
-      }
-    } else {
-      response = await simulatePersonaResponse(message, persona, context);
-    }
-
-    return NextResponse.json({
-      response,
+    console.log('📝 Processing request:', {
       persona,
+      messageLength: message.length,
+      historyLength: history.length,
       timestamp: new Date().toISOString(),
-      context: context.type,
-      isSimulated: !process.env.OPENAI_API_KEY,
     });
+
+    // Format conversation history
+    const formattedHistory = formatConversationHistory(history);
+
+    // Create enhanced prompt
+    const enhancedPrompt = createEnhancedPrompt(
+      persona,
+      message,
+      formattedHistory,
+    );
+
+    // Prepare messages for OpenAI
+    const messages = [
+      { role: 'system', content: enhancedPrompt },
+      ...formattedHistory,
+      { role: 'user', content: message },
+    ];
+
+    console.log('🤖 Calling OpenAI API...');
+
+    try {
+      // Call OpenAI with retry logic
+      const aiResult = await callOpenAIWithRetry(messages);
+
+      // Validate response quality
+      if (!validateAIResponse(aiResult.response, persona)) {
+        console.warn('⚠️ AI response failed validation, using fallback');
+        throw new Error('Response validation failed');
+      }
+
+      const responseTime = Date.now() - startTime;
+      console.log(`✅ AI response generated successfully in ${responseTime}ms`);
+
+      return NextResponse.json({
+        response: aiResult.response,
+        persona,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          source: 'openai',
+          model: aiResult.model,
+          attempt: aiResult.attempt,
+          responseTime,
+          usage: aiResult.usage,
+          validated: true,
+        },
+      });
+    } catch (apiError) {
+      console.error('🚨 All OpenAI attempts failed:', apiError.message);
+
+      // Generate intelligent fallback
+      const fallbackResponse = generateIntelligentFallback(message, persona);
+      const responseTime = Date.now() - startTime;
+
+      return NextResponse.json({
+        response: fallbackResponse,
+        persona,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          source: 'intelligent_fallback',
+          reason: apiError.message,
+          responseTime,
+          validated: false,
+        },
+      });
+    }
   } catch (error) {
-    console.error('Chat API Error:', error);
+    console.error('💥 Request processing error:', error);
+    const responseTime = Date.now() - startTime;
+
     return NextResponse.json(
-      { error: 'Failed to generate response' },
+      {
+        error: 'Failed to process request',
+        message: error.message,
+        timestamp: new Date().toISOString(),
+        responseTime,
+      },
       { status: 500 },
     );
   }
