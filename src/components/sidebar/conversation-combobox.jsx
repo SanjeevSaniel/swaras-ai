@@ -127,7 +127,7 @@ const ConversationCombobox = () => {
           New Chat
         </Button>
 
-        {filteredConversations.length > 0 && (
+        {/* {filteredConversations.length > 0 && (
           <span
             className={`text-xs px-2 py-1 rounded-full cursor-default ${
               darkMode
@@ -136,7 +136,7 @@ const ConversationCombobox = () => {
             }`}>
             {filteredConversations.length} chats
           </span>
-        )}
+        )} */}
       </div>
 
       {/* Fixed Combobox with Proper Hover Colors and Cursor Pointer */}
