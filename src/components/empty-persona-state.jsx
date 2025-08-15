@@ -109,7 +109,7 @@ const EmptyPersonaState = () => {
                     <RotateCcw className='w-4 h-4' />
                   </motion.div>
                   <span className='text-xs font-semibold'>
-                    Mentor Deselected • Choose Your Guide
+                    Guide Awaiting • Select Your Mentor
                   </span>
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
@@ -420,7 +420,7 @@ const EmptyPersonaState = () => {
                     }}
                     whileHover={{ scale: 1.05 }}>
                     <motion.div
-                      className={`w-5 h-5 rounded ${persona.accentColor} flex items-center justify-center text-white text-xs font-bold`}
+                      className={`w-5 h-5 rounded ${persona.accentColor} flex items-center justify-center text-white text-xs font-bold overflow-hidden`}
                       animate={{ rotate: [0, 5, -5, 0] }}
                       transition={{
                         duration: 4,
@@ -428,7 +428,26 @@ const EmptyPersonaState = () => {
                         ease: 'easeInOut',
                         delay: index * 0.3,
                       }}>
-                      {persona.avatar}
+                      {persona.avatarUrl ? (
+                        <img
+                          src={persona.avatarUrl}
+                          alt={persona.name}
+                          className='w-full h-full object-cover rounded'
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'block';
+                          }}
+                        />
+                      ) : null}
+                      <span
+                        className={`${
+                          persona.avatarUrl ? 'hidden' : 'block'
+                        } font-bold text-xs`}
+                        style={{
+                          display: persona.avatarUrl ? 'none' : 'block',
+                        }}>
+                        {persona.name.charAt(0)}
+                      </span>
                     </motion.div>
                     <span className='font-bold'>{persona.name}</span>
                   </motion.div>
