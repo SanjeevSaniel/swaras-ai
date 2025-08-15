@@ -70,7 +70,7 @@ const ChatHeader = ({ selectedPersona }) => {
           </div>
 
           {/* Compact expertise tags */}
-          <div className='flex items-center space-x-1 mt-1'>
+          {/* <div className='flex items-center space-x-1 mt-1'>
             {persona.expertise.slice(0, 2).map((skill, index) => (
               <span
                 key={index}
@@ -90,12 +90,12 @@ const ChatHeader = ({ selectedPersona }) => {
                 +{persona.expertise.length - 2}
               </span>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
 
       {/* Optional: Single action button for settings/info */}
-      <Button
+      {/* <Button
         variant='ghost'
         size='sm'
         className={`flex-shrink-0 text-xs ${
@@ -104,7 +104,7 @@ const ChatHeader = ({ selectedPersona }) => {
             : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'
         }`}>
         Info
-      </Button>
+      </Button> */}
     </motion.header>
   );
 };
