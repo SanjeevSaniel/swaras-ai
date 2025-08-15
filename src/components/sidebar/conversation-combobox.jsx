@@ -199,7 +199,7 @@ const ConversationCombobox = () => {
           align='start'>
           <Command className='bg-transparent'>
             <div className='p-3 border-b border-gray-200/10'>
-              <div className='flex items-center space-x-2 mb-2'>
+              <div className='flex items-center space-x-2'>
                 <div
                   className={`w-6 h-6 rounded-lg ${currentPersona?.accentColor} flex items-center justify-center text-white text-xs font-bold`}>
                   {currentPersona?.avatar}
@@ -211,10 +211,10 @@ const ConversationCombobox = () => {
                   {currentPersona?.name} Chat History
                 </span>
               </div>
-              <CommandInput
+              {/* <CommandInput
                 placeholder={`Search conversations with ${currentPersona?.name}...`}
                 className='text-xs'
-              />
+              /> */}
             </div>
 
             <CommandList className='max-h-80'>
