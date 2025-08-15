@@ -231,7 +231,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                     </p>
                   </div>
 
-                  {/* Reaction Badge */}
+                  {/* Fixed Reaction Badge with Proper Heart Color */}
                   {reaction && (
                     <div
                       className={`absolute -bottom-1.5 ${
@@ -243,7 +243,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                         <ThumbsDown className='w-2.5 h-2.5 text-red-500' />
                       ) : (
                         <Heart
-                          className={`w-2.5 h-2.5 ${
+                          className={`w-2.5 h-2.5 fill-current ${
                             darkMode ? 'text-pink-400' : 'text-pink-500'
                           }`}
                         />
@@ -319,7 +319,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                       />
                     </Button>
 
-                    {/* Theme-aware Heart Button */}
+                    {/* Theme-aware Heart Button with Fixed Colors */}
                     <Button
                       variant='ghost'
                       size='sm'
