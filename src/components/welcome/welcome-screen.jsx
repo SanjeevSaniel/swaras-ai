@@ -25,6 +25,8 @@ import {
   Zap,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { FaYoutube } from 'react-icons/fa6';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 // Compact floating particles
 const FloatingParticles = () => {
@@ -291,9 +293,16 @@ const WelcomeScreen = () => {
     </motion.div>
   );
 
-  // Fixed mentor card with proper avatar positioning and click handler
+  // Fixed mentor card with proper avatar positioning, click handler, and social links
   const MentorCard = ({ personaId, personaData, index }) => {
     const IconComponent = personaIcons[personaId] || Code;
+
+    const handleSocialClick = (e, url) => {
+      e.stopPropagation(); // Prevent triggering the main card click
+      if (url) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+    };
 
     return (
       <motion.div
@@ -357,7 +366,7 @@ const WelcomeScreen = () => {
             </p>
 
             {/* Skills badges */}
-            <div className='flex flex-wrap gap-1'>
+            <div className='flex flex-wrap gap-1 mb-3'>
               {personaData.expertise.slice(0, 2).map((skill, skillIndex) => (
                 <Badge
                   key={skillIndex}
@@ -372,6 +381,53 @@ const WelcomeScreen = () => {
                   className='text-xs px-2 py-0.5'>
                   +{personaData.expertise.length - 2}
                 </Badge>
+              )}
+            </div>
+
+            {/* Social Links */}
+            <div className='flex items-center space-x-2'>
+              {personaData.websiteUrl && (
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => handleSocialClick(e, personaData.websiteUrl)}
+                  className={`p-2 rounded-lg relative overflow-hidden group transition-all duration-500 ease-out ${
+                    darkMode
+                      ? 'bg-gray-700/50 text-gray-400'
+                      : 'bg-gray-100/50 text-gray-500'
+                  }`}
+                  title={`Visit ${personaData.name}'s website`}>
+                  {/* Animated background overlay */}
+                  <div
+                    className={`absolute inset-0 transition-all duration-500 ease-out transform scale-0 group-hover:scale-100 ${
+                      darkMode ? 'bg-blue-600' : 'bg-blue-500'
+                    } rounded-lg`}
+                  />
+
+                  <FaExternalLinkAlt className='w-4 h-4 relative z-10 transition-colors duration-500 ease-out group-hover:text-white' />
+                </motion.button>
+              )}
+
+              {personaData.youtubeUrl && (
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => handleSocialClick(e, personaData.youtubeUrl)}
+                  className={`p-2 rounded-lg relative overflow-hidden group transition-all duration-500 ease-out ${
+                    darkMode
+                      ? 'bg-gray-700/50 text-gray-400'
+                      : 'bg-gray-100/50 text-gray-500'
+                  }`}
+                  title={`Visit ${personaData.name}'s YouTube channel`}>
+                  {/* Animated background overlay */}
+                  <div
+                    className={`absolute inset-0 transition-all duration-500 ease-out transform scale-0 group-hover:scale-100 ${
+                      darkMode ? 'bg-red-600' : 'bg-red-500'
+                    } rounded-lg`}
+                  />
+
+                  <FaYoutube className='w-4 h-4 relative z-10 transition-colors duration-500 ease-out group-hover:text-white' />
+                </motion.button>
               )}
             </div>
           </div>
@@ -638,7 +694,7 @@ const WelcomeScreen = () => {
     );
   }
 
-  // Selected persona view with working start chat button
+  // Selected persona view with working start chat button and social links
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -719,7 +775,7 @@ const WelcomeScreen = () => {
           </div>
 
           {/* Skills */}
-          <div className='flex flex-wrap justify-center gap-2 mb-8'>
+          <div className='flex flex-wrap justify-center gap-2 mb-6'>
             {persona.expertise.slice(0, 4).map((skill, index) => (
               <motion.div
                 key={index}
@@ -741,6 +797,81 @@ const WelcomeScreen = () => {
               </Badge>
             )}
           </div>
+
+          {/* Social Links for selected persona */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className='flex justify-center space-x-4 mb-8'>
+            {persona.websiteUrl && (
+              <motion.a
+                href={persona.websiteUrl}
+                target='_blank'
+                rel='noopener noreferrer'
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl border relative overflow-hidden group transition-all duration-500 ease-out ${
+                  darkMode
+                    ? 'bg-gray-800/60 border-gray-700/50 text-gray-400'
+                    : 'bg-white/60 border-gray-200/50 text-gray-500'
+                }`}
+                style={{ backdropFilter: 'blur(10px)' }}>
+                {/* Animated background overlay */}
+                <div
+                  className={`absolute inset-0 transition-all duration-500 ease-out transform scale-0 group-hover:scale-100 ${
+                    darkMode ? 'bg-blue-600' : 'bg-blue-500'
+                  } rounded-xl`}
+                />
+
+                {/* Animated border overlay */}
+                <div
+                  className={`absolute inset-0 border rounded-xl transition-all duration-500 ease-out opacity-0 group-hover:opacity-100 ${
+                    darkMode ? 'border-blue-500' : 'border-blue-400'
+                  }`}
+                />
+
+                <FaExternalLinkAlt className='w-4 h-4 relative z-10 transition-colors duration-500 ease-out group-hover:text-white' />
+                <span className='text-sm font-medium relative z-10 transition-colors duration-500 ease-out group-hover:text-white'>
+                  Website
+                </span>
+              </motion.a>
+            )}
+
+            {persona.youtubeUrl && (
+              <motion.a
+                href={persona.youtubeUrl}
+                target='_blank'
+                rel='noopener noreferrer'
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl border relative overflow-hidden group transition-all duration-500 ease-out ${
+                  darkMode
+                    ? 'bg-gray-800/60 border-gray-700/50 text-gray-400'
+                    : 'bg-white/60 border-gray-200/50 text-gray-500'
+                }`}
+                style={{ backdropFilter: 'blur(10px)' }}>
+                {/* Animated background overlay */}
+                <div
+                  className={`absolute inset-0 transition-all duration-500 ease-out transform scale-0 group-hover:scale-100 ${
+                    darkMode ? 'bg-red-600' : 'bg-red-500'
+                  } rounded-xl`}
+                />
+
+                {/* Animated border overlay */}
+                <div
+                  className={`absolute inset-0 border rounded-xl transition-all duration-500 ease-out opacity-0 group-hover:opacity-100 ${
+                    darkMode ? 'border-red-500' : 'border-red-400'
+                  }`}
+                />
+
+                <FaYoutube className='w-4 h-4 relative z-10 transition-colors duration-500 ease-out group-hover:text-white' />
+                <span className='text-sm font-medium relative z-10 transition-colors duration-500 ease-out group-hover:text-white'>
+                  YouTube
+                </span>
+              </motion.a>
+            )}
+          </motion.div>
 
           {/* Bio */}
           <motion.div
