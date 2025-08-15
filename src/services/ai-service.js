@@ -1,236 +1,12 @@
-// src/services/ai-service.js
-import { personas } from '@/constants/personas-dataset';
-import {
-  systemPrompts,
-  contextualPrompts,
-  responseEnhancers,
-  topicClassification,
-  levelDetectionPatterns,
-  contextEnhancers,
-  personaGreetings,
-  quickStartQuestions,
-} from '@/constants/llm-prompts';
+// src/services/ai-service.js - Enhanced with better persona greetings
 
 export class AIService {
-  // Simplified user level detection using existing patterns
-  static analyzeUserLevel(message, conversationHistory = []) {
-    const messageText = message.toLowerCase();
-
-    // Use existing level detection patterns
-    const beginnerScore =
-      levelDetectionPatterns.beginner?.filter((keyword) =>
-        messageText.includes(keyword),
-      ).length || 0;
-
-    const advancedScore =
-      levelDetectionPatterns.advanced?.filter((keyword) =>
-        messageText.includes(keyword),
-      ).length || 0;
-
-    const intermediateScore =
-      levelDetectionPatterns.intermediate?.filter((keyword) =>
-        messageText.includes(keyword),
-      ).length || 0;
-
-    // Check conversation history (last 3 messages only)
-    const historyText = conversationHistory
-      .slice(-3)
-      .map((msg) => msg.content)
-      .join(' ')
-      .toLowerCase();
-
-    // Simple scoring
-    let score = 0;
-    if (beginnerScore >= 1) score -= 1;
-    if (advancedScore >= 1) score += 2;
-    if (intermediateScore >= 1) score += 1;
-
-    // Check history for technical terms
-    const technicalTerms = [
-      'architecture',
-      'scale',
-      'optimize',
-      'production',
-      'system design',
-    ];
-    if (technicalTerms.some((term) => historyText.includes(term))) score += 1;
-
-    // Return level based on simple scoring
-    if (score <= 0) return 'beginner';
-    if (score >= 2) return 'advanced';
-    return 'intermediate';
-  }
-
-  // Simplified topic classification using existing patterns
-  static classifyTopic(message, confidence = false) {
-    const messageText = message.toLowerCase();
-
-    if (!topicClassification?.patterns) {
-      console.warn('Topic classification patterns not found, using fallback');
-      return confidence
-        ? { topic: 'general', confidence: 0.1, matches: [] }
-        : 'general';
-    }
-
-    let bestTopic = 'general';
-    let bestScore = 0;
-    let bestMatches = [];
-
-    // Calculate scores for each topic using existing patterns
-    for (const [topic, keywords] of Object.entries(
-      topicClassification.patterns,
-    )) {
-      const matches = keywords.filter((keyword) =>
-        messageText.includes(keyword),
-      );
-      if (matches.length > bestScore) {
-        bestScore = matches.length;
-        bestTopic = topic;
-        bestMatches = matches;
-      }
-    }
-
-    if (confidence) {
-      return {
-        topic: bestTopic,
-        confidence: Math.min(bestScore / 2, 1), // Max confidence at 2+ matches
-        matches: bestMatches,
-      };
-    }
-
-    return bestTopic;
-  }
-
-  // Simplified prompt building using existing system prompts
-  static buildEnhancedPrompt(
-    personaId,
-    userMessage,
-    level,
-    topic,
-    conversationHistory = [],
-  ) {
-    // Get base system prompt
-    const basePrompt = systemPrompts[personaId];
-    if (!basePrompt) {
-      throw new Error(`No system prompt found for persona: ${personaId}`);
-    }
-
-    // Get contextual prompt if available
-    const contextual =
-      contextualPrompts[level]?.[topic] ||
-      contextualPrompts[level]?.general ||
-      '';
-
-    // Simple conversation analysis
-    const recentTopics = conversationHistory
-      .slice(-3)
-      .map((msg) => this.classifyTopic(msg.content))
-      .filter((topic) => topic !== 'general')
-      .slice(-2); // Last 2 unique topics
-
-    const intent = this.classifyMessageIntent(userMessage);
-
-    // Build focused prompt
-    const enhancedPrompt = `${basePrompt}
-
-CURRENT CONTEXT:
-- User Level: ${level}
-- Topic: ${topic}
-- Intent: ${intent}
-- Recent Topics: ${recentTopics.length > 0 ? recentTopics.join(', ') : 'None'}
-
-${contextual ? `CONTEXTUAL GUIDANCE:\n${contextual}\n` : ''}
-
-USER QUESTION: "${userMessage}"
-
-RESPONSE GUIDELINES:
-1. Stay completely in character with your authentic personality
-2. Use your signature phrases and communication style
-3. Adjust complexity for ${level} level
-4. Focus on ${topic} while being practical and actionable
-5. Provide specific examples when helpful
-6. End with encouragement and next steps
-
-Respond as ${
-      personas[personaId]?.name
-    } would, addressing their specific question naturally.`;
-
-    return enhancedPrompt;
-  }
-
-  // Simplified message intent classification
-  static classifyMessageIntent(message) {
-    const intents = {
-      question: /\?|how|what|why|when|where|which|can you|could you/i,
-      help: /help|assist|guide|show|explain|teach/i,
-      problem: /error|issue|problem|not working|stuck|debug|fix/i,
-      project: /build|create|make|develop|project|application/i,
-      career: /job|career|interview|salary|company|work|hire/i,
-      comparison: /vs|versus|difference|compare|better|best|choose/i,
-    };
-
-    for (const [intent, pattern] of Object.entries(intents)) {
-      if (pattern.test(message)) return intent;
-    }
-
-    return 'general';
-  }
-
-  // MAIN METHOD: Simplified persona response
   static async getPersonaResponse(
     message,
     personaId,
     conversationHistory = [],
   ) {
-    const startTime = Date.now();
-
     try {
-      console.log('🚀 AI Service Request:', {
-        message:
-          message.substring(0, 100) + (message.length > 100 ? '...' : ''),
-        personaId,
-        historyLength: conversationHistory.length,
-      });
-
-      // Input validation
-      if (!message?.trim()) {
-        throw new Error('Message cannot be empty');
-      }
-
-      if (!personas[personaId]) {
-        throw new Error(`Invalid persona: ${personaId}`);
-      }
-
-      if (!systemPrompts[personaId]) {
-        throw new Error(`System prompt not found for persona: ${personaId}`);
-      }
-
-      // Simple analysis using existing patterns
-      const level = this.analyzeUserLevel(message, conversationHistory);
-      const topicAnalysis = this.classifyTopic(message, true);
-      const topic = topicAnalysis.topic;
-
-      console.log('📊 Analysis:', {
-        level,
-        topic,
-        confidence: topicAnalysis.confidence,
-        matches: topicAnalysis.matches,
-      });
-
-      // Build prompt using existing system prompts
-      const enhancedPrompt = this.buildEnhancedPrompt(
-        personaId,
-        message,
-        level,
-        topic,
-        conversationHistory,
-      );
-
-      // Prepare clean history
-      const formattedHistory =
-        this.prepareConversationHistory(conversationHistory);
-
-      // API call
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -239,344 +15,127 @@ Respond as ${
         body: JSON.stringify({
           message,
           persona: personaId,
-          history: formattedHistory,
-          enhancedPrompt,
-          context: {
-            level,
-            topic,
-            confidence: topicAnalysis.confidence,
-            intent: this.classifyMessageIntent(message),
-            requestId: `req-${Date.now()}`,
-          },
+          history: conversationHistory
+            .map((msg) => ({
+              role: msg.sender === 'user' ? 'user' : 'assistant',
+              content: msg.content,
+            }))
+            .slice(-10), // Keep last 10 messages for context
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ error: 'Unknown error' }));
-        throw new Error(errorData.error || `API Error: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to get AI response');
       }
 
       const data = await response.json();
-
-      if (!data.response) {
-        throw new Error('No response received from API');
-      }
-
-      // Apply enhancements using existing enhancers
-      let enhancedResponse = this.enhanceResponse(
-        data.response,
-        personaId,
-        topic,
-        level,
-        message,
-      );
-
-      // Add contextual enhancements if available
-      if (contextEnhancers?.addProjectContext && level === 'beginner') {
-        enhancedResponse = contextEnhancers.addProjectContext(
-          enhancedResponse,
-          topic,
-          level,
-        );
-      }
-
-      // Validate response
-      const validation = this.validateResponse(enhancedResponse, personaId);
-      console.log('✅ Response Validation:', validation);
-
-      const processingTime = Date.now() - startTime;
-      console.log(`🎯 Response generated in ${processingTime}ms`);
-
-      return enhancedResponse;
+      return data.response;
     } catch (error) {
-      const processingTime = Date.now() - startTime;
-      console.error(`❌ AI Service Error (${processingTime}ms):`, error);
-      return this.getFallbackResponse(personaId, message);
+      console.error('AI Service Error:', error);
+      throw error;
     }
   }
 
-  // Clean conversation history preparation
-  static prepareConversationHistory(history) {
-    if (!Array.isArray(history)) return [];
-
-    if (history.length <= 8) {
-      return history.map((msg) => ({
-        role: msg.sender === 'user' ? 'user' : 'assistant',
-        content: msg.content,
-      }));
-    }
-
-    // For longer conversations, keep recent messages
-    const recent = history.slice(-6); // Last 6 messages
-
-    return recent.map((msg) => ({
-      role: msg.sender === 'user' ? 'user' : 'assistant',
-      content: msg.content,
-    }));
-  }
-
-  // Enhanced response using existing enhancers
-  static enhanceResponse(
-    baseResponse,
-    personaId,
-    topic,
-    level,
-    originalMessage,
-  ) {
-    let enhanced = baseResponse;
-
-    try {
-      // Use existing response enhancers if available
-      const enhancerKey = `enhance${
-        personaId.charAt(0).toUpperCase() + personaId.slice(1)
-      }Response`;
-      const enhancer = responseEnhancers?.[enhancerKey];
-
-      if (enhancer && typeof enhancer === 'function') {
-        enhanced = enhancer(enhanced, topic, level);
-      }
-
-      // Add code examples for technical topics if needed
-      if (
-        ['react', 'javascript', 'backend', 'typescript', 'nodejs'].includes(
-          topic,
-        ) &&
-        !enhanced.includes('```') &&
-        enhanced.length < 800
-      ) {
-        enhanced = this.addSimpleCodeExample(enhanced, topic, level);
-      }
-    } catch (error) {
-      console.warn('Enhancement failed, using base response:', error);
-    }
-
-    return enhanced;
-  }
-
-  // Simple code example addition
-  static addSimpleCodeExample(response, topic, level) {
-    const examples = {
-      javascript: {
-        beginner: `\n\n**Quick Example:**\n\`\`\`javascript\n// Basic JavaScript\nconst greeting = "Hello World!";\nconsole.log(greeting);\n\`\`\``,
-        intermediate: `\n\n**Example:**\n\`\`\`javascript\n// Modern JavaScript\nconst users = [{name: "John", age: 25}];\nconst adults = users.filter(user => user.age >= 18);\n\`\`\``,
-        advanced: `\n\n**Advanced Example:**\n\`\`\`javascript\n// Design pattern example\nclass EventEmitter {\n  constructor() { this.events = {}; }\n  on(event, callback) { this.events[event] = callback; }\n  emit(event, data) { this.events[event]?.(data); }\n}\n\`\`\``,
-      },
-      react: {
-        beginner: `\n\n**Simple Component:**\n\`\`\`jsx\nfunction Welcome() {\n  return <h1>Hello React!</h1>;\n}\n\`\`\``,
-        intermediate: `\n\n**With State:**\n\`\`\`jsx\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  return (\n    <button onClick={() => setCount(count + 1)}>\n      Count: {count}\n    </button>\n  );\n}\n\`\`\``,
-        advanced: `\n\n**Custom Hook:**\n\`\`\`jsx\nfunction useCounter(initial = 0) {\n  const [count, setCount] = useState(initial);\n  return [count, () => setCount(c => c + 1)];\n}\n\`\`\``,
-      },
-    };
-
-    const example = examples[topic]?.[level];
-    return example ? response + example : response;
-  }
-
-  // Response validation using existing validators
-  static validateResponse(response, personaId) {
-    try {
-      // Use existing validators if available
-      const validatorKey = `${personaId}Validation`;
-      const validator = responseEnhancers?.[validatorKey]?.checkResponse;
-
-      if (validator && typeof validator === 'function') {
-        return validator(response);
-      }
-    } catch (error) {
-      console.warn('Validation failed, using basic validation:', error);
-    }
-
-    // Basic validation fallback
-    return {
-      isValid: response && response.length > 50,
-      score: response?.length > 200 ? 5 : 3,
-      checks: {
-        hasContent: response && response.length > 50,
-        notTooLong: response && response.length < 3000,
-      },
-      maxScore: 5,
-    };
-  }
-
-  // Fallback response using existing patterns
-  static getFallbackResponse(personaId, message) {
-    const persona = personas[personaId];
-
-    if (personaId === 'hitesh') {
-      return `Haanji! Technical issue aa gayi hai, but main yahan hun! 😅
-
-"${message}" ke baare mein aapko help chahiye? Let me share what I can:
-
-**Based on my experience:**
-- Start with fundamentals
-- Practice daily coding
-- Build real projects
-- Join developer community
-
-Main step-by-step guidance dunga. Samjho?
-
-Chai peete peete code karte rehna! ☕️
-
-**📚 Resource:** Check my YouTube channel 'Chai aur Code' for tutorials!`;
-    } else if (personaId === 'piyush') {
-      return `Hey! Technical glitch, but let's solve this! 🚀
-
-Regarding "${message}" - here's my approach:
-
-**Modern Development Strategy:**
-- Focus on practical implementation
-- Build projects that scale  
-- Use industry best practices
-- Deploy and iterate quickly
-
-Trust me, we'll figure this out together!
-
-Ready to build something real? 💪`;
-    }
-
-    return `Sorry about the technical issue. Let me help you with "${message}" in a different way. What specific aspect would you like to focus on?`;
-  }
-
-  // Persona greeting using existing greetings
   static getPersonaGreeting(personaId) {
-    try {
-      const hour = new Date().getHours();
-      const timeOfDay =
-        hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+    const greetings = {
+      hitesh: [
+        `Haanji! Welcome to Swaras AI! 🎯\n\nMai hun Hitesh Choudhary, aur yahan main tumhe coding sikhaunga bilkul chai banane ki tarah - step by step! ☕️\n\nChaliye JavaScript, React, Node.js, ya career guidance - jo bhi chahiye, batao! Mere 1.6M+ students ke saath journey start karte hain.\n\nKya seekhna hai aaj bhai? Let's code together! 🚀`,
 
-      // Use existing persona greetings if available
-      const timeGreeting =
-        personaGreetings?.[personaId]?.[timeOfDay] ||
-        personaGreetings?.[personaId]?.general;
+        `Bilkul sahi time pe aaye ho! Chai ready hai? ☕️\n\nHitesh here! Yahan pe hum coding karte hain bilkul dost ki tarah. Complicated cheezein simple banate hain, aur industry mein jo actually use hota hai, wahi sikhate hain!\n\nReact hooks confuse kar rahe hain? JavaScript mein doubt hai? Ya phir career guidance chahiye? \n\nBolo bhai, kya help kar sakta hun aaj? 😊`,
 
-      if (timeGreeting) {
-        return timeGreeting;
-      }
-    } catch (error) {
-      console.warn('Error getting persona greeting:', error);
-    }
+        `Haanji bhai! Chai aur Code ke saath welcome! 🎉\n\nMaine dekha hai ki coding seekhna sometimes overwhelming lagta hai, but don't worry - hum isko aise breakdown karenge ki bilkul easy lagega!\n\nIndustry mein 15+ saal ka experience hai, aur 1.6M+ students ko guide kar chuka hun. Tumhara bhi success story banayenge!\n\nChaliye start karte hain - kya topic choose karna hai? 💻`,
+      ],
 
-    // Fallback greetings
-    const fallbackGreetings = {
-      hitesh: `Haanji! Welcome to Swaras AI! 🎯
+      piyush: [
+        `Alright! Finally someone who wants to learn real development! 🔥\n\nI'm Piyush Garg, and I don't believe in sugarcoating. I build devs, not just apps. If you're here for hand-holding and "you can do it" speeches, you're in the wrong place.\n\nI'll teach you exactly what companies want: production-ready skills, scalable architecture, and real-world problem solving.\n\nReady to ditch the tutorial hell and build something that actually matters? Let's get started.\n\nWhat do you want to build today? 💻`,
 
-I'm Hitesh Choudhary, ready to help you with JavaScript, React, career advice, and more!
+        `Hey! Trust me, I'm a software engineer, and I'm here to fast-track your development journey. 🚀\n\nForget the fluff. I've built 50+ production applications, scaled systems for millions of users, and I know exactly what separates beginners from industry-ready developers.\n\nWe're going to focus on:\n• Modern tech stacks that companies actually use\n• Building real projects, not tutorial clones\n• Understanding system design and scalability\n• Getting you hired with skills that matter\n\nNo more watching endless tutorials. Time to build something real. What's your goal? 🎯`,
 
-Think of this as our chai session - comfortable and full of learning! ☕️
-
-What would you like to explore today?
-
-Chaliye, let's start coding together! 😊`,
-
-      piyush: `Hey there! Welcome to Swaras AI! 🚀
-
-I'm Piyush Garg, here to help you build real-world development skills.
-
-Ready to dive into MERN stack, system design, or career growth?
-
-Let's build something that scales! 💪`,
+        `Stop right there! Before we start, let me tell you what this ISN'T: 🛑\n\n❌ Another tutorial channel experience\n❌ Basic "hello world" teaching\n❌ Theoretical computer science lectures\n❌ Feel-good motivation without substance\n\nThis IS:\n✅ Production-grade development practices\n✅ Real-world problem solving\n✅ Modern tech stacks used by actual companies\n✅ Honest feedback about what works and what doesn't\n\nI build devs, not just apps. Ready to level up your game for real? What do you want to master first? 💪`,
+      ],
     };
 
-    return (
-      fallbackGreetings[personaId] ||
-      `Hello! I'm ${personas[personaId]?.name}. How can I help you today?`
-    );
+    const personaGreetings = greetings[personaId] || greetings.hitesh;
+    return personaGreetings[
+      Math.floor(Math.random() * personaGreetings.length)
+    ];
   }
 
-  // Simple message creation
-  static createMessage(content, sender = 'user', metadata = {}) {
-    return {
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      content: content.trim(),
-      sender,
-      timestamp: Date.now(),
-      createdAt: new Date().toISOString(),
-      ...metadata,
-    };
-  }
-
-  // Simple conversation creation
   static createConversation(personaId) {
-    const persona = personas[personaId];
-    if (!persona) {
-      throw new Error(`Persona not found: ${personaId}`);
-    }
+    const greeting = this.getPersonaGreeting(personaId);
 
     return {
-      id: `conv-${Date.now()}`,
-      personaId,
+      id: Date.now().toString(),
+      personaId: personaId,
+      messages: [
+        {
+          id: Date.now(),
+          content: greeting,
+          sender: 'ai',
+          timestamp: new Date().toISOString(),
+        },
+      ],
       title: 'New Chat',
-      messages: [],
-      createdAt: Date.now(),
+      createdAt: new Date().toISOString(),
       lastMessageAt: Date.now(),
-      messageCount: 0,
     };
   }
 
-  // Get quick start questions using existing data
-  static getQuickStartQuestions(personaId, topic = null) {
-    try {
-      const questions = quickStartQuestions?.[personaId];
-      if (!questions) return [];
+  static createMessage(content, sender = 'user') {
+    return {
+      id: Date.now() + Math.random(),
+      content,
+      sender,
+      timestamp: new Date().toISOString(),
+    };
+  }
 
-      if (topic && questions[topic]) {
-        return questions[topic];
-      }
+  // New helper method for better conversation titles
+  static generateConversationTitle(firstUserMessage, personaId) {
+    const message = firstUserMessage.toLowerCase();
 
-      return Object.values(questions).flat();
-    } catch (error) {
-      console.warn('Error getting quick start questions:', error);
-      return [];
+    // Technical topics
+    if (message.includes('react')) return 'React Development Discussion';
+    if (message.includes('javascript') || message.includes('js'))
+      return 'JavaScript Learning Session';
+    if (message.includes('node')) return 'Node.js Backend Development';
+    if (message.includes('mern') || message.includes('fullstack'))
+      return 'Full-Stack Development Guide';
+    if (message.includes('career')) return 'Career Guidance Session';
+    if (message.includes('project')) return 'Project Building Discussion';
+    if (message.includes('interview')) return 'Interview Preparation';
+
+    // Persona-specific fallbacks
+    if (personaId === 'hitesh') {
+      return 'Chai aur Code Session ☕️';
+    } else {
+      return 'Development Strategy Discussion';
     }
   }
 
-  // Get available personas
-  static getAvailablePersonas() {
-    return Object.keys(personas)
-      .filter((personaId) => systemPrompts[personaId])
-      .map((personaId) => ({
-        id: personaId,
-        name: personas[personaId].name,
-        title: personas[personaId].title,
-        avatar: personas[personaId].avatar,
-        expertise: personas[personaId].expertise,
-        available: true,
-      }));
-  }
-}
+  // Enhanced method to handle conversation updates
+  static updateConversationWithResponse(conversation, userMessage, aiResponse) {
+    const updatedMessages = [
+      ...conversation.messages,
+      this.createMessage(userMessage, 'user'),
+      this.createMessage(aiResponse, 'ai'),
+    ];
 
-// MISSING FUNCTION: Add the processUserMessage function that your API route expects
-export async function processUserMessage(
-  message,
-  persona,
-  history = [],
-  enhancedPrompt = null,
-  context = {},
-) {
-  try {
-    console.log('📝 Processing user message:', {
-      message: message.substring(0, 100) + (message.length > 100 ? '...' : ''),
-      persona,
-      historyLength: history.length,
-      hasEnhancedPrompt: !!enhancedPrompt,
-      context,
-    });
-
-    // Use the enhanced prompt if provided, otherwise use AIService
-    if (enhancedPrompt) {
-      // This would be your actual LLM API call
-      // For now, return a placeholder response
-      return `Enhanced response for ${persona}: ${message}`;
+    // Update title if it's still "New Chat"
+    let title = conversation.title;
+    if (title === 'New Chat' && conversation.messages.length === 1) {
+      title = this.generateConversationTitle(
+        userMessage,
+        conversation.personaId,
+      );
     }
 
-    // Fallback to regular AIService method
-    return await AIService.getPersonaResponse(message, persona, history);
-  } catch (error) {
-    console.error('Error in processUserMessage:', error);
-    throw error;
+    return {
+      ...conversation,
+      messages: updatedMessages,
+      title,
+      lastMessageAt: Date.now(),
+    };
   }
 }
-
-export default AIService;
