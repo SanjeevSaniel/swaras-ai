@@ -1,4 +1,4 @@
-// src/components/swaras-ai.jsx (Updated with Enhanced LLM Integration)
+// src/components/swaras-ai.jsx
 'use client';
 
 import { personas } from '@/constants/personas-dataset';
@@ -125,12 +125,6 @@ const SwarasAI = () => {
       // Get enhanced AI response with full context analysis
       console.log('🤖 Requesting enhanced AI response...');
       const startTime = Date.now();
-
-      // const aiResponse = await AIService.getPersonaResponse(
-      //   messageText,
-      //   selectedPersona,
-      //   conversation.messages,
-      // );
 
       console.log('🚀 Sending message to AI Service:', {
         message: messageText,
@@ -603,206 +597,195 @@ const SwarasAI = () => {
           </motion.div>
         </div>
 
-        {/* Enhanced Status Indicators */}
-        <motion.div
-          className='absolute top-4 right-4 flex space-x-3 z-50'
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.8, duration: 0.3 }}>
-          {/* Enhanced Connection Status with Previous Animations */}
-          <AnimatePresence mode='wait'>
-            {mentorsLoading ? (
-              <motion.div
-                key='loading'
-                className='flex items-center space-x-2 bg-yellow-500/10 backdrop-blur-sm border border-yellow-500/20 rounded-full px-3 py-2'
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-                title='Connecting to AI mentors...'>
-                <motion.div
-                  className='w-2 h-2 bg-yellow-400 rounded-full'
-                  animate={{ scale: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                />
-                <span className='text-xs font-medium text-yellow-600 dark:text-yellow-400'>
-                  Connecting...
-                </span>
-
-                {/* Additional pulsating loading indicators */}
-                <div className='flex space-x-0.5 ml-1'>
-                  {[...Array(3)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className='w-1 h-1 bg-yellow-400/60 rounded-full'
-                      animate={{
-                        scale: [0.5, 1, 0.5],
-                        opacity: [0.3, 1, 0.3],
-                      }}
-                      transition={{
-                        duration: 0.8,
-                        repeat: Infinity,
-                        delay: i * 0.2,
-                        ease: 'easeInOut',
-                      }}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            ) : mentorsOnline ? (
-              <motion.div
-                key='online'
-                className='flex items-center space-x-2 bg-green-500/10 backdrop-blur-sm border border-green-500/20 rounded-full px-3 py-2 relative overflow-hidden'
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-                title='AI mentors online and ready'>
-                {/* Animated background glow */}
-                <motion.div
-                  className='absolute inset-0 bg-gradient-to-r from-green-400/10 via-emerald-400/20 to-green-400/10'
-                  animate={{
-                    x: ['-100%', '100%'],
-                    opacity: [0.3, 0.6, 0.3],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: 'linear',
-                  }}
-                />
-
-                <motion.div
-                  className='w-2 h-2 bg-green-400 rounded-full relative z-10'
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-
-                <span className='text-xs font-medium text-green-600 dark:text-green-400 relative z-10'>
-                  Enhanced AI
-                </span>
-
-                {/* Connection quality indicators with staggered animation */}
-                <div className='flex space-x-0.5 ml-2 relative z-10'>
-                  {[...Array(3)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className='w-1 rounded-full bg-green-400'
-                      style={{ height: `${(i + 1) * 3}px` }}
-                      animate={{
-                        scaleY: [1, 1.4, 1],
-                        opacity: [0.6, 1, 0.6],
-                      }}
-                      transition={{
-                        duration: 1.2,
-                        repeat: Infinity,
-                        delay: i * 0.15,
-                        ease: 'easeInOut',
-                      }}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key='offline'
-                className='flex items-center space-x-2 bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-full px-3 py-2'
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-                title='AI mentors currently offline'>
-                <motion.div
-                  className='w-2 h-2 bg-red-400 rounded-full'
-                  animate={{ opacity: [1, 0.3, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                />
-
-                <span className='text-xs font-medium text-red-600 dark:text-red-400'>
-                  Offline
-                </span>
-
-                {/* Subtle warning pulse */}
-                <motion.div
-                  className='w-3 h-3 border border-red-400/30 rounded-full ml-1'
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.4, 0.8, 0.4],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Performance Indicator */}
-          {responseMetadata && debugMode && (
+        {/* Enhanced Status Indicators - Only show during active conversations */}
+        {currentConversation &&
+          currentConversation.messages &&
+          currentConversation.messages.length > 0 && (
             <motion.div
-              className='flex items-center space-x-2 bg-blue-500/10 backdrop-blur-sm border border-blue-500/20 rounded-full px-3 py-2'
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              title={`Response time: ${responseMetadata.responseTime}ms`}>
-              <motion.div
-                className={`w-2 h-2 rounded-full ${
-                  responseMetadata.responseTime < 2000
-                    ? 'bg-green-400'
-                    : responseMetadata.responseTime < 5000
-                    ? 'bg-yellow-400'
-                    : 'bg-red-400'
-                }`}
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1 }}
-              />
-              <span className='text-xs font-medium text-blue-600 dark:text-blue-400'>
-                {responseMetadata.responseTime < 2000 ? 'Fast' : 'Normal'}
-              </span>
+              className='absolute top-4 right-4 flex space-x-3 z-50'
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{ delay: 0.8, duration: 0.3 }}>
+              {/* Enhanced Connection Status with Previous Animations */}
+              <AnimatePresence mode='wait'>
+                {mentorsLoading ? (
+                  <motion.div
+                    key='loading'
+                    className='flex items-center space-x-2 bg-yellow-500/10 backdrop-blur-sm border border-yellow-500/20 rounded-full px-3 py-2'
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    title='Connecting to AI mentors...'>
+                    <motion.div
+                      className='w-2 h-2 bg-yellow-400 rounded-full'
+                      animate={{ scale: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    />
+                    <span className='text-xs font-medium text-yellow-600 dark:text-yellow-400'>
+                      Connecting...
+                    </span>
+
+                    {/* Additional pulsating loading indicators */}
+                    <div className='flex space-x-0.5 ml-1'>
+                      {[...Array(3)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className='w-1 h-1 bg-yellow-400/60 rounded-full'
+                          animate={{
+                            scale: [0.5, 1, 0.5],
+                            opacity: [0.3, 1, 0.3],
+                          }}
+                          transition={{
+                            duration: 0.8,
+                            repeat: Infinity,
+                            delay: i * 0.2,
+                            ease: 'easeInOut',
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                ) : mentorsOnline ? (
+                  <motion.div
+                    key='online'
+                    className='flex items-center space-x-2 bg-green-500/10 backdrop-blur-sm border border-green-500/20 rounded-full px-3 py-2 relative overflow-hidden'
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    title='AI mentors online and ready'>
+                    {/* Animated background glow */}
+                    <motion.div
+                      className='absolute inset-0 bg-gradient-to-r from-green-400/10 via-emerald-400/20 to-green-400/10'
+                      animate={{
+                        x: ['-100%', '100%'],
+                        opacity: [0.3, 0.6, 0.3],
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                    />
+
+                    <motion.div
+                      className='w-2 h-2 bg-green-400 rounded-full relative z-10'
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+
+                    <span className='text-xs font-medium text-green-600 dark:text-green-400 relative z-10'>
+                      Enhanced AI
+                    </span>
+
+                    {/* Connection quality indicators with staggered animation */}
+                    <div className='flex space-x-0.5 ml-2 relative z-10'>
+                      {[...Array(3)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className='w-1 rounded-full bg-green-400'
+                          style={{ height: `${(i + 1) * 3}px` }}
+                          animate={{
+                            scaleY: [1, 1.4, 1],
+                            opacity: [0.6, 1, 0.6],
+                          }}
+                          transition={{
+                            duration: 1.2,
+                            repeat: Infinity,
+                            delay: i * 0.15,
+                            ease: 'easeInOut',
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key='offline'
+                    className='flex items-center space-x-2 bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-full px-3 py-2'
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    title='AI mentors currently offline'>
+                    <motion.div
+                      className='w-2 h-2 bg-red-400 rounded-full'
+                      animate={{ opacity: [1, 0.3, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    />
+
+                    <span className='text-xs font-medium text-red-600 dark:text-red-400'>
+                      Offline
+                    </span>
+
+                    {/* Subtle warning pulse */}
+                    <motion.div
+                      className='w-3 h-3 border border-red-400/30 rounded-full ml-1'
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        opacity: [0.4, 0.8, 0.4],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Performance Indicator - Only show during active conversations */}
+              {responseMetadata && debugMode && (
+                <motion.div
+                  className='flex items-center space-x-2 bg-blue-500/10 backdrop-blur-sm border border-blue-500/20 rounded-full px-3 py-2'
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  title={`Response time: ${responseMetadata.responseTime}ms`}>
+                  <motion.div
+                    className={`w-2 h-2 rounded-full ${
+                      responseMetadata.responseTime < 2000
+                        ? 'bg-green-400'
+                        : responseMetadata.responseTime < 5000
+                        ? 'bg-yellow-400'
+                        : 'bg-red-400'
+                    }`}
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1 }}
+                  />
+                  <span className='text-xs font-medium text-blue-600 dark:text-blue-400'>
+                    {responseMetadata.responseTime < 2000 ? 'Fast' : 'Normal'}
+                  </span>
+                </motion.div>
+              )}
             </motion.div>
           )}
-        </motion.div>
-
-        {/* Enhanced App Version Badge */}
-        {/* <motion.div
-          className='absolute bottom-4 right-4 z-50'
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.5 }}>
-          <div
-            className={`flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border ${
-              darkMode
-                ? 'bg-gray-800/60 text-gray-400 border-gray-700/40'
-                : 'bg-white/60 text-gray-600 border-gray-200/40'
-            }`}>
-            <motion.div
-              className='w-1.5 h-1.5 bg-green-400 rounded-full'
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <span>v0.1.0</span>
-          </div>
-        </motion.div> */}
 
         {/* Debug Panel (Development Only) */}
-        {debugMode && responseMetadata && (
-          <motion.div
-            className='absolute bottom-4 left-4 z-50'
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.5 }}>
-            <div
-              className={`px-3 py-2 rounded-lg text-xs backdrop-blur-sm border ${
-                darkMode
-                  ? 'bg-gray-800/80 text-gray-300 border-gray-700/40'
-                  : 'bg-white/80 text-gray-600 border-gray-200/40'
-              }`}>
-              <div className='font-bold mb-1'>Debug Info:</div>
-              <div>Persona: {responseMetadata.persona}</div>
-              <div>Response: {responseMetadata.responseTime}ms</div>
-              <div>Length: {responseMetadata.messageLength} chars</div>
-              <div>Messages: {responseMetadata.conversationLength}</div>
-            </div>
-          </motion.div>
-        )}
+        {debugMode &&
+          responseMetadata &&
+          currentConversation &&
+          currentConversation.messages &&
+          currentConversation.messages.length > 0 && (
+            <motion.div
+              className='absolute bottom-4 left-4 z-50'
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ delay: 1.5, duration: 0.5 }}>
+              <div
+                className={`px-3 py-2 rounded-lg text-xs backdrop-blur-sm border ${
+                  darkMode
+                    ? 'bg-gray-800/80 text-gray-300 border-gray-700/40'
+                    : 'bg-white/80 text-gray-600 border-gray-200/40'
+                }`}>
+                <div className='font-bold mb-1'>Debug Info:</div>
+                <div>Persona: {responseMetadata.persona}</div>
+                <div>Response: {responseMetadata.responseTime}ms</div>
+                <div>Length: {responseMetadata.messageLength} chars</div>
+                <div>Messages: {responseMetadata.conversationLength}</div>
+              </div>
+            </motion.div>
+          )}
       </motion.div>
 
       {/* Enhanced Background Elements */}
