@@ -25,14 +25,59 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
   const [copiedMessageId, setCopiedMessageId] = useState(null);
   const [messageReactions, setMessageReactions] = useState({});
   const [hoveredMessage, setHoveredMessage] = useState(null);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // Function to check if user is near bottom of scroll
+  const isNearBottom = () => {
+    if (!containerRef.current) return true;
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    return scrollHeight - scrollTop - clientHeight < 100; // 100px threshold
   };
 
+  // Auto-scroll only when user is near bottom or it's the first message
+  const scrollToBottom = () => {
+    if (shouldAutoScroll && !isUserScrolling) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Handle scroll events to detect user scrolling
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+
+    setIsUserScrolling(true);
+    setShouldAutoScroll(isNearBottom());
+
+    // Reset scrolling state after a delay
+    clearTimeout(window.scrollTimeout);
+    window.scrollTimeout = setTimeout(() => {
+      setIsUserScrolling(false);
+    }, 150);
+  };
+
+  // Only auto-scroll for new messages when appropriate
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping]);
+    const messageCount = messages?.length || 0;
+
+    // Always scroll for first message or when user is near bottom
+    if (messageCount === 1 || (shouldAutoScroll && !isUserScrolling)) {
+      scrollToBottom();
+    }
+  }, [messages?.length]); // Only depend on message count, not content
+
+  // Handle typing indicator separately
+  useEffect(() => {
+    if (isTyping && shouldAutoScroll && !isUserScrolling) {
+      scrollToBottom();
+    }
+  }, [isTyping]);
+
+  // Reset auto-scroll when persona changes
+  useEffect(() => {
+    setShouldAutoScroll(true);
+    setIsUserScrolling(false);
+  }, [selectedPersona]);
 
   const copyToClipboard = async (text, messageId) => {
     try {
@@ -119,6 +164,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
     <div className='flex-1 flex flex-col relative overflow-hidden'>
       <div
         ref={containerRef}
+        onScroll={handleScroll}
         className={`flex-1 overflow-y-auto px-4 py-4 space-y-4 ${
           darkMode ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'
         }`}>
@@ -196,7 +242,11 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                       ) : reaction.type === 'dislike' ? (
                         <ThumbsDown className='w-2.5 h-2.5 text-red-500' />
                       ) : (
-                        <Heart className='w-2.5 h-2.5 text-pink-500' />
+                        <Heart
+                          className={`w-2.5 h-2.5 ${
+                            darkMode ? 'text-pink-400' : 'text-pink-500'
+                          }`}
+                        />
                       )}
                     </div>
                   )}
@@ -269,20 +319,27 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                       />
                     </Button>
 
+                    {/* Theme-aware Heart Button */}
                     <Button
                       variant='ghost'
                       size='sm'
                       className={`h-7 px-2 transition-colors ${
                         reaction?.type === 'love'
-                          ? 'text-pink-500 bg-pink-50 dark:bg-pink-900/20'
+                          ? darkMode
+                            ? 'text-pink-400 bg-pink-900/20'
+                            : 'text-pink-500 bg-pink-50'
                           : darkMode
                           ? 'text-gray-400 hover:text-pink-400 hover:bg-gray-800'
                           : 'text-gray-500 hover:text-pink-500 hover:bg-gray-100'
                       }`}
                       onClick={() => handleReaction(message.id, 'love')}>
                       <Heart
-                        className={`w-3 h-3 ${
+                        className={`w-3 h-3 transition-colors ${
                           reaction?.type === 'love' ? 'fill-current' : ''
+                        } ${
+                          darkMode
+                            ? 'text-pink-400 hover:text-pink-300'
+                            : 'text-pink-500 hover:text-pink-600'
                         }`}
                       />
                     </Button>
