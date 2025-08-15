@@ -18,6 +18,22 @@ const PersonaSelector = () => {
 
   const personaIcons = { hitesh: Coffee, piyush: Zap };
 
+  // Define persona-specific colors
+  const personaColors = {
+    hitesh: {
+      bgColor: 'from-orange-500/20 via-amber-500/20 to-yellow-500/20',
+      borderColor: 'border-orange-500/60',
+      darkBgColor: 'from-orange-900/40 via-amber-900/40 to-orange-800/40',
+      darkBorderColor: 'border-orange-600/50',
+    },
+    piyush: {
+      bgColor: 'from-blue-500/20 via-cyan-500/20 to-teal-500/20',
+      borderColor: 'border-blue-500/60',
+      darkBgColor: 'from-blue-900/40 via-cyan-900/40 to-teal-800/40',
+      darkBorderColor: 'border-blue-600/50',
+    },
+  };
+
   const handlePersonaClick = (personaId) => {
     if (!mentorsOnline || mentorsLoading) return;
     setSelectedPersona(selectedPersona === personaId ? null : personaId);
@@ -36,6 +52,7 @@ const PersonaSelector = () => {
         const IconComponent = personaIcons[personaId] || Coffee;
         const isSelected = selectedPersona === personaId;
         const isAvailable = mentorsOnline && !mentorsLoading;
+        const colors = personaColors[personaId] || personaColors.hitesh; // Fallback to hitesh colors
 
         return (
           <motion.div
@@ -46,8 +63,8 @@ const PersonaSelector = () => {
             className={`relative p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer group ${
               isSelected
                 ? darkMode
-                  ? 'bg-gradient-to-r from-orange-900/40 via-amber-900/40 to-orange-800/40 border-orange-600/50 shadow-lg'
-                  : `bg-gradient-to-r ${persona.bgColor} border-blue-300 shadow-lg`
+                  ? `bg-gradient-to-r ${colors.darkBgColor} ${colors.darkBorderColor} shadow-lg`
+                  : `bg-gradient-to-r ${colors.bgColor} ${colors.borderColor} shadow-lg`
                 : darkMode
                 ? 'bg-gray-800/60 border-gray-700/50 hover:bg-gray-700/60 hover:border-gray-600/50'
                 : 'bg-white/60 border-gray-200/50 hover:bg-gray-50/80 hover:border-gray-300/50'
@@ -138,7 +155,15 @@ const PersonaSelector = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
-                  className='absolute top-3 right-3 w-3 h-3 bg-green-500 rounded-full'
+                  className={`absolute top-3 right-3 w-3 h-3 rounded-full ${
+                    darkMode
+                      ? personaId === 'hitesh'
+                        ? 'bg-orange-500'
+                        : 'bg-blue-500'
+                      : personaId === 'hitesh'
+                      ? 'bg-orange-600'
+                      : 'bg-blue-600'
+                  }`}
                 />
               )}
             </AnimatePresence>
