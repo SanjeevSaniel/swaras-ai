@@ -208,14 +208,15 @@ const callOpenAIWithRetry = async (messages, maxAttempts = 3) => {
     try {
       console.log(`OpenAI attempt ${attempt}/${maxAttempts}`);
 
+      // Enhanced GPT-4o configuration for better persona responses
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4-turbo-preview', // Use latest available model
+        model: process.env.OPENAI_MODEL || 'gpt-4o',
         messages: messages,
-        temperature: 0.8,
+        temperature: 0.8, // Good for creative persona responses
         max_tokens: 600,
-        presence_penalty: 0.3,
-        frequency_penalty: 0.2,
-        top_p: 0.9,
+        presence_penalty: 0.3, // Encourages diverse vocabulary
+        frequency_penalty: 0.2, // Reduces repetition
+        top_p: 0.9, // Focuses on most probable tokens
       });
 
       const response = completion.choices[0]?.message?.content;
