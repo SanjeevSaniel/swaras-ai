@@ -327,3 +327,90 @@
     left: 0;
   }
 }
+
+@keyframes gradient-shift {
+  0% { background: linear-gradient(45deg, #0f172a, #1e1b4b, #1e3a8a); }
+  25% { background: linear-gradient(90deg, #1e1b4b, #1e3a8a, #3730a3); }
+  50% { background: linear-gradient(135deg, #1e3a8a, #3730a3, #1e1b4b); }
+  75% { background: linear-gradient(180deg, #3730a3, #1e1b4b, #1e3a8a); }
+  100% { background: linear-gradient(45deg, #0f172a, #1e1b4b, #1e3a8a); }
+}
+
+@keyframes gradient-slow {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+  100% { opacity: 0.2; }
+}
+
+@keyframes gradient-reverse {
+  0% { opacity: 0.1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.1; }
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 12s ease-in-out infinite;
+}
+
+.animate-gradient-slow {
+  animation: gradient-slow 8s ease-in-out infinite;
+}
+
+.animate-gradient-reverse {
+  animation: gradient-reverse 10s ease-in-out infinite reverse;
+}
+
+/* Custom Modern Scrollbar Styles */
+.scrollbar-visible::-webkit-scrollbar {
+  width: 8px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  width: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.scrollbar-visible::-webkit-scrollbar-track,
+.scrollbar-hidden::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.scrollbar-visible::-webkit-scrollbar-thumb,
+.scrollbar-hidden::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.scrollbar-visible::-webkit-scrollbar-thumb:hover,
+.scrollbar-hidden::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #7C3AED, #DB2777);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode scrollbar */
+.dark .scrollbar-visible::-webkit-scrollbar-thumb,
+.dark .scrollbar-hidden::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #6366F1, #F59E0B);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dark .scrollbar-visible::-webkit-scrollbar-thumb:hover,
+.dark .scrollbar-hidden::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #4F46E5, #D97706);
+}
+
+/* Firefox scrollbar */
+.scrollbar-visible,
+.scrollbar-hidden {
+  scrollbar-width: thin;
+  scrollbar-color: #8B5CF6 transparent;
+}
+

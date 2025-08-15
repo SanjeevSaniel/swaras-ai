@@ -1,292 +1,407 @@
-# **Swaras AI - Code with Legends** 🚀
+# **Swaras AI - Enhanced Persona Chat Application** 🚀
 
-> **Your Personal AI-Powered Coding Mentorship Platform**
+> **Advanced AI-Powered Coding Mentorship with Authentic Persona Responses**
 
-Experience coding mentorship like never before with AI personas of legendary developers. Get personalized guidance, interactive learning, and instant solutions to your programming challenges.
+A sophisticated Next.js application that provides personalized coding mentorship through AI personas trained to mimic the authentic communication styles of legendary Indian developers Hitesh Choudhary and Piyush Garg.
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-06b6d4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+## 🚀 Tech Stack
 
-## **🎭 AI Mentor Personas**
+[![Next.js](https://img.shields.io/badge/Next.js-15.4-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.1-blue?style=flat-square&logo=react)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.0-38B2AC?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![OpenAI API](https://img.shields.io/badge/OpenAI-API-412991?style=flat-square&logo=openai)](https://platform.openai.com/)
+[![shadcn/ui](https://img.shields.io/badge/shadcn/ui-Components-000000?style=flat-square)](https://ui.shadcn.dev/)
+[![Zustand](https://img.shields.io/badge/Zustand-State%20Management-8E44AD?style=flat-square)](https://zustand-demo.pmnd.rs/)
 
-- **Interactive Mentors**: Chat with AI personas of legendary developers
-- **Dynamic Selection**: Click to select/deselect mentors with smooth animations
-- **Scalable System**: Easily add new mentor personalities
-- **Expertise Display**: View each mentor's specializations and skills
+## **Hitesh Choudhary - "Chai aur Code"**
 
-## **💬 Advanced Chat System**
+- **Authentic Language**: Hindi-English code-switching with natural phrases like "Haanji bhai!", "Chaliye step by step"
+- **Teaching Style**: Patient, encouraging, breaks down complex topics like "chai banane ki tarah"
+- **Signature Elements**: References to 1.6M+ students, LearnCodeOnline, industry insights
+- **Expertise**: JavaScript, React, Node.js, Career Guidance, YouTube Growth
 
-- **Real-time Conversations**: Seamless chat interface with typing indicators
-- **Message History**: Persistent conversation storage with local persistence
-- **Smart Grouping**: Conversations organized by date (Today, Yesterday, This Week)
-- **Message Actions**: Copy, like/dislike functionality for AI responses
+## **Piyush Garg - "Building Devs, Not Apps"**
 
-## **🎨 Beautiful UI/UX**
+- **Authentic Voice**: Direct, no-nonsense approach with confidence markers
+- **Reality Checks**: "Companies don't care about tutorials", "Build something real"
+- **Practical Focus**: Production-ready solutions, modern tech stacks, scalability
+- **Expertise**: MERN Stack, TypeScript, System Design, DevOps
 
-- **Card-Based Design**: Desktop app-like interface with glassmorphism effects
-- **Theme Support**: Smooth dark/light mode toggle with system preference detection
-- **Responsive Layout**: Works perfectly on desktop, tablet, and mobile devices
-- **Micro-Animations**: Engaging hover effects and smooth transitions
+## 🧠 **Advanced Persona Training**
 
-## **🔄 State Management**
+### **Data Sources Used**
 
-- **Persistent Storage**: Conversations and preferences saved locally
-- **Smart Context**: Maintains conversation context across sessions
-- **Toggle Functionality**: Click active mentor again to deselect
-- **Empty State Handling**: Beautiful onboarding experience for new users
+1. **YouTube Content Analysis**
+   - Video transcripts from popular tutorials
+   - Live coding session commentary
+   - Community Q&A patterns
+   - Teaching methodology extraction
 
-## **📱 User Experience**
+2. **Social Media Patterns**
+   - Twitter/X communication styles
+   - Community interaction patterns
+   - Technical opinion expressions
+   - Industry commentary styles
 
-- **Auto-Scroll**: Messages automatically scroll to bottom for new content
-- **Search Functionality**: Find specific conversations quickly
-- **Quick Actions**: Delete conversations with confirmation
-- **Visual Feedback**: Clear indicators for active states and user actions
+3. **Content Categories**
+   - **Hitesh**: Beginner-friendly explanations, career advice, encouraging responses
+   - **Piyush**: Technical deep-dives, reality checks, production focus
 
-## **🛠️ Tech Stack**
+### **Prompt Engineering Strategy**
 
-| Technology | Purpose | Version |
-|------------|---------|---------|
-| **Next.js** | React Framework | 14.x |
-| **React** | UI Library | 18.x |
-| **Tailwind CSS** | Styling Framework | 3.x |
-| **Framer Motion** | Animation Library | 10.x |
-| **Zustand** | State Management | 4.x |
-| **Lucide React** | Icon Library | Latest |
-| **React Hot Toast** | Notifications | Latest |
+#### **Context-Aware Response System**
 
-## **🚀 Quick Start**
+```javascript
+// Enhanced context analysis
+function analyzeMessageContext(message, history) {
+  return {
+    type: 'technical|career|project|encouragement',
+    isQuestion: boolean,
+    needsEncouragement: boolean,
+    isBeginnerLevel: boolean,
+    sentiment: 'positive|negative|neutral',
+    previousContext: extractFromHistory(history)
+  };
+}
+```
+
+#### **Dynamic Prompt Building**
+
+- **Base Persona Prompt**: Core personality and speaking patterns
+- **Context Modifiers**: Adjust based on user's emotional state and question type
+- **Conversation Memory**: Reference previous topics naturally
+- **Consistency Validators**: Ensure persona adherence in responses
+
+### **Response Enhancement Pipeline**
+
+1. **Message Analysis**: Context, sentiment, technical level detection
+2. **Prompt Customization**: Dynamic prompt building with context
+3. **LLM Generation**: GPT-4 with optimized parameters
+4. **Persona Validation**: Ensure authentic language patterns
+5. **Quality Enhancement**: Add missing characteristic elements
+
+## 🚀 **Quick Setup Guide**
 
 ### **Prerequisites**
 
-- Node.js 18+ installed
-- npm, yarn, or pnpm package manager
+- Node.js 18+
+- OpenAI API Key
+- npm/yarn/pnpm
 
 ### **Installation**
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/swaras-ai.git
-cd swaras-ai
+# Clone repository
+git clone https://github.com/your-username/swaras-ai-enhanced.git
+cd swaras-ai-enhanced
 
 # Install dependencies
 npm install
-# or
-yarn install
-# or
-pnpm install
+
+# Configure environment
+cp .env.example .env.local
+# Add your OpenAI API key to .env.local
 ```
 
-### **Environment Setup**
-
-Create a `.env.local` file in the root directory:
+### **Environment Configuration**
 
 ```env
-# AI Service Configuration
-NEXT_PUBLIC_AI_API_KEY=your_ai_api_key_here
-NEXT_PUBLIC_AI_BASE_URL=https://api.openai.com/v1
+# Required
+OPENAI_API_KEY=your_openai_api_key_here
+ENABLE_REAL_LLM=true
 
-# App Configuration
-NEXT_PUBLIC_APP_NAME="Swaras AI"
-NEXT_PUBLIC_APP_VERSION="1.0.0"
-
-# Optional: Analytics
-NEXT_PUBLIC_ANALYTICS_ID=your_analytics_id
+# Optional Performance Tuning
+NEXT_PUBLIC_MAX_TOKENS=600
+NEXT_PUBLIC_RESPONSE_TIMEOUT=30000
+NEXT_PUBLIC_MAX_MESSAGE_HISTORY=10
 ```
 
-### **Development Server**
+### **Development**
 
 ```bash
-# Start development server
+# Start development server with Turbopack (faster builds)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+
+# Production build
+npm run build
+npm start
+
+# Linting
+npm run lint
+
+# Open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+## 📊 **Persona Accuracy Metrics**
 
-## **📁 Project Structure**
+### **Response Quality Scoring**
+
+- **Language Pattern Match**: 40% weight
+  - Hindi phrase usage (Hitesh)
+  - Direct communication style (Piyush)
+- **Tone Consistency**: 30% weight
+  - Encouraging vs Direct approach
+  - Technical depth appropriateness
+- **Technical Accuracy**: 20% weight
+  - Correct information delivery
+  - Industry-relevant advice
+- **Context Appropriateness**: 10% weight
+  - Situation-aware responses
+  - Conversation flow
+
+### **Sample Authentic Responses**
+
+#### **Hitesh Style - React Question**
 
 ```Plaintext
-swaras-ai/
-├── src/
-│   ├── app/                    # Next.js app router
-│   │   ├── layout.js          # Root layout with theme provider
-│   │   ├── page.js            # Home page component
-│   │   └── globals.css        # Global styles and utilities
-│   ├── components/            # React components
-│   │   ├── swaras-ai-refactored.jsx    # Main app component
-│   │   ├── empty-persona-state.jsx     # Empty state component
-│   │   ├── sidebar/           # Sidebar components
-│   │   │   ├── app-sidebar.jsx
-│   │   │   ├── persona-selector.jsx
-│   │   │   ├── conversation-combobox.jsx
-│   │   │   └── animated-theme-toggle.jsx
-│   │   ├── chat/              # Chat components
-│   │   │   ├── chat-header.jsx
-│   │   │   ├── chat-messages.jsx
-│   │   │   └── chat-input.jsx
-│   │   └── ui/                # Reusable UI components
-│   ├── store/                 # State management
-│   │   └── chat-store.js      # Zustand store configuration
-│   ├── services/              # API services
-│   │   └── ai-service.js      # AI integration service
-│   ├── constants/             # App constants
-│   │   └── personas.js        # Mentor persona definitions
-│   ├── lib/                   # Utility functions
-│   │   ├── utils.js           # General utilities
-│   │   └── date-utils.js      # Date formatting utilities
-│   └── providers/             # Context providers
-│       └── theme-provider.jsx # Theme context provider
-├── public/                    # Static assets
-├── tailwind.config.js         # Tailwind CSS configuration
-├── next.config.js             # Next.js configuration
-└── package.json               # Project dependencies
+Haanji bhai! React bilkul game changer hai! 🚀
+
+Chaliye ek chai banane ki tarah step by step samjhate hain:
+
+**React Fundamentals (Pani - Base):**
+• Components aur JSX - ye foundation hai
+• Props aur State - data flow samjho
+• Hooks - useState, useEffect (ye super important!)
+
+**Advanced Concepts (Chai Leaves):**
+• Context API for state management
+• React Router for navigation
+• Performance optimization
+
+Industry mein mere 1.6M+ students ko dekho - sab ne exactly yahi approach follow kiya hai. Production mein ye sab daily use hota hai!
+
+Kya specific doubt hai bhai? Detail mein explain karta hun! ☕️
 ```
 
-## **🎭 Available Mentors**
+#### **Piyush Style - MERN Stack Question**
 
-### **👨💻 Hitesh Choudhary**
+```Plaintext
+Stop watching MERN tutorials. Here's the 2024 production stack: 🔥
 
-- **Expertise**: JavaScript, React, Node.js, MongoDB, Express
-- **Specialty**: Full-stack web development and YouTube education
-- **Best For**: Learning modern web development stack
+**Modern Full-Stack Architecture:**
+• Frontend: Next.js 15+ (App Router) + TypeScript
+• Backend: Node.js + Express + TypeScript + Prisma
+• Database: PostgreSQL (better ACID compliance than MongoDB)
+• State: Zustand/Redux Toolkit
+• Deployment: Vercel + Railway
 
-### **⚡ Piyush Garg**
+**Why this stack?**
+I've built 50+ production apps with this setup. It scales to millions of users, has great DX, and companies actually use this.
 
-- **Expertise**: System Design, Backend Architecture, Microservices, Docker, AWS
-- **Specialty**: Scalable system architecture and backend development
-- **Best For**: Understanding system design and backend optimization
+**Your challenge:**
+Build a full-stack app with auth, CRUD operations, and deployment in 2 weeks. No tutorials - just docs and building.
 
-## **🔧 Configuration**
+Trust me, I'm a software engineer. This is exactly what hiring managers want to see.
+```
 
-### **Adding New Mentors**
+## 🛠 **Technical Architecture**
 
-Edit `src/constants/personas.js`:
+### **Modern Stack Features**
+
+- **Next.js 15.4**: Latest App Router with Turbopack for faster development
+- **React 19.1**: Concurrent features and improved performance
+- **TailwindCSS 4.0**: Latest utility-first CSS framework
+- **Zustand 5.0**: Lightweight state management with persistence
+- **Framer Motion**: Smooth animations and transitions
+- **OpenAI Integration**: GPT-4 API for natural language processing
+
+### **Enhanced API Route Structure**
 
 ```javascript
-export const personas = {
-  // Existing mentors...
-  newMentor: {
-    id: 'newMentor',
-    name: 'New Mentor Name',
-    avatar: '🚀',
-    title: 'Mentor Title',
-    subtitle: 'Mentor Subtitle',
-    description: 'Mentor description and background',
-    accentColor: 'bg-gradient-to-r from-green-500 to-blue-500',
-    bgColor: 'from-green-100 to-blue-100',
-    expertise: ['Skill1', 'Skill2', 'Skill3']
-  }
-};
-```
-
-### **Customizing Themes**
-
-Modify theme colors in `src/styles/globals.css`:
-
-```css
-:root {
-  --primary-color: #your-color;
-  --secondary-color: #your-color;
-  /* Add your custom CSS variables */
+// Context-aware persona response system
+export async function POST(request) {
+  const { message, persona, history } = await request.json();
+  
+  // 1. Analyze message context
+  const context = analyzeMessageContext(message, history);
+  
+  // 2. Build dynamic prompt
+  const prompt = buildContextualPrompt(persona, context, history);
+  
+  // 3. Generate with GPT-4
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: prompt }, 
+      ...history, 
+      { role: 'user', content: message }
+    ],
+    temperature: 0.8,
+    max_tokens: 600,
+  });
+  
+  // 4. Enhance persona consistency
+  const enhancedResponse = enhancePersonaResponse(response, persona, context);
+  
+  return enhancedResponse;
 }
 ```
 
-### **AI Service Integration**
+### **State Management with Zustand**
 
-Update `src/services/ai-service.js` to connect with your preferred AI provider:
+- Persistent conversation storage with localStorage
+- Theme management (dark/light modes)
+- Persona selection with validation
+- Real-time mentor status simulation
+- Conversation history management
+
+### **UI/UX Features**
+
+- **Glassmorphism Design**: Modern card-based interface with backdrop blur
+- **Smooth Animations**: Framer Motion transitions and micro-interactions
+- **Dark/Light Themes**: System preference detection with manual toggle
+- **Responsive Layout**: Mobile-first approach with adaptive breakpoints
+- **Accessibility**: WCAG 2.1 compliant with keyboard navigation
+- **Toast Notifications**: Real-time feedback with react-hot-toast
+
+## 📈 **Performance Optimizations**
+
+### **Response Generation**
+
+- **Context Caching**: Reduce API calls for similar questions
+- **Streaming Responses**: Real-time message delivery (planned)
+- **Fallback System**: Graceful degradation when API unavailable
+- **Token Optimization**: Efficient prompt engineering to reduce costs
+
+### **User Experience**
+
+- **Typing Indicators**: Visual feedback during generation
+- **Message Persistence**: Local storage for conversations
+- **Quick Actions**: Pre-built question suggestions
+- **Export Functionality**: Save conversations as JSON/Markdown
+
+### **Development Experience**
+
+- **Turbopack**: Faster development builds with Next.js 15
+- **Hot Reload**: Instant feedback during development
+- **ESLint**: Code quality and consistency
+- **Component Library**: Reusable UI components with Radix UI
+
+## 🧪 **Testing Persona Authenticity**
+
+### **Manual Testing Checklist**
+
+- [ ] Hitesh uses Hindi phrases naturally
+- [ ] Piyush maintains direct, confident tone
+- [ ] Responses match persona's expertise areas
+- [ ] Context awareness across conversation
+- [ ] Appropriate encouragement/challenge levels
+- [ ] Technical accuracy in suggestions
+- [ ] Natural conversation flow
+
+### **Automated Validation**
 
 ```javascript
-// Configure your AI service endpoint
-const AI_CONFIG = {
-  apiKey: process.env.NEXT_PUBLIC_AI_API_KEY,
-  baseUrl: process.env.NEXT_PUBLIC_AI_BASE_URL,
-  model: 'gpt-3.5-turbo' // or your preferred model
-};
+function validatePersonaResponse(response, persona, context) {
+  const validators = {
+    hitesh: {
+      requiredElements: ['hindi_phrases', 'encouragement', 'step_by_step'],
+      forbiddenElements: ['overly_technical', 'discouraging'],
+      toneCheck: 'friendly_supportive'
+    },
+    piyush: {
+      requiredElements: ['directness', 'practical_focus', 'industry_reality'],
+      forbiddenElements: ['overly_encouraging', 'theoretical_focus'],
+      toneCheck: 'confident_practical'
+    }
+  };
+  
+  return checkPersonaCompliance(response, validators[persona]);
+}
 ```
 
-## **🎨 Design System**
+## 📊 **Sample Chat Demonstrations**
 
-### **Color Palette**
+### **Beginner JavaScript Question**
 
-- **Primary**: Purple to Pink gradient (`from-purple-500 to-pink-500`)
-- **Secondary**: Blue to Cyan gradient (`from-blue-500 to-cyan-500`)
-- **Accent**: Orange to Red gradient (`from-orange-500 to-red-500`)
-- **Success**: Green shades for online indicators
-- **Neutral**: Gray scale for text and backgrounds
+**User**: "I'm confused about JavaScript closures. Can you explain?"
 
-### **Typography**
-
-- **Primary Font**: Inter (Google Fonts)
-- **Font Weights**: 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
-- **Scale**: Tailwind's default type scale
-
-### **Spacing**
-
-- **Container**: Max-width 7xl with responsive padding
-- **Card Padding**: 4-6 on mobile, 6-8 on desktop
-- **Element Spacing**: Consistent 2-4 spacing units
-
-## **📝 Scripts**
-
-```bash
-# Development
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run lint:fix     # Fix ESLint issues
-
-# Deployment
-npm run export       # Export static site
-npm run analyze      # Analyze bundle size
-```
-
-## **🔄 Git Workflow**
-
-### **Branch Structure**
+**Hitesh Response**:
 
 ```Plaintext
-main                 # Production-ready code
-├── development      # Integration branch
-    ├── feature/ui-enhancements
-    ├── feature/ai-integration
-    ├── feature/new-mentors
-    └── hotfix/critical-fixes
+Haanji bhai! Closures - ye initially sabko confuse karta hai, don't worry! 😊
+
+Chaliye ek simple example se samjhate hain:
+
+function outerFunction(x) {
+  // Ye outer variable hai
+  return function innerFunction(y) {
+    return x + y; // Inner function outer variable ko access kar raha hai!
+  };
+}
+
+Bilkul aise samjho - outer function ek dabba hai, aur inner function us dabby ke andar ka chhota dabba. Chhota dabba bade dabby ki cheezein use kar sakta hai!
+
+Industry mein ye pattern bahut use hota hai - callbacks, event handlers, modules mein. Mere students initially struggle karte hain but practice se clear ho jata hai.
+
+Try karo ye example, aur batao kya doubt hai! Step by step clarify karte hain! ☕️
 ```
 
-### **Development Process**
+**Piyush Response**:
 
-1. Create feature branch from `development`
-2. Implement feature with proper commits
-3. Create PR to `development` branch
-4. After review, merge to `development`
-5. Deploy to production from `main`
+```Plaintext
+Closures are fundamental to JavaScript. Here's exactly what you need to know:
 
-## **🚀 Deployment**
+**Definition**: A closure gives you access to an outer function's scope from an inner function.
 
-### **Vercel (Recommended)**
+**Practical Example**:
 
+```Plaintext
+function createCounter() {
+  let count = 0;
+  return function() {
+    return ++count;
+  };
+}
+
+const counter = createCounter();
+console.log(counter()); // 1
+console.log(counter()); // 2
+```
+
+**Why this matters in production**:
+• Module patterns for data privacy
+• Event handlers that remember state
+• Callback functions with persistent data
+• Factory functions for creating specialized functions
+
+Companies test this in interviews because it shows you understand JavaScript's execution context and memory management.
+
+Build a simple todo app using closures for state management. No frameworks - just vanilla JS. That'll cement the concept.
+
+```Plaintext
+
+## 🔄 **Continuous Improvement**
+
+### **Feedback Collection**
+- User satisfaction ratings on responses
+- Persona authenticity scores from users
+- A/B testing different prompt strategies
+- Performance metrics tracking
+- Community feedback integration
+
+### **Model Refinement Process**
+1. **Weekly Prompt Updates**: Based on user feedback and creator content
+2. **Response Pattern Analysis**: Identify improvement areas
+3. **New Content Integration**: Latest creator content patterns
+4. **Quality Metrics Monitoring**: Maintain consistency scores above 85%
+
+## 🚀 **Deployment Guide**
+
+### **Vercel Deployment** (Recommended)
 ```bash
 # Install Vercel CLI
 npm i -g vercel
 
-# Deploy to Vercel
+# Deploy
 vercel --prod
+
+# Set environment variables in Vercel dashboard:
+# - OPENAI_API_KEY
+# - ENABLE_REAL_LLM=true
 ```
 
-### **Netlify**
-
-```bash
-# Build command
-npm run build
-
-# Publish directory
-out/
-```
-
-### **Docker**
+### **Docker Deployment**
 
 ```dockerfile
 FROM node:18-alpine
@@ -299,69 +414,127 @@ EXPOSE 3000
 CMD ["npm", "start"]
 ```
 
-## **🐛 Troubleshooting**
+### **Environment Variables**
 
-### **Common Issues**
+Required for production:
 
-**Issue**: Hydration errors in development
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+ENABLE_REAL_LLM=true
+NEXT_PUBLIC_APP_NAME="Swaras AI"
+NEXT_PUBLIC_APP_DESCRIPTION="AI-powered coding mentors"
+```
+
+## 📝 **Contributing**
+
+### **Persona Enhancement Guidelines**
+
+1. **Research Phase**: Study latest creator content and patterns
+2. **Pattern Extraction**: Identify new speech patterns and teaching methods
+3. **Implementation**: Update prompts and validation logic
+4. **Testing**: Verify authenticity improvements with sample conversations
+5. **Documentation**: Update examples and implementation guides
+
+### **Code Quality Standards**
+
+- ESLint + Prettier configuration for consistent formatting
+- TypeScript for type safety (planned migration)
+- Component testing with Jest (planned)
+- E2E testing with Playwright (planned)
+- Semantic commit messages
+- PR reviews required for all changes
+
+### **Development Workflow**
 
 ```bash
-# Solution: Clear Next.js cache
-rm -rf .next
+# Create feature branch
+git checkout -b feature/persona-enhancement
+
+# Make changes and test locally
 npm run dev
+
+# Lint and build
+npm run lint
+npm run build
+
+# Submit PR with detailed description
 ```
 
-**Issue**: Theme not persisting
+## 📚 **API Documentation**
 
-```bash
-# Check localStorage in browser DevTools
-localStorage.getItem('swaras-ai-storage')
+### **Chat Endpoint**
+
+```typescript
+POST /api/chat
+Content-Type: application/json
+
+{
+  "message": string,
+  "persona": "hitesh" | "piyush",
+  "userId": string (optional),
+  "history": Array (optional)
+}
+
+Response:
+{
+  "response": string,
+  "persona": string,
+  "timestamp": string
+}
 ```
 
-**Issue**: AI responses not working
+### **Persona Data Endpoint**
 
-```bash
-# Verify environment variables
-echo $NEXT_PUBLIC_AI_API_KEY
+```typescript
+GET /api/personas
+
+Response:
+{
+  "personas": {
+    "hitesh": PersonaData,
+    "piyush": PersonaData
+  }
+}
 ```
 
-## **🤝 Contributing**
+## 🛡️ **Security & Privacy**
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+### **Data Handling**
 
-### **Development Setup**
+- **No Personal Data Storage**: Conversations stored locally only
+- **API Key Security**: Server-side OpenAI API calls only
+- **Rate Limiting**: Implemented to prevent abuse
+- **Content Filtering**: Inappropriate content detection
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+### **Ethical Considerations**
 
-### **Code Style**
+- **Clear AI Identification**: Users know they're talking to AI
+- **Persona Attribution**: Proper credit to original creators
+- **No Impersonation Claims**: Clear disclaimer about AI nature
+- **Educational Purpose**: Focus on learning and skill development
 
-- Follow ESLint configuration
-- Use Prettier for formatting
-- Write meaningful commit messages
-- Add JSDoc comments for functions
+## 📄 **License & Acknowledgments**
 
-## **📄 License**
+MIT License - see [LICENSE](LICENSE) file for details.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+**Inspired by:**
 
-## **🙏 Acknowledgments**
+- **Hitesh Choudhary** - Chai aur Code methodology and teaching approach
+- **Piyush Garg** - Real-world development focus and practical guidance
+- **Community Feedback** - Continuous improvement insights from users
+- **Open Source Community** - Various libraries and frameworks used
 
-- **Hitesh Choudhary** - Inspiration for JavaScript mentorship
-- **Piyush Garg** - Inspiration for system design guidance
-- **Vercel** - Hosting and deployment platform
-- **Tailwind CSS** - Amazing utility-first CSS framework
-- **Framer Motion** - Smooth animations and transitions
+## 🤝 **Community**
 
----
+- **Discord Server**: [Join our community](https://discord.gg/s.saniel)
+- **Twitter/X**: [@SwarasAI](https://x.com/SanjeevSaniel)
+- **GitHub Discussions**: Share ideas and feedback
+- **Blog**: Technical deep-dives and updates
 
-## **Made with ❤️ in Bengaluru, India**
+## **Made with ❤️ in India** 🇮🇳
 
-**Happy Coding with Swaras AI!** 🚀✨
+**Experience authentic AI mentorship that feels like learning from the legends themselves!**
 
----
+***
 
-*For the latest updates and announcements, follow us on [Twitter](https://x.com/SanjeevSaniel) and star our [GitHub repository](https://github.com/SanjeevSaniel/swaras-ai)!*
+*For latest updates and community discussions, join our [Discord](https://discord.gg/swaras-ai) and follow us on [Twitter](https://twitter.com/SwarasAI)!*
