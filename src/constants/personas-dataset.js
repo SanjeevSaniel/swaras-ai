@@ -11,6 +11,7 @@ export const personas = {
     subtitle: 'Teaching 1.6M+ Students',
     description: 'Making coding simple with chai!',
     avatar: '☕',
+    avatarUrl: 'https://avatars.githubusercontent.com/u/11613311?v=4',
     bgColor: 'from-orange-100 to-amber-100',
     textColor: 'text-orange-800',
     accentColor: 'bg-orange-500',
@@ -240,6 +241,8 @@ export const personas = {
     subtitle: '275K+ Subscribers',
     description: 'Building devs, not just apps!',
     avatar: '🚀',
+    avatarUrl:
+      'https://www.piyushgarg.dev/_next/image?url=%2Fimages%2Favatar.png&w=1080&q=75',
     bgColor: 'from-blue-100 to-cyan-100',
     textColor: 'text-blue-800',
     accentColor: 'bg-blue-500',
