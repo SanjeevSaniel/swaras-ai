@@ -1,11 +1,20 @@
-// src/components/chat/chat-messages.jsx (Complete Fixed Version)
+// src/components/chat/chat-messages.jsx
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, ThumbsDown, ThumbsUp, User, Check, Heart } from 'lucide-react';
+import {
+  Copy,
+  ThumbsDown,
+  ThumbsUp,
+  User,
+  Check,
+  Heart,
+  Sparkles,
+  MoreHorizontal,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
@@ -15,8 +24,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
   const persona = personas[selectedPersona];
   const [copiedMessageId, setCopiedMessageId] = useState(null);
   const [messageReactions, setMessageReactions] = useState({});
-  const [showScrollbar, setShowScrollbar] = useState(false);
-  const [particles, setParticles] = useState([]);
+  const [hoveredMessage, setHoveredMessage] = useState(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -26,532 +34,419 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Handle scrollbar visibility
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      const isScrollable = scrollHeight > clientHeight;
-      const isNearTop = scrollTop > 10;
-
-      setShowScrollbar(isScrollable && isNearTop);
-    };
-
-    const handleMouseEnter = () => {
-      const { scrollHeight, clientHeight } = container;
-      if (scrollHeight > clientHeight) {
-        setShowScrollbar(true);
-      }
-    };
-
-    const handleMouseLeave = () => {
-      setShowScrollbar(false);
-    };
-
-    container.addEventListener('scroll', handleScroll);
-    container.addEventListener('mouseenter', handleMouseEnter);
-    container.addEventListener('mouseleave', handleMouseLeave);
-
-    // Initial check
-    handleScroll();
-
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [messages]);
-
   const copyToClipboard = async (text, messageId) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedMessageId(messageId);
-
-      // Create particle effect
-      const newParticles = [...Array(8)].map((_, i) => ({
-        id: Date.now() + i,
-        x: Math.random() * 40 - 20,
-        y: Math.random() * 40 - 20,
-        scale: Math.random() * 0.5 + 0.5,
-        delay: Math.random() * 0.3,
-      }));
-      setParticles(newParticles);
-
-      setTimeout(() => {
-        setCopiedMessageId(null);
-        setParticles([]);
-      }, 2000);
+      setTimeout(() => setCopiedMessageId(null), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        setCopiedMessageId(messageId);
-
-        // Create particle effect for fallback too
-        const newParticles = [...Array(8)].map((_, i) => ({
-          id: Date.now() + i,
-          x: Math.random() * 40 - 20,
-          y: Math.random() * 40 - 20,
-          scale: Math.random() * 0.5 + 0.5,
-          delay: Math.random() * 0.3,
-        }));
-        setParticles(newParticles);
-
-        setTimeout(() => {
-          setCopiedMessageId(null);
-          setParticles([]);
-        }, 2000);
-      } catch (fallbackErr) {
-        console.error('Fallback copy failed: ', fallbackErr);
-      }
-      document.body.removeChild(textArea);
     }
   };
 
-  // Handle message reactions
   const handleReaction = (messageId, reactionType) => {
     setMessageReactions((prev) => {
       const currentReaction = prev[messageId]?.type;
-
-      // If clicking the same reaction, remove it
       if (currentReaction === reactionType) {
         const { [messageId]: removed, ...rest } = prev;
         return rest;
       }
-
-      // Otherwise, set new reaction
       return {
         ...prev,
-        [messageId]: {
-          type: reactionType,
-          timestamp: Date.now(),
-        },
+        [messageId]: { type: reactionType, timestamp: Date.now() },
       };
     });
-
-    // Optional: Send reaction to backend here
-    console.log(`Reacted ${reactionType} to message ${messageId}`);
   };
 
   if (!messages || messages.length === 0) {
     return (
       <div className='flex-1 flex flex-col items-center justify-center p-8 text-center'>
         <div className='relative mb-6'>
-          <img
-            src={persona?.avatarUrl}
-            alt={`${persona?.name} avatar`}
-            className='w-20 h-20 rounded-full object-cover mx-auto'
-            onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.nextElementSibling.style.display = 'flex';
-            }}
-          />
-          <div
-            className='w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-3xl mx-auto'
-            style={{ display: 'none' }}>
-            {persona?.avatar}
-          </div>
-        </div>
-        <h3
-          className={`text-xl font-semibold mb-2 ${
-            darkMode ? 'text-gray-100' : 'text-gray-900'
-          }`}>
-          Start a conversation with {persona?.name}
-        </h3>
-        <p
-          className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          Ask anything about coding and programming!
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      ref={containerRef}
-      className={`flex-1 overflow-y-auto p-4 space-y-6 scroll-smooth relative ${
-        showScrollbar ? 'scrollbar-visible' : 'scrollbar-hidden'
-      }`}
-      style={{
-        scrollbarWidth: 'thin',
-        scrollbarColor: darkMode ? '#4B5563 #1F2937' : '#D1D5DB #F9FAFB',
-      }}>
-      {messages.map((message) => {
-        const reaction = messageReactions[message.id];
-
-        return (
-          <motion.div
-            key={message.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className={`flex group ${
-              message.sender === 'user' ? 'justify-end' : 'justify-start'
-            }`}>
-            {/* Avatar for AI messages */}
-            {message.sender === 'ai' && (
-              <div className='flex-shrink-0 mr-3'>
-                <div className='relative'>
-                  <img
-                    src={persona?.avatarUrl}
-                    alt={`${persona?.name} avatar`}
-                    className='w-10 h-10 rounded-full object-cover'
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextElementSibling.style.display = 'flex';
-                    }}
-                  />
-                  <div
-                    className='w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xl'
-                    style={{ display: 'none' }}>
-                    {persona?.avatar}
-                  </div>
-                  <div className='absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white'></div>
-                </div>
-              </div>
-            )}
-
-            {/* Message container */}
-            <div
-              className={`flex flex-col max-w-[75%] ${
-                message.sender === 'user' ? 'items-end' : 'items-start'
-              }`}>
-              {/* Message bubble */}
-              <div
-                className={`relative rounded-2xl px-4 py-3 shadow-sm ${
-                  message.sender === 'user'
-                    ? darkMode
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                      : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
-                    : darkMode
-                    ? 'bg-gray-800 text-gray-100 border border-gray-700'
-                    : 'bg-white text-gray-900 border border-gray-200 shadow-md'
-                }`}>
-                {/* Message content */}
-                <div
-                  className={`prose prose-sm max-w-none ${
-                    message.sender === 'user'
-                      ? 'prose-invert'
-                      : darkMode
-                      ? 'prose-invert'
-                      : ''
-                  }`}>
-                  <p className='mb-0 whitespace-pre-wrap break-words leading-relaxed'>
-                    {message.content}
-                  </p>
-                </div>
-
-                {/* Message tail */}
-                <div
-                  className={`absolute top-3 ${
-                    message.sender === 'user'
-                      ? 'right-0 translate-x-2'
-                      : 'left-0 -translate-x-2'
-                  }`}>
-                  <div
-                    className={`w-3 h-3 rotate-45 ${
-                      message.sender === 'user'
-                        ? darkMode
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600'
-                          : 'bg-gradient-to-r from-blue-500 to-purple-500'
-                        : darkMode
-                        ? 'bg-gray-800 border-l border-b border-gray-700'
-                        : 'bg-white border-l border-b border-gray-200'
-                    }`}></div>
-                </div>
-
-                {/* Reaction indicator on message */}
-                {reaction && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className={`absolute -bottom-2 ${
-                      message.sender === 'user' ? 'left-3' : 'right-3'
-                    } bg-white dark:bg-gray-700 rounded-full p-1 shadow-lg border`}>
-                    {reaction.type === 'like' ? (
-                      <ThumbsUp className='w-3 h-3 text-blue-500 fill-current' />
-                    ) : reaction.type === 'dislike' ? (
-                      <ThumbsDown className='w-3 h-3 text-red-500 fill-current' />
-                    ) : (
-                      <Heart className='w-3 h-3 text-pink-500 fill-current' />
-                    )}
-                  </motion.div>
-                )}
-              </div>
-
-              {/* AI message actions with FIXED copy button */}
-              {message.sender === 'ai' && (
-                <div className='flex items-center space-x-1 mt-2 ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
-                  {/* FIXED Copy button - no spring animation error */}
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className='h-8 px-3 text-xs relative overflow-hidden group/copy transition-all duration-300 hover:shadow-md hover:shadow-blue-500/25 dark:hover:shadow-purple-500/25 rounded-xl border border-transparent hover:border-blue-200 dark:hover:border-purple-600/30'
-                    onClick={() =>
-                      copyToClipboard(message.content, message.id)
-                    }>
-                    <AnimatePresence mode='wait'>
-                      {copiedMessageId === message.id ? (
-                        <motion.div
-                          key='success'
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: 'easeOut' }}
-                          className='flex items-center text-green-600 dark:text-green-400 relative z-10'>
-                          {/* Success background with gradient */}
-                          <motion.div
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.3, ease: 'easeOut' }}
-                            className='absolute inset-0 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 rounded-xl -z-10'
-                          />
-
-                          {/* Expanding ring effect */}
-                          <motion.div
-                            initial={{ scale: 0.5, opacity: 0.8 }}
-                            animate={{ scale: 3, opacity: 0 }}
-                            transition={{ duration: 1, ease: 'easeOut' }}
-                            className='absolute inset-0 border-2 border-green-400 rounded-xl -z-10'
-                          />
-
-                          {/* FIXED: Check icon - using backOut instead of spring */}
-                          <motion.div
-                            initial={{ scale: 0, rotate: -90 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            transition={{
-                              duration: 0.5,
-                              ease: 'backOut', // ✅ No more spring animation error
-                            }}>
-                            <Check className='w-3 h-3 mr-1.5' />
-                          </motion.div>
-
-                          {/* Text with smooth appearance */}
-                          <motion.span
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2, duration: 0.3 }}
-                            className='font-semibold'>
-                            Copied!
-                          </motion.span>
-
-                          {/* Floating particles */}
-                          {particles.map((particle) => (
-                            <motion.div
-                              key={particle.id}
-                              initial={{
-                                scale: 0,
-                                opacity: 1,
-                                x: 0,
-                                y: 0,
-                              }}
-                              animate={{
-                                scale: particle.scale,
-                                opacity: 0,
-                                x: particle.x,
-                                y: particle.y,
-                                rotate: 360,
-                              }}
-                              transition={{
-                                duration: 1.5,
-                                delay: particle.delay,
-                                ease: 'easeOut',
-                              }}
-                              className='absolute w-1.5 h-1.5 bg-green-400 rounded-full'
-                            />
-                          ))}
-
-                          {/* Shimmer effect */}
-                          <motion.div
-                            initial={{ x: '-100%' }}
-                            animate={{ x: '100%' }}
-                            transition={{
-                              duration: 1,
-                              delay: 0.3,
-                              ease: 'easeInOut',
-                            }}
-                            className='absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -z-10 -rotate-12'
-                          />
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          key='copy'
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0.9, opacity: 0 }}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className='flex items-center relative'>
-                          {/* Hover gradient background */}
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            whileHover={{
-                              opacity: 1,
-                              scale: 1,
-                            }}
-                            className='absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl -z-10'
-                          />
-
-                          {/* Copy icon with gentle hover animation */}
-                          <motion.div
-                            whileHover={{
-                              y: -1,
-                              transition: { duration: 0.2 },
-                            }}>
-                            <Copy className='w-3 h-3 mr-1.5' />
-                          </motion.div>
-
-                          <span className='font-medium'>Copy</span>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </Button>
-
-                  {/* Like button */}
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className={`h-8 px-2 transition-colors ${
-                      reaction?.type === 'like'
-                        ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'hover:text-blue-500'
-                    }`}
-                    onClick={() => handleReaction(message.id, 'like')}>
-                    <motion.div
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.9 }}>
-                      <ThumbsUp
-                        className={`w-3 h-3 ${
-                          reaction?.type === 'like' ? 'fill-current' : ''
-                        }`}
-                      />
-                    </motion.div>
-                  </Button>
-
-                  {/* Dislike button */}
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className={`h-8 px-2 transition-colors ${
-                      reaction?.type === 'dislike'
-                        ? 'text-red-500 bg-red-50 dark:bg-red-900/20'
-                        : 'hover:text-red-500'
-                    }`}
-                    onClick={() => handleReaction(message.id, 'dislike')}>
-                    <motion.div
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.9 }}>
-                      <ThumbsDown
-                        className={`w-3 h-3 ${
-                          reaction?.type === 'dislike' ? 'fill-current' : ''
-                        }`}
-                      />
-                    </motion.div>
-                  </Button>
-
-                  {/* Love button */}
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className={`h-8 px-2 transition-colors ${
-                      reaction?.type === 'love'
-                        ? 'text-pink-500 bg-pink-50 dark:bg-pink-900/20'
-                        : 'hover:text-pink-500'
-                    }`}
-                    onClick={() => handleReaction(message.id, 'love')}>
-                    <motion.div
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.9 }}>
-                      <Heart
-                        className={`w-3 h-3 ${
-                          reaction?.type === 'love' ? 'fill-current' : ''
-                        }`}
-                      />
-                    </motion.div>
-                  </Button>
-                </div>
-              )}
-
-              {/* Timestamp */}
-              <div
-                className={`text-xs mt-1 ${
-                  darkMode ? 'text-gray-500' : 'text-gray-400'
-                }`}>
-                {new Date(message.timestamp || Date.now()).toLocaleTimeString(
-                  [],
-                  {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  },
-                )}
-              </div>
-            </div>
-
-            {/* Avatar for user messages */}
-            {message.sender === 'user' && (
-              <div className='flex-shrink-0 ml-3'>
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    darkMode ? 'bg-blue-600' : 'bg-blue-500'
-                  }`}>
-                  <User className='w-6 h-6 text-white' />
-                </div>
-              </div>
-            )}
-          </motion.div>
-        );
-      })}
-
-      {/* Typing indicator */}
-      {isTyping && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className='flex justify-start'>
-          <div className='flex-shrink-0 mr-3'>
+          <div className='w-16 h-16 rounded-full overflow-hidden border-2 border-blue-500/30 bg-gradient-to-br from-blue-500 to-purple-600'>
             <img
               src={persona?.avatarUrl}
               alt={`${persona?.name} avatar`}
-              className='w-10 h-10 rounded-full object-cover'
+              className='w-full h-full object-cover'
               onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.nextElementSibling.style.display = 'flex';
               }}
             />
             <div
-              className='w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xl'
+              className='w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl text-white'
               style={{ display: 'none' }}>
               {persona?.avatar}
             </div>
           </div>
-          <div
-            className={`rounded-2xl px-4 py-3 ${
-              darkMode
-                ? 'bg-gray-800 border border-gray-700'
-                : 'bg-white border border-gray-200'
-            }`}>
-            <div className='flex space-x-1'>
-              {[0, 150, 300].map((delay, index) => (
+
+          <div className='absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900'>
+            <Sparkles className='w-2.5 h-2.5 text-white' />
+          </div>
+        </div>
+
+        <h3
+          className={`text-xl font-semibold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}>
+          Start a conversation with {persona?.name}
+        </h3>
+        <p
+          className={`text-sm ${
+            darkMode ? 'text-gray-400' : 'text-gray-600'
+          } mb-4`}>
+          Ask anything about coding, career advice, or programming best
+          practices
+        </p>
+
+        <div className='flex flex-wrap justify-center gap-2 max-w-md'>
+          {['How to learn React?', 'Career guidance', 'Best practices'].map(
+            (suggestion) => (
+              <div
+                key={suggestion}
+                className={`px-3 py-1.5 rounded-full text-xs border cursor-pointer transition-colors ${
+                  darkMode
+                    ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-800 text-gray-300'
+                    : 'bg-white/80 border-gray-200 hover:bg-gray-50 text-gray-600'
+                }`}>
+                {suggestion}
+              </div>
+            ),
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className='flex-1 flex flex-col relative overflow-hidden'>
+      <div
+        ref={containerRef}
+        className={`flex-1 overflow-y-auto px-4 py-4 space-y-4 ${
+          darkMode ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'
+        }`}>
+        {messages.map((message, index) => {
+          const reaction = messageReactions[message.id];
+          const isUser = message.sender === 'user';
+          const isHovered = hoveredMessage === message.id;
+
+          return (
+            <div
+              key={message.id}
+              onMouseEnter={() => setHoveredMessage(message.id)}
+              onMouseLeave={() => setHoveredMessage(null)}
+              className={`flex group ${
+                isUser ? 'justify-end' : 'justify-start'
+              }`}>
+              {/* AI Avatar */}
+              {!isUser && (
+                <div className='flex-shrink-0 mr-3'>
+                  <div className='relative'>
+                    <div className='w-8 h-8 rounded-full overflow-hidden border border-blue-500/30 bg-gradient-to-br from-blue-500 to-purple-600'>
+                      <img
+                        src={persona?.avatarUrl}
+                        alt={`${persona?.name} avatar`}
+                        className='w-full h-full object-cover'
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextElementSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div
+                        className='w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-sm text-white'
+                        style={{ display: 'none' }}>
+                        {persona?.avatar}
+                      </div>
+                    </div>
+
+                    <div className='absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border border-white dark:border-gray-900'></div>
+                  </div>
+                </div>
+              )}
+
+              {/* Message Container */}
+              <div
+                className={`flex flex-col max-w-[75%] ${
+                  isUser ? 'items-end' : 'items-start'
+                }`}>
+                {/* Message Bubble */}
                 <div
-                  key={index}
-                  className={`w-2 h-2 rounded-full animate-bounce ${
-                    darkMode ? 'bg-gray-400' : 'bg-gray-500'
-                  }`}
-                  style={{ animationDelay: `${delay}ms` }}
-                />
-              ))}
+                  className={`relative rounded-2xl px-4 py-3 ${
+                    isUser
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                      : darkMode
+                      ? 'bg-gray-800 text-gray-100 border border-gray-700'
+                      : 'bg-white text-gray-900 border border-gray-200 shadow-sm'
+                  }`}>
+                  {/* Message Content */}
+                  <div
+                    className={`prose prose-sm max-w-none ${
+                      isUser ? 'prose-invert' : darkMode ? 'prose-invert' : ''
+                    }`}>
+                    <p className='mb-0 whitespace-pre-wrap break-words leading-relaxed'>
+                      {message.content}
+                    </p>
+                  </div>
+
+                  {/* Reaction Badge */}
+                  {reaction && (
+                    <div
+                      className={`absolute -bottom-1.5 ${
+                        isUser ? 'left-3' : 'right-3'
+                      } bg-white dark:bg-gray-800 rounded-full p-1 shadow-md border border-gray-200 dark:border-gray-600`}>
+                      {reaction.type === 'like' ? (
+                        <ThumbsUp className='w-2.5 h-2.5 text-blue-500' />
+                      ) : reaction.type === 'dislike' ? (
+                        <ThumbsDown className='w-2.5 h-2.5 text-red-500' />
+                      ) : (
+                        <Heart className='w-2.5 h-2.5 text-pink-500' />
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons and Timestamp Row for AI messages */}
+                <div
+                  className={`flex items-center justify-between mt-2 ml-2 ${
+                    !isUser ? 'opacity-100' : 'opacity-0'
+                  }`}>
+                  {/* Timestamp - Always visible on left */}
+                  <div
+                    className={`text-xs ${
+                      darkMode ? 'text-gray-500' : 'text-gray-400'
+                    }`}>
+                    {new Date(
+                      message.timestamp || Date.now(),
+                    ).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </div>
+
+                  {/* Action Buttons - Only visible on hover on right */}
+                  <div
+                    className={`flex items-center space-x-1 transition-opacity duration-200 ${
+                      isHovered ? 'opacity-100' : 'opacity-0'
+                    }`}>
+                    {/* Copy Button */}
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className={`h-7 px-2 text-xs transition-colors ${
+                        copiedMessageId === message.id
+                          ? 'text-green-600 bg-green-50 dark:bg-green-900/20'
+                          : darkMode
+                          ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                      }`}
+                      onClick={() =>
+                        copyToClipboard(message.content, message.id)
+                      }>
+                      {copiedMessageId === message.id ? (
+                        <>
+                          <Check className='w-3 h-3 mr-1' /> Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy className='w-3 h-3 mr-1' /> Copy
+                        </>
+                      )}
+                    </Button>
+
+                    {/* Reaction Buttons */}
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className={`h-7 px-2 transition-colors ${
+                        reaction?.type === 'like'
+                          ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : darkMode
+                          ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-800'
+                          : 'text-gray-500 hover:text-blue-500 hover:bg-gray-100'
+                      }`}
+                      onClick={() => handleReaction(message.id, 'like')}>
+                      <ThumbsUp
+                        className={`w-3 h-3 ${
+                          reaction?.type === 'like' ? 'fill-current' : ''
+                        }`}
+                      />
+                    </Button>
+
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className={`h-7 px-2 transition-colors ${
+                        reaction?.type === 'love'
+                          ? 'text-pink-500 bg-pink-50 dark:bg-pink-900/20'
+                          : darkMode
+                          ? 'text-gray-400 hover:text-pink-400 hover:bg-gray-800'
+                          : 'text-gray-500 hover:text-pink-500 hover:bg-gray-100'
+                      }`}
+                      onClick={() => handleReaction(message.id, 'love')}>
+                      <Heart
+                        className={`w-3 h-3 ${
+                          reaction?.type === 'love' ? 'fill-current' : ''
+                        }`}
+                      />
+                    </Button>
+
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className={`h-7 px-2 transition-colors ${
+                        reaction?.type === 'dislike'
+                          ? 'text-red-500 bg-red-50 dark:bg-red-900/20'
+                          : darkMode
+                          ? 'text-gray-400 hover:text-red-400 hover:bg-gray-800'
+                          : 'text-gray-500 hover:text-red-500 hover:bg-gray-100'
+                      }`}
+                      onClick={() => handleReaction(message.id, 'dislike')}>
+                      <ThumbsDown
+                        className={`w-3 h-3 ${
+                          reaction?.type === 'dislike' ? 'fill-current' : ''
+                        }`}
+                      />
+                    </Button>
+
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className={`h-7 px-2 transition-colors ${
+                        darkMode
+                          ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                      }`}>
+                      <MoreHorizontal className='w-3 h-3' />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Timestamp for User messages */}
+                {isUser && (
+                  <div
+                    className={`text-xs mt-1 ${
+                      darkMode ? 'text-gray-500' : 'text-gray-400'
+                    }`}>
+                    {new Date(
+                      message.timestamp || Date.now(),
+                    ).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* User Avatar */}
+              {isUser && (
+                <div className='flex-shrink-0 ml-3'>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600`}>
+                    <User className='w-4 h-4 text-white' />
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Simple Typing Indicator */}
+        {isTyping && (
+          <div className='flex justify-start'>
+            <div className='flex-shrink-0 mr-3'>
+              <div className='relative'>
+                <div className='w-8 h-8 rounded-full overflow-hidden border border-blue-500/30 bg-gradient-to-br from-blue-500 to-purple-600'>
+                  <img
+                    src={persona?.avatarUrl}
+                    alt={`${persona?.name} avatar`}
+                    className='w-full h-full object-cover'
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextElementSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div
+                    className='w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-sm text-white'
+                    style={{ display: 'none' }}>
+                    {persona?.avatar}
+                  </div>
+                </div>
+                <div className='absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border border-white dark:border-gray-900'></div>
+              </div>
+            </div>
+
+            <div
+              className={`rounded-2xl px-4 py-3 ${
+                darkMode
+                  ? 'bg-gray-800 border border-gray-700'
+                  : 'bg-white border border-gray-200 shadow-sm'
+              }`}>
+              <div className='flex items-center space-x-1'>
+                {[0, 1, 2].map((index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full animate-bounce ${
+                      darkMode ? 'bg-gray-400' : 'bg-gray-500'
+                    }`}
+                    style={{ animationDelay: `${index * 150}ms` }}
+                  />
+                ))}
+                <span
+                  className={`text-xs ml-2 ${
+                    darkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>
+                  {persona?.name} is thinking...
+                </span>
+              </div>
             </div>
           </div>
-        </motion.div>
-      )}
+        )}
 
-      <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Custom Scrollbar Styles */}
+      <style jsx>{`
+        .custom-scrollbar-light {
+          scrollbar-width: thin;
+          scrollbar-color: #d1d5db #f9fafb;
+        }
+
+        .custom-scrollbar-dark {
+          scrollbar-width: thin;
+          scrollbar-color: #4b5563 #1f2937;
+        }
+
+        .custom-scrollbar-light::-webkit-scrollbar,
+        .custom-scrollbar-dark::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .custom-scrollbar-light::-webkit-scrollbar-track {
+          background: #f9fafb;
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar-dark::-webkit-scrollbar-track {
+          background: #1f2937;
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar-light::-webkit-scrollbar-thumb {
+          background: #d1d5db;
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar-dark::-webkit-scrollbar-thumb {
+          background: #4b5563;
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar-light::-webkit-scrollbar-thumb:hover {
+          background: #9ca3af;
+        }
+
+        .custom-scrollbar-dark::-webkit-scrollbar-thumb:hover {
+          background: #6b7280;
+        }
+      `}</style>
     </div>
   );
 };
