@@ -1,0 +1,19 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="32" height="32" rx="6" fill="url(#favicon-gradient)"/>
+  
+  <defs>
+    <linearGradient id="favicon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Simplified S -->
+  <path d="M12 11 C10 11, 8 12, 8 14 C8 16, 10 17, 12 17 L18 17 C19 17, 20 18, 20 19 C20 20, 19 21, 18 21 L10 21" 
+        stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+  
+  <!-- Small indicators -->
+  <circle cx="24" cy="8" r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="8" cy="24" r="1.5" fill="white" opacity="0.8"/>
+</svg>

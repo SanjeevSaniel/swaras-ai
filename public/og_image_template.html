@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swaras AI - OG Image</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .og-container {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            font-family: 'Manrope', sans-serif;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 0%, transparent 50%);
+        }
+        
+        .content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            max-width: 900px;
+            padding: 40px;
+        }
+        
+        .logo {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(45deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tagline {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #e0e7ff;
+        }
+        
+        .description {
+            font-size: 20px;
+            font-weight: 400;
+            margin-bottom: 32px;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+        
+        .mentors {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-bottom: 32px;
+        }
+        
+        .mentor {
+            text-align: center;
+        }
+        
+        .mentor-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 12px;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+        
+        .mentor-avatar.piyush {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+        
+        .mentor-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .mentor-title {
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+        
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e0e7ff;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .corner-decoration {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        .corner-decoration.top-left {
+            top: -100px;
+            left: -100px;
+        }
+        
+        .corner-decoration.bottom-right {
+            bottom: -100px;
+            right: -100px;
+        }
+        
+        .twitter-card {
+            width: 1200px;
+            height: 675px;
+        }
+        
+        .square-version {
+            width: 1080px;
+            height: 1080px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main OG Image (1200x630) -->
+    <div class="og-container">
+        <div class="bg-pattern"></div>
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration bottom-right"></div>
+        
+        <div class="content">
+            <div class="logo">Swaras AI</div>
+            <div class="tagline">Code with Legends</div>
+            <div class="description">
+                AI-powered coding mentorship with legendary Indian developers
+            </div>
+            
+            <div class="mentors">
+                <div class="mentor">
+                    <div class="mentor-avatar">☕</div>
+                    <div class="mentor-name">Hitesh Choudhary</div>
+                    <div class="mentor-title">Chai aur Code</div>
+                </div>
+                <div class="mentor">
+                    <div class="mentor-avatar piyush">🚀</div>
+                    <div class="mentor-name">Piyush Garg</div>
+                    <div class="mentor-title">Building Devs</div>
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">💬</div>
+                    <span>Real-time Chat</span>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🧠</div>
+                    <span>Personalized Learning</span>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <span>Career Guidance</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Function to create different sized versions
+        function createVersion(className, width, height) {
+            const container = document.querySelector('.og-container');
+            container.className = `og-container ${className}`;
+            container.style.width = width + 'px';
+            container.style.height = height + 'px';
+        }
+        
+        // Uncomment one of these to generate different versions:
+        // createVersion('twitter-card', 1200, 675);
+        // createVersion('square-version', 1080, 1080);
+    </script>
+</body>
+</html>
