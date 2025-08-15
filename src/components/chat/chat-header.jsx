@@ -1,4 +1,4 @@
-// src/components/chat/chat-header.jsx (Compact - No Tags)
+// src/components/chat/chat-header.jsx (Compact Version)
 import { Button } from '@/components/ui/button';
 import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
@@ -28,7 +28,7 @@ const ChatHeader = ({ selectedPersona }) => {
         <Menu className='h-5 w-5' />
       </Button>
 
-      {/* Persona info - clean layout */}
+      {/* Persona info - compact layout */}
       <div className='flex items-center space-x-3 flex-1 min-w-0'>
         {/* Avatar with online indicator */}
         <div className='relative flex-shrink-0'>
@@ -46,11 +46,11 @@ const ChatHeader = ({ selectedPersona }) => {
             style={{ display: 'none' }}>
             {persona.avatar}
           </div>
-          {/* Online indicator */}
+          {/* Compact online indicator */}
           <div className='absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white'></div>
         </div>
 
-        {/* Name and status only */}
+        {/* Name and status - single line layout */}
         <div className='flex-1 min-w-0'>
           <div className='flex items-center space-x-2'>
             <h2
@@ -68,10 +68,33 @@ const ChatHeader = ({ selectedPersona }) => {
               Online
             </span>
           </div>
+
+          {/* Compact expertise tags */}
+          <div className='flex items-center space-x-1 mt-1'>
+            {persona.expertise.slice(0, 2).map((skill, index) => (
+              <span
+                key={index}
+                className={`text-xs px-1.5 py-0.5 rounded ${
+                  darkMode
+                    ? 'bg-gray-700/60 text-gray-300'
+                    : 'bg-gray-100 text-gray-600'
+                }`}>
+                {skill}
+              </span>
+            ))}
+            {persona.expertise.length > 2 && (
+              <span
+                className={`text-xs ${
+                  darkMode ? 'text-gray-400' : 'text-gray-500'
+                }`}>
+                +{persona.expertise.length - 2}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Single info button */}
+      {/* Optional: Single action button for settings/info */}
       <Button
         variant='ghost'
         size='sm'
