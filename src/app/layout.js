@@ -9,6 +9,9 @@ export const metadata = {
   title: 'Swaras AI - Code with Legends',
   description:
     'AI-powered chat with coding legends Hitesh Choudhary and Piyush Garg',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 const RootLayout = ({ children }) => {
@@ -21,6 +24,11 @@ const RootLayout = ({ children }) => {
         <meta
           name='viewport'
           content='width=device-width, initial-scale=1'
+        />
+        <link
+          rel='icon'
+          href='/favicon.ico'
+          sizes='any'
         />
       </head>
       <body className={`${manrope.className} antialiased`}>
