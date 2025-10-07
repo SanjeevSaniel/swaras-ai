@@ -3,6 +3,7 @@
 
 import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
+import { useUser, useClerk, SignInButton } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -12,19 +13,31 @@ import {
   Users,
   WifiOff,
   Zap,
+  ChevronDown,
+  LogOut,
+  Settings,
+  Moon,
+  Sun,
+  User as UserIcon,
 } from 'lucide-react';
-import AnimatedThemeToggle from './animated-theme-toggle';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { useState } from 'react';
 import ConversationCombobox from './conversation-combobox';
 import PersonaSelector from './persona-selector';
 
 const AppSidebar = () => {
   const {
     darkMode,
+    toggleDarkMode,
     selectedPersona,
     conversations,
     mentorsOnline,
     mentorsLoading,
   } = useChatStore();
+
+  const { user, isSignedIn, isLoaded } = useUser();
+  const { signOut, openSignIn } = useClerk();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const currentPersona = personas[selectedPersona];
   const personaConversations = conversations.filter(
@@ -84,10 +97,10 @@ const AppSidebar = () => {
     <div
       className={`h-full flex flex-col transition-all duration-500 relative overflow-hidden ${
         darkMode
-          ? 'bg-gradient-to-b from-gray-900/95 via-gray-900/90 to-gray-800/95'
-          : 'bg-gradient-to-b from-white/95 via-white/90 to-gray-50/95'
+          ? 'bg-gradient-to-b from-slate-950/95 via-slate-900/90 to-slate-800/95'
+          : 'bg-gradient-to-b from-white/95 via-white/90 to-slate-50/95'
       } backdrop-blur-xl border-r ${
-        darkMode ? 'border-gray-700/40' : 'border-gray-200/40'
+        darkMode ? 'border-slate-700/40' : 'border-slate-200/40'
       }`}>
       {/* Animated background pattern */}
       <div className='absolute inset-0 opacity-5 pointer-events-none'>
@@ -98,43 +111,188 @@ const AppSidebar = () => {
       <div
         className={`flex-shrink-0 p-4 border-b backdrop-blur-sm ${
           darkMode
-            ? 'border-gray-700/40 bg-gray-900/20'
-            : 'border-gray-200/40 bg-white/20'
+            ? 'border-slate-700/40 bg-slate-900/20'
+            : 'border-slate-200/40 bg-white/20'
         }`}>
-        {/* Main Brand Section */}
+        {/* Main Brand Section with Dropdown */}
         <motion.div
           className='flex items-center justify-between mb-3'
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.6, ease: 'easeOut' }}>
-          <div className='flex items-center space-x-3 flex-1 min-w-0'>
-            <motion.div
-              className='relative w-8 h-8 bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 rounded-xl flex items-center justify-center shadow-md cursor-pointer'
-              whileHover={{ scale: 1.1, rotate: 180 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.4 }}>
-              <Sparkles className='w-4 h-4 text-white' />
-            </motion.div>
+          <Popover open={dropdownOpen} onOpenChange={setDropdownOpen}>
+            <PopoverTrigger asChild>
+              <button className='flex items-center space-x-3 flex-1 min-w-0 hover:opacity-80 transition-opacity'>
+                {/* Modern Brushed Geometric Logo */}
+                <motion.div
+                  className='relative w-10 h-10 flex items-center justify-center'
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}>
+                  <svg
+                    viewBox="0 0 48 48"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-10 h-10">
+                    {/* Geometric hexagon with brushed S */}
+                    <path
+                      d="M24 2L42 13V35L24 46L6 35V13L24 2Z"
+                      fill={darkMode ? '#1e293b' : '#f1f5f9'}
+                      stroke={darkMode ? '#3b82f6' : '#2563eb'}
+                      strokeWidth="1.5"
+                    />
+                    {/* Stylized S with geometric cuts */}
+                    <path
+                      d="M24 14C27 14 29.5 15.5 30.5 18C30.8 18.8 30.5 19.5 29.7 19.8C28.9 20.1 28.2 19.8 27.9 19C27.3 17.5 25.8 16.5 24 16.5C21.5 16.5 19.5 18 19.5 20C19.5 21.5 20.5 22.5 23 23.5L25 24.3C28.5 25.5 30 27 30 30C30 33 27.5 35.5 24 35.5C20.5 35.5 17.8 33.5 17 30.5C16.8 29.7 17.2 28.9 18 28.7C18.8 28.5 19.6 28.9 19.8 29.7C20.3 31.5 22 32.5 24 32.5C26.5 32.5 28.5 31 28.5 29C28.5 27.5 27.5 26.8 25 25.8L23 25C19.5 23.8 18 22.3 18 20C18 17 20.5 14 24 14Z"
+                      fill={darkMode ? '#3b82f6' : '#2563eb'}
+                    />
+                    {/* Geometric accent dots */}
+                    <circle cx="24" cy="10" r="1.5" fill={darkMode ? '#3b82f6' : '#2563eb'} opacity="0.6"/>
+                    <circle cx="24" cy="38" r="1.5" fill={darkMode ? '#3b82f6' : '#2563eb'} opacity="0.6"/>
+                  </svg>
+                </motion.div>
 
-            <div className='min-w-0 flex-1'>
-              <h1 className='text-base font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent'>
-                Swaras AI
-              </h1>
-              <p
-                className={`text-xs ${
-                  darkMode ? 'text-gray-400' : 'text-gray-600'
-                } font-medium`}>
-                Code with Legends
-              </p>
-            </div>
-          </div>
+                <div className='min-w-0 flex-1 text-left'>
+                  <div className='flex items-center space-x-1.5'>
+                    <h1 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}
+                      style={{
+                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                        letterSpacing: '-0.03em',
+                        fontWeight: '700'
+                      }}>
+                      SWARAS
+                    </h1>
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''} ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                  </div>
+                  <p
+                    className={`text-[10px] font-bold tracking-[0.15em] uppercase ${
+                      darkMode ? 'text-gray-500' : 'text-gray-500'
+                    }`}>
+                    AI PLATFORM
+                  </p>
+                </div>
+              </button>
+            </PopoverTrigger>
 
-          <AnimatedThemeToggle />
+            <PopoverContent
+              className={`w-56 p-2 ${darkMode ? 'bg-[#1a1a1a] border-[#2a2a2a]' : 'bg-white border-[#e5e7eb]'}`}
+              align="start"
+              sideOffset={8}>
+              <div className='space-y-1'>
+                {/* User Info */}
+                {isLoaded && (
+                  <>
+                    {isSignedIn ? (
+                      <div className={`px-3 py-2 rounded-lg ${darkMode ? 'bg-[#262626]' : 'bg-[#f5f5f5]'}`}>
+                        <div className='flex items-center space-x-2'>
+                          {user?.imageUrl ? (
+                            <img
+                              src={user.imageUrl}
+                              alt={user.fullName || 'User'}
+                              className='w-8 h-8 rounded-full object-cover'
+                            />
+                          ) : (
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${darkMode ? 'bg-[#2563eb]' : 'bg-[#2563eb]'}`}>
+                              <UserIcon className='w-4 h-4 text-white' />
+                            </div>
+                          )}
+                          <div className='flex-1 min-w-0'>
+                            <p className={`text-sm font-medium truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                              {user?.fullName || user?.firstName || 'User'}
+                            </p>
+                            <p className={`text-xs truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {user?.primaryEmailAddress?.emailAddress || 'No email'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={`px-3 py-2 rounded-lg ${darkMode ? 'bg-[#262626]' : 'bg-[#f5f5f5]'}`}>
+                        <button
+                          onClick={() => {
+                            openSignIn();
+                            setDropdownOpen(false);
+                          }}
+                          className={`w-full text-left ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                          <div className='flex items-center space-x-2'>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${darkMode ? 'bg-[#2563eb]' : 'bg-[#2563eb]'}`}>
+                              <UserIcon className='w-4 h-4 text-white' />
+                            </div>
+                            <div>
+                              <p className='text-sm font-medium'>Sign In</p>
+                              <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                Click to sign in
+                              </p>
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {/* Divider */}
+                <div className={`h-px ${darkMode ? 'bg-[#2a2a2a]' : 'bg-[#e5e7eb]'}`} />
+
+                {/* Theme Toggle */}
+                <button
+                  onClick={() => {
+                    toggleDarkMode();
+                    setDropdownOpen(false);
+                  }}
+                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                    darkMode
+                      ? 'hover:bg-[#262626] text-gray-300'
+                      : 'hover:bg-[#f5f5f5] text-gray-700'
+                  }`}>
+                  {darkMode ? <Sun className='w-4 h-4' /> : <Moon className='w-4 h-4' />}
+                  <span className='text-sm'>
+                    {darkMode ? 'Light Mode' : 'Dark Mode'}
+                  </span>
+                </button>
+
+                {/* Settings */}
+                <button
+                  onClick={() => {
+                    console.log('Settings clicked');
+                    setDropdownOpen(false);
+                  }}
+                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                    darkMode
+                      ? 'hover:bg-[#262626] text-gray-300'
+                      : 'hover:bg-[#f5f5f5] text-gray-700'
+                  }`}>
+                  <Settings className='w-4 h-4' />
+                  <span className='text-sm'>Settings</span>
+                </button>
+
+                {/* Divider */}
+                <div className={`h-px ${darkMode ? 'bg-[#2a2a2a]' : 'bg-[#e5e7eb]'}`} />
+
+                {/* Logout - Only show if signed in */}
+                {isSignedIn && (
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                      darkMode
+                        ? 'hover:bg-red-900/20 text-red-400'
+                        : 'hover:bg-red-50 text-red-600'
+                    }`}>
+                    <LogOut className='w-4 h-4' />
+                    <span className='text-sm'>Sign Out</span>
+                  </button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
         </motion.div>
 
         {/* Compact Status Section */}
         <motion.div
-          className={`rounded-xl p-3 border ${statusConfig.bgColor} backdrop-blur-sm`}
+          className={`rounded-2xl p-3 border ${statusConfig.bgColor} backdrop-blur-sm`}
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.5 }}>

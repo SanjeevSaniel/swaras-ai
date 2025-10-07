@@ -95,8 +95,8 @@ const ChatInput = ({ onSendMessage, selectedPersona, isTyping }) => {
     <div
       className={`relative ${
         darkMode
-          ? 'bg-gray-950/95 border-gray-800/50'
-          : 'bg-white/95 border-gray-200/50'
+          ? 'bg-slate-950/95 border-slate-800/50'
+          : 'bg-white/95 border-slate-200/50'
       } border-t backdrop-blur-xl`}>
       {/* Compact Suggestions Panel */}
       <AnimatePresence>
@@ -106,10 +106,10 @@ const ChatInput = ({ onSendMessage, selectedPersona, isTyping }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`absolute bottom-full left-0 right-0 mb-1 mx-3 rounded-xl border shadow-xl backdrop-blur-xl ${
+            className={`absolute bottom-full left-0 right-0 mb-1 mx-3 rounded-2xl border shadow-xl backdrop-blur-xl ${
               darkMode
-                ? 'bg-gray-900/95 border-gray-700/50'
-                : 'bg-white/95 border-gray-200/50'
+                ? 'bg-slate-900/95 border-slate-700/50'
+                : 'bg-white/95 border-slate-200/50'
             }`}>
             {/* Header - Compact */}
             <div className='p-3 border-b border-gray-200/20'>
@@ -173,243 +173,153 @@ const ChatInput = ({ onSendMessage, selectedPersona, isTyping }) => {
         )}
       </AnimatePresence>
 
-      {/* Main Input Container - Very Compact */}
-      <div className='p-3'>
-        <div
-          className={`relative rounded-xl border transition-all duration-300 ${
-            isFocused
-              ? darkMode
-                ? 'bg-gray-900/80 border-blue-500/50 shadow-xl shadow-blue-500/10'
-                : 'bg-white border-blue-400/50 shadow-xl shadow-blue-400/10'
-              : isHovered
-              ? darkMode
-                ? 'bg-gray-900/60 border-gray-600/60'
-                : 'bg-gray-50/80 border-gray-300/60'
-              : darkMode
-              ? 'bg-gray-900/40 border-gray-700/40'
-              : 'bg-gray-50/60 border-gray-300/40'
-          } backdrop-blur-xl`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}>
-          {/* Copilot gradient border effect */}
-          {isFocused && (
-            <div className='absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 -z-10 blur-lg' />
-          )}
+      {/* Main Input Container - Centered with max-width */}
+      <div className='p-3 flex justify-center'>
+        <div className='w-full max-w-3xl'>
+          <div
+            className={`relative rounded-xl border transition-all duration-200 ${
+              isFocused
+                ? darkMode
+                  ? 'bg-[#1a1a1a] border-[#3b82f6]'
+                  : 'bg-white border-[#2563eb]'
+                : darkMode
+                ? 'bg-[#1a1a1a] border-[#2a2a2a]'
+                : 'bg-white border-[#e5e7eb]'
+            }`}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}>
 
-          {/* Input Content - Very Compact */}
-          <div className='flex items-center p-2.5 space-x-2.5'>
-            {/* AI Assistant Avatar - Compact */}
-            {persona && (
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className='flex-shrink-0'>
-                <div className='relative'>
-                  <img
-                    src={persona.avatarUrl}
-                    alt={`${persona.name} avatar`}
-                    className='w-6 h-6 rounded-full object-cover border border-blue-500/30'
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextElementSibling.style.display = 'flex';
-                    }}
-                  />
-                  <div
-                    className='w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs border border-blue-500/30'
-                    style={{ display: 'none' }}>
-                    {persona.avatar}
+            {/* Input Content with bottom-aligned avatar and button */}
+            <div className='flex items-end p-3 space-x-3'>
+              {/* AI Assistant Avatar - Bottom aligned */}
+              {persona && (
+                <div className='flex-shrink-0 pb-0.5'>
+                  <div className='relative'>
+                    <img
+                      src={persona.avatarUrl}
+                      alt={`${persona.name} avatar`}
+                      className='w-8 h-8 rounded-full object-cover'
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div
+                      className='w-8 h-8 rounded-full bg-[#2563eb] flex items-center justify-center text-sm'
+                      style={{ display: 'none' }}>
+                      {persona.avatar}
+                    </div>
+
+                    {/* Online indicator */}
+                    <div className='absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white'></div>
                   </div>
-
-                  {/* Online indicator - very small */}
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className='absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full border border-white'></motion.div>
                 </div>
-              </motion.div>
-            )}
-
-            {/* Text Input */}
-            <div className='flex-1'>
-              <textarea
-                ref={textareaRef}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                placeholder={
-                  selectedPersona
-                    ? `Ask ${persona?.name}...`
-                    : 'Select mentor to start...'
-                }
-                disabled={!selectedPersona || isSubmitting}
-                className={`w-full resize-none bg-transparent border-none ${
-                  darkMode
-                    ? 'text-gray-100 placeholder-gray-500'
-                    : 'text-gray-900 placeholder-gray-500'
-                } focus:outline-none text-sm leading-5 font-medium`}
-                rows={1}
-                style={{
-                  minHeight: '18px',
-                  maxHeight: '80px',
-                }}
-              />
-            </div>
-
-            {/* Action Buttons - Minimal */}
-            <div className='flex items-center space-x-1.5 flex-shrink-0'>
-              {/* AI Suggestions Button - Only when no text */}
-              {!hasText && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowSuggestions(!showSuggestions)}
-                  className={`p-1.5 rounded-lg transition-all duration-200 ${
-                    showSuggestions
-                      ? 'bg-blue-500 text-white shadow-md'
-                      : darkMode
-                      ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-800/50'
-                      : 'text-gray-500 hover:text-blue-500 hover:bg-blue-50'
-                  }`}>
-                  <Sparkles className='w-3.5 h-3.5' />
-                </motion.button>
               )}
 
-              {/* Send Button - Very Compact */}
-              <motion.button
-                whileHover={{ scale: canSend ? 1.05 : 1 }}
-                whileTap={{ scale: canSend ? 0.95 : 1 }}
-                onClick={canSend ? handleSend : undefined}
-                disabled={!canSend}
-                className={`relative p-2 rounded-lg transition-all duration-300 ${
-                  canSend
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg'
-                    : darkMode
-                    ? 'bg-gray-800/50 text-gray-500 cursor-not-allowed'
-                    : 'bg-gray-200/50 text-gray-400 cursor-not-allowed'
-                }`}>
-                {/* Copilot glow effect - subtle */}
-                {canSend && (
-                  <motion.div
-                    animate={{
-                      opacity: [0.3, 0.6, 0.3],
-                      scale: [1, 1.05, 1],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                    className='absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400/20 to-purple-500/20 blur-sm -z-10'
-                  />
+              {/* Text Input */}
+              <div className='flex-1'>
+                <textarea
+                  ref={textareaRef}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  placeholder={
+                    selectedPersona
+                      ? `Ask ${persona?.name}...`
+                      : 'Select mentor to start...'
+                  }
+                  disabled={!selectedPersona || isSubmitting}
+                  className={`w-full resize-none bg-transparent border-none ${
+                    darkMode
+                      ? 'text-white placeholder-gray-500'
+                      : 'text-gray-900 placeholder-gray-500'
+                  } focus:outline-none text-sm leading-relaxed`}
+                  rows={1}
+                  style={{
+                    minHeight: '24px',
+                    maxHeight: '120px',
+                  }}
+                />
+              </div>
+
+              {/* Action Buttons - Bottom aligned */}
+              <div className='flex items-center space-x-2 flex-shrink-0 pb-0.5'>
+                {/* AI Suggestions Button - Only when no text */}
+                {!hasText && (
+                  <button
+                    onClick={() => setShowSuggestions(!showSuggestions)}
+                    className={`p-2 rounded-lg transition-colors duration-200 ${
+                      showSuggestions
+                        ? 'bg-[#2563eb] text-white'
+                        : darkMode
+                        ? 'text-gray-400 hover:text-[#3b82f6] hover:bg-[#262626]'
+                        : 'text-gray-500 hover:text-[#2563eb] hover:bg-[#f5f5f5]'
+                    }`}>
+                    <Sparkles className='w-4 h-4' />
+                  </button>
                 )}
 
-                <AnimatePresence mode='wait'>
+                {/* Send Button */}
+                <button
+                  onClick={canSend ? handleSend : undefined}
+                  disabled={!canSend}
+                  className={`p-2 rounded-lg transition-colors duration-200 ${
+                    canSend
+                      ? 'bg-[#2563eb] hover:bg-[#1d4ed8] text-white'
+                      : darkMode
+                      ? 'bg-[#262626] text-gray-500 cursor-not-allowed'
+                      : 'bg-[#f5f5f5] text-gray-400 cursor-not-allowed'
+                  }`}>
                   {isSubmitting ? (
-                    <motion.div
-                      key='loading'
-                      initial={{ scale: 0, rotate: 0 }}
-                      animate={{ scale: 1, rotate: 360 }}
-                      exit={{ scale: 0 }}
-                      transition={{
-                        scale: { duration: 0.2 },
-                        rotate: {
-                          duration: 1,
-                          repeat: Infinity,
-                          ease: 'linear',
-                        },
-                      }}>
-                      <Loader2 className='w-3.5 h-3.5' />
-                    </motion.div>
-                  ) : canSend ? (
-                    <motion.div
-                      key='send'
-                      initial={{ scale: 0, y: 3 }}
-                      animate={{ scale: 1, y: 0 }}
-                      exit={{ scale: 0, y: -3 }}
-                      transition={{ duration: 0.2, ease: 'easeOut' }}>
-                      <ArrowUp className='w-3.5 h-3.5' />
-                    </motion.div>
+                    <Loader2 className='w-4 h-4 animate-spin' />
                   ) : (
-                    <motion.div
-                      key='disabled'
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      transition={{ duration: 0.2 }}>
-                      <ArrowUp className='w-3.5 h-3.5' />
-                    </motion.div>
+                    <ArrowUp className='w-4 h-4' />
                   )}
-                </AnimatePresence>
-              </motion.button>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Status - Very Compact */}
-        <div className='mt-1.5 px-1'>
-          <AnimatePresence>
+          {/* Status - Inside max-w container */}
+          <div className='mt-2 px-1'>
             {isTyping ? (
-              <motion.div
-                initial={{ opacity: 0, y: 3 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -3 }}
-                className='flex items-center space-x-1.5'>
-                <div className='flex space-x-0.5'>
+              <div className='flex items-center space-x-2'>
+                <div className='flex space-x-1'>
                   {[0, 1, 2].map((i) => (
-                    <motion.div
+                    <div
                       key={i}
-                      animate={{
-                        scale: [1, 1.3, 1],
-                        opacity: [0.5, 1, 0.5],
-                      }}
-                      transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        delay: i * 0.2,
-                      }}
-                      className='w-1 h-1 bg-blue-500 rounded-full'
+                      className='w-1 h-1 bg-[#2563eb] rounded-full animate-pulse'
+                      style={{ animationDelay: `${i * 0.2}s` }}
                     />
                   ))}
                 </div>
                 <span
                   className={`text-xs ${
-                    darkMode ? 'text-blue-400' : 'text-blue-600'
+                    darkMode ? 'text-gray-400' : 'text-gray-600'
                   }`}>
                   {persona?.name} is thinking...
                 </span>
-              </motion.div>
+              </div>
             ) : !selectedPersona ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className='flex items-center space-x-1.5'>
-                <Brain className='w-3 h-3 text-purple-500' />
-                <span className='text-xs text-purple-600 font-medium'>
+              <div className='flex items-center space-x-2'>
+                <Brain className='w-3 h-3 text-gray-500' />
+                <span className='text-xs text-gray-500'>
                   Choose AI mentor to begin
                 </span>
-              </motion.div>
+              </div>
             ) : (
               <div className='flex items-center justify-between'>
-                <div
+                <span
                   className={`text-xs ${
                     darkMode ? 'text-gray-500' : 'text-gray-400'
                   }`}>
-                  Enter to send
-                </div>
-                <div className='flex items-center space-x-1'>
-                  <div className='w-1 h-1 bg-green-500 rounded-full animate-pulse' />
-                  <div
-                    className={`text-xs ${
-                      darkMode ? 'text-gray-500' : 'text-gray-400'
-                    }`}>
-                    AI
-                  </div>
-                </div>
+                  Press Enter to send
+                </span>
               </div>
             )}
-          </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>

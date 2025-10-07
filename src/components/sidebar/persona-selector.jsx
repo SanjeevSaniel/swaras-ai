@@ -5,7 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Coffee, Zap, Crown, Loader2 } from 'lucide-react';
+import {
+  GraduationCap,
+  Code2,
+  Crown,
+  Loader2,
+  Sparkles,
+  CheckCircle2,
+} from 'lucide-react';
 
 const PersonaSelector = () => {
   const {
@@ -16,21 +23,25 @@ const PersonaSelector = () => {
     mentorsLoading,
   } = useChatStore();
 
-  const personaIcons = { hitesh: Coffee, piyush: Zap };
+  const personaIcons = { hitesh: GraduationCap, piyush: Code2 };
 
-  // Define persona-specific colors
+  // Define professional persona-specific colors
   const personaColors = {
     hitesh: {
-      bgColor: 'from-orange-500/20 via-amber-500/20 to-yellow-500/20',
-      borderColor: 'border-orange-500/60',
-      darkBgColor: 'from-orange-900/40 via-amber-900/40 to-orange-800/40',
-      darkBorderColor: 'border-orange-600/50',
+      bgColor: 'from-slate-500/10 via-slate-600/8 to-slate-500/6',
+      borderColor: 'border-slate-400/30',
+      darkBgColor: 'from-slate-500/12 via-slate-600/10 to-slate-500/8',
+      darkBorderColor: 'border-slate-400/25',
+      iconColor: 'text-slate-600',
+      darkIconColor: 'text-slate-400',
     },
     piyush: {
-      bgColor: 'from-blue-500/20 via-cyan-500/20 to-teal-500/20',
-      borderColor: 'border-blue-500/60',
-      darkBgColor: 'from-blue-900/40 via-cyan-900/40 to-teal-800/40',
-      darkBorderColor: 'border-blue-600/50',
+      bgColor: 'from-blue-500/10 via-blue-600/8 to-blue-500/6',
+      borderColor: 'border-blue-400/30',
+      darkBgColor: 'from-blue-500/12 via-blue-600/10 to-blue-500/8',
+      darkBorderColor: 'border-blue-400/25',
+      iconColor: 'text-blue-600',
+      darkIconColor: 'text-blue-400',
     },
   };
 
@@ -102,69 +113,92 @@ const PersonaSelector = () => {
 
               {/* Content */}
               <div className='flex-1 min-w-0'>
-                <div className='flex items-center space-x-2'>
+                <div className='flex items-center space-x-2 mb-1'>
                   <h3
-                    className={`font-semibold truncate ${
-                      isSelected
-                        ? darkMode
-                          ? 'text-gray-100'
-                          : 'text-gray-900'
-                        : darkMode
-                        ? 'text-gray-100'
-                        : 'text-gray-900'
+                    className={`font-semibold text-base truncate ${
+                      darkMode ? 'text-slate-100' : 'text-slate-900'
                     }`}>
                     {persona.name}
                   </h3>
-                  {persona.isPremium && (
-                    <Crown className='w-4 h-4 text-yellow-500' />
+                  {isSelected && (
+                    <CheckCircle2
+                      className={`w-4 h-4 ${
+                        darkMode ? colors.darkIconColor : colors.iconColor
+                      }`}
+                    />
                   )}
                 </div>
 
                 <p
-                  className={`text-sm truncate ${
-                    darkMode ? 'text-gray-300' : 'text-gray-600'
+                  className={`text-sm truncate mb-2 ${
+                    darkMode ? 'text-slate-400' : 'text-slate-600'
                   }`}>
                   {persona.title}
                 </p>
 
-                <div className='flex items-center space-x-2 mt-2'>
+                <div className='flex items-center gap-1.5'>
                   <Badge
                     variant='secondary'
-                    className='text-xs'>
-                    {isSelected
-                      ? 'Active'
-                      : mentorsOnline
-                      ? 'Available'
-                      : 'Offline'}
+                    className={`text-xs px-2 py-0.5 ${
+                      isSelected
+                        ? darkMode
+                          ? `bg-gradient-to-r ${colors.darkBgColor} ${colors.darkBorderColor} border`
+                          : `bg-gradient-to-r ${colors.bgColor} ${colors.borderColor} border`
+                        : ''
+                    }`}>
+                    {isSelected ? (
+                      <span className='flex items-center gap-1'>
+                        <Sparkles className='w-3 h-3' /> Active
+                      </span>
+                    ) : mentorsOnline ? (
+                      'Available'
+                    ) : (
+                      'Offline'
+                    )}
                   </Badge>
                 </div>
               </div>
 
               <div className='flex-shrink-0'>
-                <IconComponent
-                  className={`w-5 h-5 ${
-                    darkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}
-                />
+                <div
+                  className={`p-2 rounded-lg transition-colors ${
+                    isSelected
+                      ? darkMode
+                        ? `bg-gradient-to-br ${colors.darkBgColor}`
+                        : `bg-gradient-to-br ${colors.bgColor}`
+                      : darkMode
+                      ? 'bg-slate-800/50'
+                      : 'bg-slate-100/50'
+                  }`}>
+                  <IconComponent
+                    className={`w-5 h-5 ${
+                      isSelected
+                        ? darkMode
+                          ? colors.darkIconColor
+                          : colors.iconColor
+                        : darkMode
+                        ? 'text-slate-400'
+                        : 'text-slate-500'
+                    }`}
+                  />
+                </div>
               </div>
             </div>
 
+            {/* Selection glow effect */}
             <AnimatePresence>
               {isSelected && (
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                  className={`absolute top-3 right-3 w-3 h-3 rounded-full ${
-                    darkMode
-                      ? personaId === 'hitesh'
-                        ? 'bg-orange-500'
-                        : 'bg-blue-500'
-                      : personaId === 'hitesh'
-                      ? 'bg-orange-600'
-                      : 'bg-blue-600'
-                  }`}
-                />
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className='absolute inset-0 rounded-xl overflow-hidden pointer-events-none'>
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-r ${
+                      darkMode ? colors.darkBgColor : colors.bgColor
+                    } opacity-30`}
+                  />
+                </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
