@@ -143,16 +143,16 @@ const WelcomeScreen = () => {
     return (
       <div
         className={`relative min-h-screen ${
-          darkMode
-            ? 'bg-[#27282c] text-white'
-            : 'bg-[#fafafa] text-gray-900'
+          darkMode ? 'bg-[#27282c] text-white' : 'bg-[#fafafa] text-gray-900'
         }`}>
         {/* JetBrains-style subtle gradient overlay */}
-        <div className={`absolute inset-0 ${
-          darkMode
-            ? 'bg-gradient-to-b from-[#27282c] via-[#27282c] to-[#1e1f23]'
-            : 'bg-gradient-to-b from-[#fafafa] via-[#fafafa] to-[#f5f5f5]'
-        }`} />
+        <div
+          className={`absolute inset-0 ${
+            darkMode
+              ? 'bg-gradient-to-b from-[#27282c] via-[#27282c] to-[#1e1f23]'
+              : 'bg-gradient-to-b from-[#fafafa] via-[#fafafa] to-[#f5f5f5]'
+          }`}
+        />
 
         <div className='relative z-10 max-w-[1280px] mx-auto px-8 py-16'>
           {/* JetBrains-style Hero section */}
@@ -160,7 +160,7 @@ const WelcomeScreen = () => {
             <div className='grid lg:grid-cols-2 gap-16 items-center'>
               {/* Left: Text content */}
               <div className='space-y-8'>
-                <div>
+                {/* <div>
                   <h1 className={`text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] ${
                     darkMode ? 'text-white' : 'text-[#27282c]'
                   }`}
@@ -196,10 +196,10 @@ const WelcomeScreen = () => {
                       </span>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Stats row */}
-                <div className='grid grid-cols-3 gap-6 pt-8 border-t'
+                {/* <div className='grid grid-cols-3 gap-6 pt-8 border-t'
                   style={{ borderColor: darkMode ? '#3c3d41' : '#e6e6e6' }}>
                   <div>
                     <div className={`text-3xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-[#27282c]'}`}>
@@ -225,17 +225,18 @@ const WelcomeScreen = () => {
                       AI Support
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Right: Visual element */}
-              <div className={`relative h-[500px] rounded-2xl overflow-hidden ${
-                darkMode ? 'bg-[#2b2d30]' : 'bg-white'
-              }`}
+              <div
+                className={`relative h-[500px] rounded-2xl overflow-hidden ${
+                  darkMode ? 'bg-[#2b2d30]' : 'bg-white'
+                }`}
                 style={{
                   boxShadow: darkMode
                     ? '0 20px 60px rgba(0,0,0,0.3)'
-                    : '0 20px 60px rgba(0,0,0,0.08)'
+                    : '0 20px 60px rgba(0,0,0,0.08)',
                 }}>
                 {/* Code editor mockup */}
                 <div className='p-4'>
@@ -247,53 +248,147 @@ const WelcomeScreen = () => {
 
                   <div className='space-y-3 font-mono text-sm'>
                     <div className='flex'>
-                      <span className={darkMode ? 'text-[#4d4d4d]' : 'text-[#999]'}>1</span>
+                      <span
+                        className={darkMode ? 'text-[#4d4d4d]' : 'text-[#999]'}>
+                        1
+                      </span>
                       <span className='ml-4'>
-                        <span className={darkMode ? 'text-[#cf8e6d]' : 'text-[#0033b3]'}>const</span>
-                        <span className={darkMode ? 'text-[#c77dbb]' : 'text-[#067d17]'}> mentor</span>
-                        <span className={darkMode ? 'text-white' : 'text-black'}> = </span>
-                        <span className={darkMode ? 'text-[#6a8759]' : 'text-[#1a8031]'}>"Hitesh"</span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#cf8e6d]' : 'text-[#0033b3]'
+                          }>
+                          const
+                        </span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#c77dbb]' : 'text-[#067d17]'
+                          }>
+                          {' '}
+                          mentor
+                        </span>
+                        <span
+                          className={darkMode ? 'text-white' : 'text-black'}>
+                          {' '}
+                          ={' '}
+                        </span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#6a8759]' : 'text-[#1a8031]'
+                          }>
+                          "Hitesh"
+                        </span>
                       </span>
                     </div>
                     <div className='flex'>
-                      <span className={darkMode ? 'text-[#4d4d4d]' : 'text-[#999]'}>2</span>
+                      <span
+                        className={darkMode ? 'text-[#4d4d4d]' : 'text-[#999]'}>
+                        2
+                      </span>
                       <span className='ml-4'>
-                        <span className={darkMode ? 'text-[#cf8e6d]' : 'text-[#0033b3]'}>const</span>
-                        <span className={darkMode ? 'text-[#c77dbb]' : 'text-[#067d17]'}> learn</span>
-                        <span className={darkMode ? 'text-white' : 'text-black'}> = </span>
-                        <span className={darkMode ? 'text-[#c77dbb]' : 'text-[#00627a]'}>await </span>
-                        <span className={darkMode ? 'text-[#ffc66d]' : 'text-[#0033b3]'}>swarasAI</span>
-                        <span className={darkMode ? 'text-white' : 'text-black'}>.</span>
-                        <span className={darkMode ? 'text-[#ffc66d]' : 'text-[#00627a]'}>ask</span>
-                        <span className={darkMode ? 'text-white' : 'text-black'}>  ()</span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#cf8e6d]' : 'text-[#0033b3]'
+                          }>
+                          const
+                        </span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#c77dbb]' : 'text-[#067d17]'
+                          }>
+                          {' '}
+                          learn
+                        </span>
+                        <span
+                          className={darkMode ? 'text-white' : 'text-black'}>
+                          {' '}
+                          ={' '}
+                        </span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#c77dbb]' : 'text-[#00627a]'
+                          }>
+                          await{' '}
+                        </span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#ffc66d]' : 'text-[#0033b3]'
+                          }>
+                          swarasAI
+                        </span>
+                        <span
+                          className={darkMode ? 'text-white' : 'text-black'}>
+                          .
+                        </span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#ffc66d]' : 'text-[#00627a]'
+                          }>
+                          ask
+                        </span>
+                        <span
+                          className={darkMode ? 'text-white' : 'text-black'}>
+                          {' '}
+                          ()
+                        </span>
                       </span>
                     </div>
                     <div className='flex'>
-                      <span className={darkMode ? 'text-[#4d4d4d]' : 'text-[#999]'}>3</span>
+                      <span
+                        className={darkMode ? 'text-[#4d4d4d]' : 'text-[#999]'}>
+                        3
+                      </span>
                       <span className='ml-4'>
-                        <span className={darkMode ? 'text-[#ffc66d]' : 'text-[#00627a]'}>console</span>
-                        <span className={darkMode ? 'text-white' : 'text-black'}>.</span>
-                        <span className={darkMode ? 'text-[#ffc66d]' : 'text-[#00627a]'}>log</span>
-                        <span className={darkMode ? 'text-white' : 'text-black'}>  (</span>
-                        <span className={darkMode ? 'text-[#6a8759]' : 'text-[#1a8031]'}>"Learning!"</span>
-                        <span className={darkMode ? 'text-white' : 'text-black'}>)</span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#ffc66d]' : 'text-[#00627a]'
+                          }>
+                          console
+                        </span>
+                        <span
+                          className={darkMode ? 'text-white' : 'text-black'}>
+                          .
+                        </span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#ffc66d]' : 'text-[#00627a]'
+                          }>
+                          log
+                        </span>
+                        <span
+                          className={darkMode ? 'text-white' : 'text-black'}>
+                          {' '}
+                          (
+                        </span>
+                        <span
+                          className={
+                            darkMode ? 'text-[#6a8759]' : 'text-[#1a8031]'
+                          }>
+                          "Learning!"
+                        </span>
+                        <span
+                          className={darkMode ? 'text-white' : 'text-black'}>
+                          )
+                        </span>
                       </span>
                     </div>
                   </div>
 
                   {/* AI Response */}
-                  <div className={`mt-8 p-4 rounded-lg ${
-                    darkMode ? 'bg-[#1e1f23]' : 'bg-[#f5f5f5]'
-                  }`}>
+                  <div
+                    className={`mt-8 p-4 rounded-lg ${
+                      darkMode ? 'bg-[#1e1f23]' : 'bg-[#f5f5f5]'
+                    }`}>
                     <div className='flex items-start space-x-3'>
                       <div className='w-8 h-8 rounded-full bg-gradient-to-r from-[#c026d3] to-[#d946ef] flex items-center justify-center text-white text-sm font-bold'>
                         AI
                       </div>
                       <div className='flex-1'>
-                        <p className={`text-sm leading-relaxed ${
-                          darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
-                        }`}>
-                          Great question! Let me help you understand async/await in JavaScript...
+                        <p
+                          className={`text-sm leading-relaxed ${
+                            darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
+                          }`}>
+                          Great question! Let me help you understand async/await
+                          in JavaScript...
                         </p>
                       </div>
                     </div>
@@ -305,9 +400,10 @@ const WelcomeScreen = () => {
 
           {/* Features section - JetBrains style */}
           <div className='mb-24'>
-            <h2 className={`text-4xl font-bold mb-12 ${
-              darkMode ? 'text-white' : 'text-[#27282c]'
-            }`}>
+            <h2
+              className={`text-4xl font-bold mb-12 ${
+                darkMode ? 'text-white' : 'text-[#27282c]'
+              }`}>
               Why choose Swaras AI
             </h2>
 
@@ -321,21 +417,24 @@ const WelcomeScreen = () => {
                       : 'bg-white hover:shadow-lg'
                   }`}
                   style={{
-                    border: `1px solid ${darkMode ? '#3c3d41' : '#e6e6e6'}`
+                    border: `1px solid ${darkMode ? '#3c3d41' : '#e6e6e6'}`,
                   }}>
-                  <div className='w-12 h-12 rounded-lg flex items-center justify-center mb-6'
+                  <div
+                    className='w-12 h-12 rounded-lg flex items-center justify-center mb-6'
                     style={{ backgroundColor: feature.color }}>
                     <feature.icon className='w-6 h-6 text-white' />
                   </div>
 
-                  <h3 className={`font-bold text-xl mb-3 ${
-                    darkMode ? 'text-white' : 'text-[#27282c]'
-                  }`}>
+                  <h3
+                    className={`font-bold text-xl mb-3 ${
+                      darkMode ? 'text-white' : 'text-[#27282c]'
+                    }`}>
                     {feature.title}
                   </h3>
-                  <p className={`text-base leading-relaxed ${
-                    darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
-                  }`}>
+                  <p
+                    className={`text-base leading-relaxed ${
+                      darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
+                    }`}>
                     {feature.description}
                   </p>
                 </div>
@@ -345,14 +444,16 @@ const WelcomeScreen = () => {
 
           {/* Mentors section - JetBrains style */}
           <div className='mb-24'>
-            <h2 className={`text-4xl font-bold mb-4 ${
-              darkMode ? 'text-white' : 'text-[#27282c]'
-            }`}>
+            <h2
+              className={`text-4xl font-bold mb-4 ${
+                darkMode ? 'text-white' : 'text-[#27282c]'
+              }`}>
               Meet your AI mentors
             </h2>
-            <p className={`text-xl mb-12 ${
-              darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
-            }`}>
+            <p
+              className={`text-xl mb-12 ${
+                darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
+              }`}>
               Learn from industry legends with years of real-world experience
             </p>
 
@@ -369,7 +470,9 @@ const WelcomeScreen = () => {
                     } ${!mentorsOnline ? 'opacity-50 cursor-not-allowed' : ''}`}
                     style={{
                       border: `1px solid ${darkMode ? '#3c3d41' : '#e6e6e6'}`,
-                      boxShadow: darkMode ? 'none' : '0 8px 24px rgba(0,0,0,0.06)'
+                      boxShadow: darkMode
+                        ? 'none'
+                        : '0 8px 24px rgba(0,0,0,0.06)',
                     }}>
                     <div className='flex items-start space-x-6'>
                       <div className='relative flex-shrink-0'>
@@ -389,47 +492,61 @@ const WelcomeScreen = () => {
                         </div>
 
                         {/* Online badge */}
-                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 ${
-                          darkMode ? 'border-[#2b2d30]' : 'border-white'
-                        } ${mentorsOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
+                        <div
+                          className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 ${
+                            darkMode ? 'border-[#2b2d30]' : 'border-white'
+                          } ${mentorsOnline ? 'bg-green-500' : 'bg-gray-400'}`}
+                        />
                       </div>
 
                       <div className='flex-1 min-w-0'>
                         <div className='flex items-start justify-between mb-2'>
-                          <h3 className={`font-bold text-2xl ${
-                            darkMode ? 'text-white' : 'text-[#27282c]'
-                          }`}>
+                          <h3
+                            className={`font-bold text-2xl ${
+                              darkMode ? 'text-white' : 'text-[#27282c]'
+                            }`}>
                             {personaData.name}
                           </h3>
-                          <svg className='w-5 h-5 flex-shrink-0' fill='currentColor' viewBox='0 0 20 20'>
-                            <path fillRule='evenodd' d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z' clipRule='evenodd' />
+                          <svg
+                            className='w-5 h-5 flex-shrink-0'
+                            fill='currentColor'
+                            viewBox='0 0 20 20'>
+                            <path
+                              fillRule='evenodd'
+                              d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
+                              clipRule='evenodd'
+                            />
                           </svg>
                         </div>
 
-                        <p className={`text-base mb-4 ${
-                          darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
-                        }`}>
+                        <p
+                          className={`text-base mb-4 ${
+                            darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
+                          }`}>
                           {personaData.title}
                         </p>
 
                         <div className='flex flex-wrap gap-2 mb-4'>
-                          {personaData.expertise.slice(0, 3).map((skill, skillIndex) => (
+                          {personaData.expertise
+                            .slice(0, 3)
+                            .map((skill, skillIndex) => (
+                              <span
+                                key={skillIndex}
+                                className={`text-xs px-3 py-1 rounded-full ${
+                                  darkMode
+                                    ? 'bg-[#1e1f23] text-[#aaadb3]'
+                                    : 'bg-[#f5f5f5] text-[#6c6e73]'
+                                }`}>
+                                {skill}
+                              </span>
+                            ))}
+                          {personaData.expertise.length > 3 && (
                             <span
-                              key={skillIndex}
                               className={`text-xs px-3 py-1 rounded-full ${
                                 darkMode
                                   ? 'bg-[#1e1f23] text-[#aaadb3]'
                                   : 'bg-[#f5f5f5] text-[#6c6e73]'
                               }`}>
-                              {skill}
-                            </span>
-                          ))}
-                          {personaData.expertise.length > 3 && (
-                            <span className={`text-xs px-3 py-1 rounded-full ${
-                              darkMode
-                                ? 'bg-[#1e1f23] text-[#aaadb3]'
-                                : 'bg-[#f5f5f5] text-[#6c6e73]'
-                            }`}>
                               +{personaData.expertise.length - 3} more
                             </span>
                           )}
@@ -479,12 +596,8 @@ const WelcomeScreen = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={`relative min-h-screen flex items-center justify-center p-6 overflow-hidden ${
-        darkMode
-          ? 'bg-[#0a0a0a] text-white'
-          : 'bg-white text-gray-900'
+        darkMode ? 'bg-[#0a0f1e] text-white' : 'bg-white text-gray-900'
       }`}>
-      <FloatingParticles />
-
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -502,7 +615,7 @@ const WelcomeScreen = () => {
               }}
             />
             <div
-              className='w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-5xl border-4 border-white/50 shadow-xl'
+              className='w-32 h-32 rounded-full bg-gradient-to-br from-[#0073e6] to-[#0052cc] flex items-center justify-center text-5xl border-4 border-white/50 shadow-xl'
               style={{ display: 'none' }}>
               {persona.avatar}
             </div>
@@ -523,7 +636,10 @@ const WelcomeScreen = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}>
           <h1 className='text-3xl md:text-4xl font-bold mb-4'>
-            Hello, I'm <span className='bg-gradient-to-r from-[#c026d3] to-[#d946ef] bg-clip-text text-transparent'>{persona.name}</span>
+            Hello, I'm{' '}
+            <span className='bg-gradient-to-r from-[#0073e6] to-[#0052cc] bg-clip-text text-transparent'>
+              {persona.name}
+            </span>
           </h1>
 
           <p
@@ -533,7 +649,7 @@ const WelcomeScreen = () => {
             {persona.description}
           </p>
 
-          {/* Status indicator - FIXED */}
+          {/* Status indicator */}
           <div
             className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full mb-6 ${
               mentorsOnline
@@ -565,8 +681,8 @@ const WelcomeScreen = () => {
                   variant='outline'
                   className={`px-3 py-1 ${
                     darkMode
-                      ? 'bg-[#2e1065] text-[#c084fc] border-[#3c3d41]'
-                      : 'bg-[#fdf4ff] text-[#a855f7] border-[#f3e8ff]'
+                      ? 'bg-blue-950/50 text-blue-400 border-slate-700'
+                      : 'bg-blue-50 text-blue-700 border-blue-200'
                   }`}>
                   {skill}
                 </Badge>
@@ -577,8 +693,8 @@ const WelcomeScreen = () => {
                 variant='outline'
                 className={`px-3 py-1 ${
                   darkMode
-                    ? 'bg-[#2e1065] text-[#c084fc] border-[#3c3d41]'
-                    : 'bg-[#fdf4ff] text-[#a855f7] border-[#f3e8ff]'
+                    ? 'bg-blue-950/50 text-blue-400 border-slate-700'
+                    : 'bg-blue-50 text-blue-700 border-blue-200'
                 }`}>
                 +{persona.expertise.length - 4} more
               </Badge>
@@ -598,13 +714,11 @@ const WelcomeScreen = () => {
                 rel='noopener noreferrer'
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
                   darkMode
-                    ? 'bg-[#1a1a1a] border-[#2a2a2a] text-gray-400 hover:bg-[#c026d3] hover:text-white hover:border-[#c026d3]'
-                    : 'bg-white border-[#e5e7eb] text-gray-500 hover:bg-[#c026d3] hover:text-white hover:border-[#c026d3]'
+                    ? 'bg-slate-800 border-slate-700 text-gray-400 hover:bg-[#0073e6] hover:text-white hover:border-[#0073e6]'
+                    : 'bg-white border-slate-200 text-gray-500 hover:bg-[#0073e6] hover:text-white hover:border-[#0073e6]'
                 }`}>
                 <Globe className='w-4 h-4' />
-                <span className='text-sm font-medium'>
-                  Website
-                </span>
+                <span className='text-sm font-medium'>Website</span>
               </a>
             )}
 
@@ -615,13 +729,11 @@ const WelcomeScreen = () => {
                 rel='noopener noreferrer'
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
                   darkMode
-                    ? 'bg-[#1a1a1a] border-[#2a2a2a] text-gray-400 hover:bg-[#dc2626] hover:text-white hover:border-[#dc2626]'
-                    : 'bg-white border-[#e5e7eb] text-gray-500 hover:bg-[#dc2626] hover:text-white hover:border-[#dc2626]'
+                    ? 'bg-slate-800 border-slate-700 text-gray-400 hover:bg-[#dc2626] hover:text-white hover:border-[#dc2626]'
+                    : 'bg-white border-slate-200 text-gray-500 hover:bg-[#dc2626] hover:text-white hover:border-[#dc2626]'
                 }`}>
                 <Play className='w-4 h-4' />
-                <span className='text-sm font-medium'>
-                  YouTube
-                </span>
+                <span className='text-sm font-medium'>YouTube</span>
               </a>
             )}
           </motion.div>
@@ -630,8 +742,8 @@ const WelcomeScreen = () => {
           <div
             className={`p-6 rounded-lg border mb-8 ${
               darkMode
-                ? 'bg-[#1a1a1a] border-[#2a2a2a]'
-                : 'bg-white border-[#e5e7eb]'
+                ? 'bg-slate-800/50 border-slate-700'
+                : 'bg-slate-50 border-slate-200'
             }`}>
             <p
               className={`leading-relaxed ${
@@ -654,7 +766,7 @@ const WelcomeScreen = () => {
               disabled={!mentorsOnline || startingChat}
               className={`px-8 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
                 mentorsOnline
-                  ? 'bg-[#c026d3] hover:bg-[#a21caf] text-white'
+                  ? 'bg-[#0073e6] hover:bg-[#0052cc] text-white'
                   : 'bg-gray-400 text-gray-200 cursor-not-allowed'
               }`}>
               {startingChat ? (

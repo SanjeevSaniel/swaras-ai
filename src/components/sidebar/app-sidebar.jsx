@@ -95,80 +95,39 @@ const AppSidebar = () => {
 
   return (
     <div
-      className={`h-full flex flex-col transition-all duration-500 relative overflow-hidden ${
-        darkMode
-          ? 'bg-gradient-to-b from-slate-950/95 via-slate-900/90 to-slate-800/95'
-          : 'bg-gradient-to-b from-white/95 via-white/90 to-slate-50/95'
-      } backdrop-blur-xl border-r ${
-        darkMode ? 'border-slate-700/40' : 'border-slate-200/40'
+      className={`h-full flex flex-col transition-colors duration-300 ${
+        darkMode ? 'bg-[#0a0f1e]' : 'bg-white'
+      } border-r ${
+        darkMode ? 'border-slate-800' : 'border-slate-200'
       }`}>
-      {/* Animated background pattern */}
-      <div className='absolute inset-0 opacity-5 pointer-events-none'>
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22%23000%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%223%22%20cy%3D%223%22%20r%3D%223%22/%3E%3C/g%3E%3C/svg%3E')]"></div>
-      </div>
 
-      {/* Enhanced Header */}
-      <div
-        className={`flex-shrink-0 p-4 border-b backdrop-blur-sm ${
-          darkMode
-            ? 'border-slate-700/40 bg-slate-900/20'
-            : 'border-slate-200/40 bg-white/20'
-        }`}>
+      {/* Header */}
+      <div className={`flex-shrink-0 p-4 border-b ${
+        darkMode ? 'border-slate-800' : 'border-slate-200'
+      }`}>
         {/* Main Brand Section with Dropdown */}
         <motion.div
           className='flex items-center justify-between mb-3'
-          initial={{ y: -30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.6, ease: 'easeOut' }}>
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}>
           <Popover open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <PopoverTrigger asChild>
-              <button className='flex items-center space-x-3 flex-1 min-w-0 hover:opacity-80 transition-opacity'>
-                {/* Modern Brushed Geometric Logo */}
-                <motion.div
-                  className='relative w-10 h-10 flex items-center justify-center'
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2 }}>
-                  <svg
-                    viewBox="0 0 48 48"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-10 h-10">
-                    {/* Geometric hexagon with brushed S */}
-                    <path
-                      d="M24 2L42 13V35L24 46L6 35V13L24 2Z"
-                      fill={darkMode ? '#1e293b' : '#f1f5f9'}
-                      stroke={darkMode ? '#3b82f6' : '#2563eb'}
-                      strokeWidth="1.5"
-                    />
-                    {/* Stylized S with geometric cuts */}
-                    <path
-                      d="M24 14C27 14 29.5 15.5 30.5 18C30.8 18.8 30.5 19.5 29.7 19.8C28.9 20.1 28.2 19.8 27.9 19C27.3 17.5 25.8 16.5 24 16.5C21.5 16.5 19.5 18 19.5 20C19.5 21.5 20.5 22.5 23 23.5L25 24.3C28.5 25.5 30 27 30 30C30 33 27.5 35.5 24 35.5C20.5 35.5 17.8 33.5 17 30.5C16.8 29.7 17.2 28.9 18 28.7C18.8 28.5 19.6 28.9 19.8 29.7C20.3 31.5 22 32.5 24 32.5C26.5 32.5 28.5 31 28.5 29C28.5 27.5 27.5 26.8 25 25.8L23 25C19.5 23.8 18 22.3 18 20C18 17 20.5 14 24 14Z"
-                      fill={darkMode ? '#3b82f6' : '#2563eb'}
-                    />
-                    {/* Geometric accent dots */}
-                    <circle cx="24" cy="10" r="1.5" fill={darkMode ? '#3b82f6' : '#2563eb'} opacity="0.6"/>
-                    <circle cx="24" cy="38" r="1.5" fill={darkMode ? '#3b82f6' : '#2563eb'} opacity="0.6"/>
-                  </svg>
-                </motion.div>
+              <button className='flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity'>
+                {/* Logo */}
+                <div className='w-10 h-10 bg-gradient-to-br from-[#0073e6] to-[#0052cc] rounded-lg flex items-center justify-center shadow-sm'>
+                  <Sparkles className='w-5 h-5 text-white' />
+                </div>
 
                 <div className='min-w-0 flex-1 text-left'>
-                  <div className='flex items-center space-x-1.5'>
-                    <h1 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}
-                      style={{
-                        fontFamily: 'system-ui, -apple-system, sans-serif',
-                        letterSpacing: '-0.03em',
-                        fontWeight: '700'
-                      }}>
-                      SWARAS
+                  <div className='flex items-center gap-1.5'>
+                    <h1 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                      Swaras AI
                     </h1>
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''} ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''} ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} />
                   </div>
-                  <p
-                    className={`text-[10px] font-bold tracking-[0.15em] uppercase ${
-                      darkMode ? 'text-gray-500' : 'text-gray-500'
-                    }`}>
-                    AI PLATFORM
+                  <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    AI Mentors
                   </p>
                 </div>
               </button>
@@ -290,90 +249,37 @@ const AppSidebar = () => {
           </Popover>
         </motion.div>
 
-        {/* Compact Status Section */}
-        <motion.div
-          className={`rounded-2xl p-3 border ${statusConfig.bgColor} backdrop-blur-sm`}
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}>
+        {/* Status Section */}
+        <div className={`p-3 rounded-lg ${
+          darkMode ? 'bg-slate-800/50' : 'bg-slate-50'
+        }`}>
           <div className='flex items-center justify-between'>
-            <div className='flex items-center space-x-2'>
-              <motion.div
-                className={`w-6 h-4 rounded-lg ${statusConfig.bgColor} border flex items-center justify-center ${statusConfig.pulseColor}`}
-                animate={statusConfig.iconAnimation}
-                transition={statusConfig.iconTransition}>
-                <statusConfig.icon
-                  className={`w-3 h-3 ${statusConfig.iconColor}`}
-                />
-              </motion.div>
-
-              <div>
-                <h3
-                  className={`text-xs font-semibold ${statusConfig.textColor}`}>
-                  {statusConfig.text}
-                </h3>
-              </div>
+            <div className='flex items-center gap-2'>
+              <div className={`w-2 h-2 rounded-full ${
+                mentorsLoading
+                  ? 'bg-yellow-500'
+                  : mentorsOnline
+                  ? 'bg-green-500'
+                  : 'bg-gray-400'
+              }`}></div>
+              <span className={`text-sm font-medium ${
+                darkMode ? 'text-slate-300' : 'text-slate-700'
+              }`}>
+                {mentorsLoading ? 'Connecting' : mentorsOnline ? Object.keys(personas).length + ' Mentors Online' : 'Offline'}
+              </span>
             </div>
-
-            <div className='flex items-center space-x-3'>
-              <div className='flex items-center space-x-1'>
-                <Users
-                  className={`w-3 h-3 ${
-                    darkMode ? 'text-gray-500' : 'text-gray-600'
-                  }`}
-                />
-                <span
-                  className={`text-xs ${
-                    darkMode ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                  {mentorsOnline ? Object.keys(personas).length : '0'}
-                </span>
-              </div>
-
-              <div className='flex items-center space-x-1'>
-                <MessageSquare
-                  className={`w-3 h-3 ${
-                    darkMode ? 'text-gray-500' : 'text-gray-600'
-                  }`}
-                />
-                <span
-                  className={`text-xs ${
-                    darkMode ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                  {conversations.length}
-                </span>
-              </div>
-
-              <motion.div
-                className={`w-2 h-2 rounded-full ${statusConfig.dotColor}`}
-                animate={{
-                  scale: mentorsOnline ? [1, 1.3, 1] : [1, 0.8, 1],
-                  opacity: [1, 0.7, 1],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
-            </div>
+            <span className={`text-xs ${
+              darkMode ? 'text-slate-500' : 'text-slate-500'
+            }`}>
+              24/7
+            </span>
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Main Content with thin auto-hide scrolling */}
-      <div className='flex-1 overflow-hidden flex flex-col'>
-        <motion.div
-          className='flex-1 overflow-y-auto px-4 pt-4 pb-2 scrollbar-thin scrollbar-thumb-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500 scrollbar-track-transparent transition-all duration-300'
-          style={{
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'transparent transparent',
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}>
-          <PersonaSelector />
-        </motion.div>
+      {/* Persona Selector */}
+      <div className='flex-shrink-0'>
+        <PersonaSelector />
       </div>
 
       <style jsx>{`

@@ -335,11 +335,11 @@ const SwarasAI = () => {
     if (!selectedPersona) {
       return (
         <motion.div
-          className='h-full overflow-hidden'
-          initial={{ opacity: 0 }}
+          className={`h-full overflow-hidden ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.1 }}
           key='empty-persona-state'>
           <EmptyPersonaState />
         </motion.div>
@@ -354,11 +354,11 @@ const SwarasAI = () => {
     if (validConversation && validConversation.messages.length > 0) {
       return (
         <motion.div
-          className='flex flex-col h-full overflow-hidden chat-container'
-          initial={{ opacity: 0 }}
+          className={`flex flex-col h-full overflow-hidden chat-container ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.1 }}
           key={`conversation-${validConversation.id}-${selectedPersona}`}>
           <ChatHeader selectedPersona={selectedPersona} />
           <div className='flex-1 overflow-hidden chat-messages-area'>
@@ -381,11 +381,11 @@ const SwarasAI = () => {
 
     return (
       <motion.div
-        className='h-full overflow-hidden'
-        initial={{ opacity: 0 }}
+        className={`h-full overflow-hidden ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+        initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.1 }}
         key={`welcome-${selectedPersona}`}>
         <WelcomeScreen onQuickStart={handleQuickStart} />
       </motion.div>
