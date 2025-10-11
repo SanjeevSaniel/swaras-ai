@@ -117,16 +117,16 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-slate-50'>
+    <div className='min-h-screen bg-[#0a0a0a]'>
       {/* Navigation */}
-      <nav className='fixed top-0 left-0 right-0 z-50 border-b border-slate-200/50 bg-white/80 backdrop-blur-xl'>
+      <nav className='fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl'>
         <div className='container mx-auto px-6 py-4'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center space-x-3'>
-              <div className='w-10 h-10 bg-gradient-to-br from-blue-500 to-slate-600 rounded-2xl flex items-center justify-center shadow-lg'>
+              <div className='w-10 h-10 bg-gradient-to-br from-[#7c3aed] to-[#c026d3] rounded-2xl flex items-center justify-center shadow-lg shadow-purple-900/30'>
                 <Sparkles className='w-5 h-5 text-white' />
               </div>
-              <span className='text-xl font-bold bg-gradient-to-r from-blue-600 to-slate-700 bg-clip-text text-transparent'>
+              <span className='text-xl font-bold bg-gradient-to-r from-[#a78bfa] to-[#d946ef] bg-clip-text text-transparent'>
                 Swaras AI
               </span>
             </div>
@@ -135,12 +135,12 @@ const LandingPage = () => {
               <SignInButton mode='modal'>
                 <Button
                   variant='ghost'
-                  className='text-slate-600 hover:text-slate-900'>
+                  className='text-gray-300 hover:text-white hover:bg-white/5'>
                   Sign In
                 </Button>
               </SignInButton>
               <SignUpButton mode='modal'>
-                <Button className='bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg'>
+                <Button className='bg-gradient-to-r from-[#7c3aed] to-[#c026d3] hover:from-[#6d28d9] hover:to-[#a21caf] text-white shadow-lg shadow-purple-900/30'>
                   Get Started
                   <ArrowRight className='w-4 h-4 ml-2' />
                 </Button>
@@ -151,8 +151,9 @@ const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className='pt-32 pb-20 px-6'>
-        <div className='container mx-auto max-w-6xl'>
+      <section className='pt-32 pb-20 px-6 relative'>
+        <div className='absolute inset-0 bg-gradient-to-b from-purple-900/20 via-transparent to-transparent pointer-events-none'></div>
+        <div className='container mx-auto max-w-6xl relative'>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -162,21 +163,21 @@ const LandingPage = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className='inline-flex items-center gap-2 px-4 py-2 mb-6 bg-blue-50 border border-blue-200/50 rounded-full'>
-              <Zap className='w-4 h-4 text-blue-600' />
-              <span className='text-sm font-medium text-blue-700'>
+              className='inline-flex items-center gap-2 px-4 py-2 mb-6 bg-purple-950/50 border border-purple-500/20 rounded-full backdrop-blur-sm'>
+              <Zap className='w-4 h-4 text-purple-400' />
+              <span className='text-sm font-medium text-purple-300'>
                 AI-Powered Learning Platform
               </span>
             </motion.div>
 
-            <h1 className='text-5xl md:text-7xl font-bold mb-6 tracking-tight'>
+            <h1 className='text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white'>
               Learn to Code with{' '}
-              <span className='bg-gradient-to-r from-blue-600 via-blue-700 to-slate-700 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#a78bfa] via-[#c026d3] to-[#d946ef] bg-clip-text text-transparent'>
                 AI Mentors
               </span>
             </h1>
 
-            <p className='text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed'>
+            <p className='text-xl text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed'>
               Master programming with personalized AI mentorship from industry
               experts. Get instant help, build real projects, and accelerate
               your development career.
@@ -186,7 +187,7 @@ const LandingPage = () => {
               <SignUpButton mode='modal'>
                 <Button
                   size='lg'
-                  className='bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-xl px-8 py-6 text-lg'>
+                  className='bg-gradient-to-r from-[#7c3aed] to-[#c026d3] hover:from-[#6d28d9] hover:to-[#a21caf] text-white shadow-xl shadow-purple-900/30 px-8 py-6 text-lg'>
                   Start Learning Free
                   <ArrowRight className='w-5 h-5 ml-2' />
                 </Button>
@@ -194,19 +195,19 @@ const LandingPage = () => {
               <Button
                 size='lg'
                 variant='outline'
-                className='border-2 border-slate-300 hover:border-slate-400 px-8 py-6 text-lg'>
+                className='border-2 border-white/10 hover:border-purple-500/50 hover:bg-white/5 text-gray-300 px-8 py-6 text-lg'>
                 View Demo
                 <MessageCircle className='w-5 h-5 ml-2' />
               </Button>
             </div>
 
-            <div className='flex items-center justify-center gap-8 text-sm text-slate-600'>
+            <div className='flex items-center justify-center gap-8 text-sm text-gray-400'>
               <div className='flex items-center gap-2'>
-                <Check className='w-5 h-5 text-blue-600' />
+                <Check className='w-5 h-5 text-purple-400' />
                 <span>No credit card required</span>
               </div>
               <div className='flex items-center gap-2'>
-                <Check className='w-5 h-5 text-blue-600' />
+                <Check className='w-5 h-5 text-purple-400' />
                 <span>Free forever plan</span>
               </div>
             </div>
@@ -215,7 +216,7 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className='py-20 px-6 bg-white/50'>
+      <section className='py-20 px-6 bg-gradient-to-b from-[#0a0a0a] via-[#0f0a14] to-[#0a0a0a]'>
         <div className='container mx-auto max-w-6xl'>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -223,19 +224,19 @@ const LandingPage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className='text-center mb-16'>
-            <h2 className='text-4xl md:text-5xl font-bold mb-4'>
+            <h2 className='text-4xl md:text-5xl font-bold mb-4 text-white'>
               Everything You Need to{' '}
-              <span className='bg-gradient-to-r from-blue-600 to-slate-700 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#a78bfa] to-[#d946ef] bg-clip-text text-transparent'>
                 Excel
               </span>
             </h2>
-            <p className='text-xl text-slate-600 max-w-2xl mx-auto'>
+            <p className='text-xl text-gray-400 max-w-2xl mx-auto'>
               Comprehensive features designed to accelerate your learning
               journey
             </p>
           </motion.div>
 
-          <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
+          <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -244,14 +245,14 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className='p-6 bg-white rounded-2xl border border-slate-200/50 shadow-lg hover:shadow-xl transition-all duration-300'>
-                <div className='w-12 h-12 bg-gradient-to-br from-blue-500/10 to-slate-500/10 rounded-xl flex items-center justify-center mb-4'>
-                  <feature.icon className='w-6 h-6 text-blue-600' />
+                className='group p-8 bg-gradient-to-b from-[#1a1a1a]/80 to-[#151515]/80 rounded-2xl border border-white/5 hover:border-purple-500/30 backdrop-blur-sm transition-all duration-300'>
+                <div className='w-14 h-14 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300'>
+                  <feature.icon className='w-7 h-7 text-purple-400' />
                 </div>
-                <h3 className='text-xl font-semibold mb-2 text-slate-900'>
+                <h3 className='text-xl font-semibold mb-3 text-white'>
                   {feature.title}
                 </h3>
-                <p className='text-slate-600'>{feature.description}</p>
+                <p className='text-gray-400 leading-relaxed'>{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -259,7 +260,7 @@ const LandingPage = () => {
       </section>
 
       {/* Mentors Section */}
-      <section className='py-20 px-6'>
+      <section className='py-20 px-6 bg-[#0a0a0a]'>
         <div className='container mx-auto max-w-6xl'>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -267,18 +268,18 @@ const LandingPage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className='text-center mb-16'>
-            <h2 className='text-4xl md:text-5xl font-bold mb-4'>
+            <h2 className='text-4xl md:text-5xl font-bold mb-4 text-white'>
               Learn from{' '}
-              <span className='bg-gradient-to-r from-blue-600 to-slate-700 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#a78bfa] to-[#d946ef] bg-clip-text text-transparent'>
                 Industry Experts
               </span>
             </h2>
-            <p className='text-xl text-slate-600 max-w-2xl mx-auto'>
+            <p className='text-xl text-gray-400 max-w-2xl mx-auto'>
               AI mentors trained on the teaching styles of renowned educators
             </p>
           </motion.div>
 
-          <div className='grid md:grid-cols-2 gap-8 max-w-4xl mx-auto'>
+          <div className='grid md:grid-cols-2 gap-6 max-w-4xl mx-auto'>
             {mentors.map((mentor, index) => (
               <motion.div
                 key={index}
@@ -286,31 +287,31 @@ const LandingPage = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                whileHover={{ scale: 1.05 }}
-                className='p-8 bg-white rounded-2xl border border-slate-200/50 shadow-xl hover:shadow-2xl transition-all duration-300'>
+                whileHover={{ scale: 1.02 }}
+                className='group p-8 bg-gradient-to-b from-[#1a1a1a]/80 to-[#151515]/80 rounded-2xl border border-white/5 hover:border-purple-500/30 backdrop-blur-sm transition-all duration-300'>
                 <div className='flex items-center gap-4 mb-6'>
-                  <div className='w-16 h-16 bg-gradient-to-br from-blue-500 to-slate-600 rounded-2xl flex items-center justify-center'>
+                  <div className='w-16 h-16 bg-gradient-to-br from-[#7c3aed] to-[#c026d3] rounded-2xl flex items-center justify-center shadow-lg shadow-purple-900/30 group-hover:shadow-purple-900/50 transition-shadow duration-300'>
                     <mentor.icon className='w-8 h-8 text-white' />
                   </div>
                   <div>
-                    <h3 className='text-2xl font-bold text-slate-900'>
+                    <h3 className='text-2xl font-bold text-white'>
                       {mentor.name}
                     </h3>
-                    <p className='text-slate-600'>{mentor.role}</p>
+                    <p className='text-gray-400'>{mentor.role}</p>
                   </div>
                 </div>
-                <div className='flex gap-6'>
+                <div className='flex gap-8'>
                   <div>
-                    <div className='text-3xl font-bold text-blue-600'>
+                    <div className='text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent'>
                       {mentor.students}
                     </div>
-                    <div className='text-sm text-slate-600'>Students</div>
+                    <div className='text-sm text-gray-500'>Students</div>
                   </div>
                   <div>
-                    <div className='text-3xl font-bold text-blue-600'>
+                    <div className='text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent'>
                       {mentor.courses}
                     </div>
-                    <div className='text-sm text-slate-600'>Courses</div>
+                    <div className='text-sm text-gray-500'>Courses</div>
                   </div>
                 </div>
               </motion.div>
@@ -320,7 +321,7 @@ const LandingPage = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className='py-20 px-6 bg-white/50'>
+      <section className='py-20 px-6 bg-gradient-to-b from-[#0a0a0a] via-[#0f0a14] to-[#0a0a0a]'>
         <div className='container mx-auto max-w-6xl'>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -328,18 +329,18 @@ const LandingPage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className='text-center mb-16'>
-            <h2 className='text-4xl md:text-5xl font-bold mb-4'>
+            <h2 className='text-4xl md:text-5xl font-bold mb-4 text-white'>
               Simple,{' '}
-              <span className='bg-gradient-to-r from-blue-600 to-slate-700 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#a78bfa] to-[#d946ef] bg-clip-text text-transparent'>
                 Transparent Pricing
               </span>
             </h2>
-            <p className='text-xl text-slate-600 max-w-2xl mx-auto'>
+            <p className='text-xl text-gray-400 max-w-2xl mx-auto'>
               Choose the plan that fits your learning goals
             </p>
           </motion.div>
 
-          <div className='grid md:grid-cols-3 gap-8'>
+          <div className='grid md:grid-cols-3 gap-6'>
             {pricing.map((plan, index) => (
               <motion.div
                 key={index}
@@ -347,14 +348,14 @@ const LandingPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`p-8 rounded-2xl border-2 ${
+                className={`p-8 rounded-2xl border ${
                   plan.popular
-                    ? 'border-blue-500 bg-blue-50/50 shadow-2xl scale-105'
-                    : 'border-slate-200 bg-white shadow-lg'
-                } transition-all duration-300 relative`}>
+                    ? 'border-purple-500/50 bg-gradient-to-b from-purple-950/50 to-[#1a1a1a]/80 shadow-2xl shadow-purple-900/30 scale-105'
+                    : 'border-white/5 bg-gradient-to-b from-[#1a1a1a]/80 to-[#151515]/80'
+                } backdrop-blur-sm transition-all duration-300 relative`}>
                 {plan.popular && (
                   <div className='absolute -top-4 left-1/2 transform -translate-x-1/2'>
-                    <div className='px-4 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-semibold rounded-full flex items-center gap-1'>
+                    <div className='px-4 py-1 bg-gradient-to-r from-[#7c3aed] to-[#c026d3] text-white text-sm font-semibold rounded-full flex items-center gap-1 shadow-lg shadow-purple-900/50'>
                       <Star className='w-4 h-4' />
                       Most Popular
                     </div>
@@ -362,15 +363,15 @@ const LandingPage = () => {
                 )}
 
                 <div className='mb-6'>
-                  <h3 className='text-2xl font-bold text-slate-900 mb-2'>
+                  <h3 className='text-2xl font-bold text-white mb-2'>
                     {plan.name}
                   </h3>
                   <div className='flex items-baseline gap-1'>
-                    <span className='text-5xl font-bold text-slate-900'>
+                    <span className='text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent'>
                       {plan.price}
                     </span>
                     {plan.period && (
-                      <span className='text-slate-600'>{plan.period}</span>
+                      <span className='text-gray-400'>{plan.period}</span>
                     )}
                   </div>
                 </div>
@@ -379,8 +380,8 @@ const LandingPage = () => {
                   <Button
                     className={`w-full mb-6 ${
                       plan.popular
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg'
-                        : 'bg-slate-900 hover:bg-slate-800 text-white'
+                        ? 'bg-gradient-to-r from-[#7c3aed] to-[#c026d3] hover:from-[#6d28d9] hover:to-[#a21caf] text-white shadow-lg shadow-purple-900/30'
+                        : 'bg-white/5 hover:bg-white/10 text-white border border-white/10'
                     }`}>
                     Get Started
                   </Button>
@@ -389,8 +390,8 @@ const LandingPage = () => {
                 <ul className='space-y-3'>
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className='flex items-start gap-3'>
-                      <Check className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
-                      <span className='text-slate-600'>{feature}</span>
+                      <Check className='w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5' />
+                      <span className='text-gray-400'>{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -401,43 +402,46 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className='py-20 px-6'>
+      <section className='py-20 px-6 bg-[#0a0a0a]'>
         <div className='container mx-auto max-w-4xl'>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className='bg-gradient-to-br from-blue-500 to-slate-600 rounded-3xl p-12 text-center text-white shadow-2xl'>
-            <h2 className='text-4xl md:text-5xl font-bold mb-6'>
-              Ready to Start Your Journey?
-            </h2>
-            <p className='text-xl mb-8 opacity-90'>
-              Join thousands of developers learning with AI mentors
-            </p>
-            <SignUpButton mode='modal'>
-              <Button
-                size='lg'
-                className='bg-white text-blue-600 hover:bg-slate-50 px-8 py-6 text-lg font-semibold shadow-xl'>
-                Get Started for Free
-                <ArrowRight className='w-5 h-5 ml-2' />
-              </Button>
-            </SignUpButton>
+            className='relative bg-gradient-to-br from-[#7c3aed] via-[#c026d3] to-[#d946ef] rounded-3xl p-12 text-center text-white shadow-2xl shadow-purple-900/50 overflow-hidden'>
+            <div className='absolute inset-0 bg-black/10'></div>
+            <div className='relative z-10'>
+              <h2 className='text-4xl md:text-5xl font-bold mb-6'>
+                Ready to Start Your Journey?
+              </h2>
+              <p className='text-xl mb-8 opacity-90'>
+                Join thousands of developers learning with AI mentors
+              </p>
+              <SignUpButton mode='modal'>
+                <Button
+                  size='lg'
+                  className='bg-white text-purple-700 hover:bg-gray-100 px-8 py-6 text-lg font-semibold shadow-xl'>
+                  Get Started for Free
+                  <ArrowRight className='w-5 h-5 ml-2' />
+                </Button>
+              </SignUpButton>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className='py-12 px-6 border-t border-slate-200/50 bg-white/50'>
+      <footer className='py-12 px-6 border-t border-white/5 bg-[#0a0a0a]'>
         <div className='container mx-auto max-w-6xl'>
           <div className='flex flex-col md:flex-row items-center justify-between gap-4'>
             <div className='flex items-center gap-3'>
-              <div className='w-8 h-8 bg-gradient-to-br from-blue-500 to-slate-600 rounded-xl flex items-center justify-center'>
+              <div className='w-8 h-8 bg-gradient-to-br from-[#7c3aed] to-[#c026d3] rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/30'>
                 <Sparkles className='w-4 h-4 text-white' />
               </div>
-              <span className='font-bold text-slate-900'>Swaras AI</span>
+              <span className='font-bold bg-gradient-to-r from-[#a78bfa] to-[#d946ef] bg-clip-text text-transparent'>Swaras AI</span>
             </div>
-            <div className='text-sm text-slate-600'>
+            <div className='text-sm text-gray-500'>
               © 2025 Swaras AI. All rights reserved.
             </div>
           </div>
