@@ -3,7 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ElegantLanding from '@/components/landing/elegant-landing';
+import ElegantLanding from '@/components/landing/landing-page';
 import { Loader2 } from 'lucide-react';
 
 export default function Home() {

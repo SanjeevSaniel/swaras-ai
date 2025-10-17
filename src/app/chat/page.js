@@ -19,10 +19,10 @@ export default function ChatPage() {
   // Show loading state while checking authentication
   if (!isLoaded) {
     return (
-      <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900'>
+      <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950'>
         <div className='flex flex-col items-center gap-4'>
-          <Loader2 className='w-8 h-8 animate-spin text-indigo-600' />
-          <p className='text-slate-600 dark:text-slate-400'>Loading...</p>
+          <Loader2 className='w-8 h-8 animate-spin text-emerald-500' />
+          <p className='text-slate-400'>Loading...</p>
         </div>
       </div>
     );

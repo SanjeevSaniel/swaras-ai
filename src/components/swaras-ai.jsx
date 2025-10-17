@@ -396,8 +396,8 @@ const SwarasAI = () => {
     <div
       className={`min-h-screen transition-colors duration-300 ${
         darkMode
-          ? 'bg-[#0a0a0a]'
-          : 'bg-white'
+          ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950'
+          : 'bg-gradient-to-br from-slate-50 via-white to-slate-50'
       }`}>
       {/* Enhanced Toast Configuration with Better Styling */}
       <Toaster
@@ -425,7 +425,7 @@ const SwarasAI = () => {
           success: {
             iconTheme: {
               primary: '#10b981',
-              secondary: darkMode ? '#1f2937' : '#ffffff',
+              secondary: darkMode ? '#0f172a' : '#ffffff',
             },
           },
           error: {
@@ -447,8 +447,8 @@ const SwarasAI = () => {
       <motion.div
         className={`w-full h-screen border-0 overflow-hidden transition-all duration-300 relative ${
           darkMode
-            ? 'bg-[#0a0a0a]'
-            : 'bg-white'
+            ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950'
+            : 'bg-gradient-to-br from-slate-50 via-white to-slate-50'
         }`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -459,7 +459,7 @@ const SwarasAI = () => {
           {/* Sidebar - Wider */}
           <motion.div
             className={`w-[340px] h-full flex-shrink-0 overflow-hidden border-r ${
-              darkMode ? 'border-[#2a2a2a]' : 'border-[#e5e7eb]'
+              darkMode ? 'border-white/10' : 'border-slate-200'
             }`}
             initial={{ x: -340, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
