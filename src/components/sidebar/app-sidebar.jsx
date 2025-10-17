@@ -3,6 +3,7 @@
 
 import { personas } from '@/constants/personas-dataset';
 import { useChatStore } from '@/store/chat-store';
+import { useUser, useClerk, SignInButton } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -12,19 +13,31 @@ import {
   Users,
   WifiOff,
   Zap,
+  ChevronDown,
+  LogOut,
+  Settings,
+  Moon,
+  Sun,
+  User as UserIcon,
 } from 'lucide-react';
-import AnimatedThemeToggle from './animated-theme-toggle';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { useState } from 'react';
 import ConversationCombobox from './conversation-combobox';
 import PersonaSelector from './persona-selector';
 
 const AppSidebar = () => {
   const {
     darkMode,
+    toggleDarkMode,
     selectedPersona,
     conversations,
     mentorsOnline,
     mentorsLoading,
   } = useChatStore();
+
+  const { user, isSignedIn, isLoaded } = useUser();
+  const { signOut, openSignIn } = useClerk();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const currentPersona = personas[selectedPersona];
   const personaConversations = conversations.filter(
@@ -82,140 +95,191 @@ const AppSidebar = () => {
 
   return (
     <div
-      className={`h-full flex flex-col transition-all duration-500 relative overflow-hidden ${
-        darkMode
-          ? 'bg-gradient-to-b from-gray-900/95 via-gray-900/90 to-gray-800/95'
-          : 'bg-gradient-to-b from-white/95 via-white/90 to-gray-50/95'
-      } backdrop-blur-xl border-r ${
-        darkMode ? 'border-gray-700/40' : 'border-gray-200/40'
+      className={`h-full flex flex-col transition-colors duration-300 ${
+        darkMode ? 'bg-[#0a0f1e]' : 'bg-white'
+      } border-r ${
+        darkMode ? 'border-slate-800' : 'border-slate-200'
       }`}>
-      {/* Animated background pattern */}
-      <div className='absolute inset-0 opacity-5 pointer-events-none'>
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22%23000%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%223%22%20cy%3D%223%22%20r%3D%223%22/%3E%3C/g%3E%3C/svg%3E')]"></div>
-      </div>
 
-      {/* Enhanced Header */}
-      <div
-        className={`flex-shrink-0 p-4 border-b backdrop-blur-sm ${
-          darkMode
-            ? 'border-gray-700/40 bg-gray-900/20'
-            : 'border-gray-200/40 bg-white/20'
-        }`}>
-        {/* Main Brand Section */}
+      {/* Header */}
+      <div className={`flex-shrink-0 p-4 border-b ${
+        darkMode ? 'border-slate-800' : 'border-slate-200'
+      }`}>
+        {/* Main Brand Section with Dropdown */}
         <motion.div
           className='flex items-center justify-between mb-3'
-          initial={{ y: -30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.6, ease: 'easeOut' }}>
-          <div className='flex items-center space-x-3 flex-1 min-w-0'>
-            <motion.div
-              className='relative w-8 h-8 bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 rounded-xl flex items-center justify-center shadow-md cursor-pointer'
-              whileHover={{ scale: 1.1, rotate: 180 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.4 }}>
-              <Sparkles className='w-4 h-4 text-white' />
-            </motion.div>
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}>
+          <Popover open={dropdownOpen} onOpenChange={setDropdownOpen}>
+            <PopoverTrigger asChild>
+              <button className='flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity'>
+                {/* Logo */}
+                <div className='w-10 h-10 bg-gradient-to-br from-[#0073e6] to-[#0052cc] rounded-lg flex items-center justify-center shadow-sm'>
+                  <Sparkles className='w-5 h-5 text-white' />
+                </div>
 
-            <div className='min-w-0 flex-1'>
-              <h1 className='text-base font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent'>
-                Swaras AI
-              </h1>
-              <p
-                className={`text-xs ${
-                  darkMode ? 'text-gray-400' : 'text-gray-600'
-                } font-medium`}>
-                Code with Legends
-              </p>
-            </div>
-          </div>
+                <div className='min-w-0 flex-1 text-left'>
+                  <div className='flex items-center gap-1.5'>
+                    <h1 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                      Swaras AI
+                    </h1>
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''} ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} />
+                  </div>
+                  <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    AI Mentors
+                  </p>
+                </div>
+              </button>
+            </PopoverTrigger>
 
-          <AnimatedThemeToggle />
+            <PopoverContent
+              className={`w-56 p-2 ${darkMode ? 'bg-[#1a1a1a] border-[#2a2a2a]' : 'bg-white border-[#e5e7eb]'}`}
+              align="start"
+              sideOffset={8}>
+              <div className='space-y-1'>
+                {/* User Info */}
+                {isLoaded && (
+                  <>
+                    {isSignedIn ? (
+                      <div className={`px-3 py-2 rounded-lg ${darkMode ? 'bg-[#262626]' : 'bg-[#f5f5f5]'}`}>
+                        <div className='flex items-center space-x-2'>
+                          {user?.imageUrl ? (
+                            <img
+                              src={user.imageUrl}
+                              alt={user.fullName || 'User'}
+                              className='w-8 h-8 rounded-full object-cover'
+                            />
+                          ) : (
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${darkMode ? 'bg-[#2563eb]' : 'bg-[#2563eb]'}`}>
+                              <UserIcon className='w-4 h-4 text-white' />
+                            </div>
+                          )}
+                          <div className='flex-1 min-w-0'>
+                            <p className={`text-sm font-medium truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                              {user?.fullName || user?.firstName || 'User'}
+                            </p>
+                            <p className={`text-xs truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {user?.primaryEmailAddress?.emailAddress || 'No email'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={`px-3 py-2 rounded-lg ${darkMode ? 'bg-[#262626]' : 'bg-[#f5f5f5]'}`}>
+                        <button
+                          onClick={() => {
+                            openSignIn();
+                            setDropdownOpen(false);
+                          }}
+                          className={`w-full text-left ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                          <div className='flex items-center space-x-2'>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${darkMode ? 'bg-[#2563eb]' : 'bg-[#2563eb]'}`}>
+                              <UserIcon className='w-4 h-4 text-white' />
+                            </div>
+                            <div>
+                              <p className='text-sm font-medium'>Sign In</p>
+                              <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                Click to sign in
+                              </p>
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {/* Divider */}
+                <div className={`h-px ${darkMode ? 'bg-[#2a2a2a]' : 'bg-[#e5e7eb]'}`} />
+
+                {/* Theme Toggle */}
+                <button
+                  onClick={() => {
+                    toggleDarkMode();
+                    setDropdownOpen(false);
+                  }}
+                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                    darkMode
+                      ? 'hover:bg-[#262626] text-gray-300'
+                      : 'hover:bg-[#f5f5f5] text-gray-700'
+                  }`}>
+                  {darkMode ? <Sun className='w-4 h-4' /> : <Moon className='w-4 h-4' />}
+                  <span className='text-sm'>
+                    {darkMode ? 'Light Mode' : 'Dark Mode'}
+                  </span>
+                </button>
+
+                {/* Settings */}
+                <button
+                  onClick={() => {
+                    console.log('Settings clicked');
+                    setDropdownOpen(false);
+                  }}
+                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                    darkMode
+                      ? 'hover:bg-[#262626] text-gray-300'
+                      : 'hover:bg-[#f5f5f5] text-gray-700'
+                  }`}>
+                  <Settings className='w-4 h-4' />
+                  <span className='text-sm'>Settings</span>
+                </button>
+
+                {/* Divider */}
+                <div className={`h-px ${darkMode ? 'bg-[#2a2a2a]' : 'bg-[#e5e7eb]'}`} />
+
+                {/* Logout - Only show if signed in */}
+                {isSignedIn && (
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                      darkMode
+                        ? 'hover:bg-red-900/20 text-red-400'
+                        : 'hover:bg-red-50 text-red-600'
+                    }`}>
+                    <LogOut className='w-4 h-4' />
+                    <span className='text-sm'>Sign Out</span>
+                  </button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
         </motion.div>
 
-        {/* Compact Status Section */}
-        <motion.div
-          className={`rounded-xl p-3 border ${statusConfig.bgColor} backdrop-blur-sm`}
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}>
+        {/* Status Section */}
+        <div className={`p-3 rounded-lg ${
+          darkMode ? 'bg-slate-800/50' : 'bg-slate-50'
+        }`}>
           <div className='flex items-center justify-between'>
-            <div className='flex items-center space-x-2'>
-              <motion.div
-                className={`w-6 h-4 rounded-lg ${statusConfig.bgColor} border flex items-center justify-center ${statusConfig.pulseColor}`}
-                animate={statusConfig.iconAnimation}
-                transition={statusConfig.iconTransition}>
-                <statusConfig.icon
-                  className={`w-3 h-3 ${statusConfig.iconColor}`}
-                />
-              </motion.div>
-
-              <div>
-                <h3
-                  className={`text-xs font-semibold ${statusConfig.textColor}`}>
-                  {statusConfig.text}
-                </h3>
-              </div>
+            <div className='flex items-center gap-2'>
+              <div className={`w-2 h-2 rounded-full ${
+                mentorsLoading
+                  ? 'bg-yellow-500'
+                  : mentorsOnline
+                  ? 'bg-green-500'
+                  : 'bg-gray-400'
+              }`}></div>
+              <span className={`text-sm font-medium ${
+                darkMode ? 'text-slate-300' : 'text-slate-700'
+              }`}>
+                {mentorsLoading ? 'Connecting' : mentorsOnline ? Object.keys(personas).length + ' Mentors Online' : 'Offline'}
+              </span>
             </div>
-
-            <div className='flex items-center space-x-3'>
-              <div className='flex items-center space-x-1'>
-                <Users
-                  className={`w-3 h-3 ${
-                    darkMode ? 'text-gray-500' : 'text-gray-600'
-                  }`}
-                />
-                <span
-                  className={`text-xs ${
-                    darkMode ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                  {mentorsOnline ? Object.keys(personas).length : '0'}
-                </span>
-              </div>
-
-              <div className='flex items-center space-x-1'>
-                <MessageSquare
-                  className={`w-3 h-3 ${
-                    darkMode ? 'text-gray-500' : 'text-gray-600'
-                  }`}
-                />
-                <span
-                  className={`text-xs ${
-                    darkMode ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                  {conversations.length}
-                </span>
-              </div>
-
-              <motion.div
-                className={`w-2 h-2 rounded-full ${statusConfig.dotColor}`}
-                animate={{
-                  scale: mentorsOnline ? [1, 1.3, 1] : [1, 0.8, 1],
-                  opacity: [1, 0.7, 1],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
-            </div>
+            <span className={`text-xs ${
+              darkMode ? 'text-slate-500' : 'text-slate-500'
+            }`}>
+              24/7
+            </span>
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Main Content with thin auto-hide scrolling */}
-      <div className='flex-1 overflow-hidden flex flex-col'>
-        <motion.div
-          className='flex-1 overflow-y-auto px-4 pt-4 pb-2 scrollbar-thin scrollbar-thumb-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500 scrollbar-track-transparent transition-all duration-300'
-          style={{
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'transparent transparent',
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}>
-          <PersonaSelector />
-        </motion.div>
+      {/* Persona Selector */}
+      <div className='flex-shrink-0'>
+        <PersonaSelector />
       </div>
 
       <style jsx>{`

@@ -112,34 +112,27 @@ const ConversationCombobox = () => {
   }
 
   return (
-    <div className='space-y-2'>
-      {/* Header with New Button - Added cursor-pointer */}
-      <div className='flex items-center justify-between'>
-        <Button
-          size='sm'
-          onClick={startNewConversation}
-          className={`h-7 px-3 text-xs font-medium cursor-pointer ${
-            darkMode
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-900/20'
-              : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg shadow-purple-200/50'
-          }`}>
-          <Plus className='w-3 h-3 mr-1' />
-          New Chat
-        </Button>
-
-        {/* {filteredConversations.length > 0 && (
-          <span
-            className={`text-xs px-2 py-1 rounded-full cursor-default ${
-              darkMode
-                ? 'bg-gray-700/50 text-gray-400'
-                : 'bg-gray-100 text-gray-600'
-            }`}>
-            {filteredConversations.length} chats
-          </span>
-        )} */}
+    <div className='p-4 space-y-3'>
+      {/* Header with title */}
+      <div className={`text-xs font-semibold uppercase tracking-wide ${
+        darkMode ? 'text-slate-400' : 'text-slate-600'
+      }`}>
+        Chat History
       </div>
 
-      {/* Fixed Combobox with Proper Hover Colors and Cursor Pointer */}
+      {/* New Chat Button */}
+      <Button
+        onClick={startNewConversation}
+        className={`w-full h-9 text-xs font-medium cursor-pointer transition-colors ${
+          darkMode
+            ? 'bg-[#0073e6] hover:bg-[#0052cc] text-white'
+            : 'bg-[#0073e6] hover:bg-[#0052cc] text-white'
+        }`}>
+        <Plus className='w-4 h-4 mr-2' />
+        New Chat
+      </Button>
+
+      {/* Conversation Selector */}
       <Popover
         open={open}
         onOpenChange={setOpen}>
@@ -148,92 +141,99 @@ const ConversationCombobox = () => {
             variant='outline'
             role='combobox'
             aria-expanded={open}
-            className={`w-full justify-between h-9 text-xs backdrop-blur-sm transition-colors cursor-pointer ${
+            className={`w-full justify-between p-3 h-auto text-left transition-colors cursor-pointer ${
               currentConversation &&
               currentConversation.personaId === selectedPersona
                 ? darkMode
-                  ? 'bg-purple-900/30 border-purple-700/50 text-purple-300 shadow-md hover:bg-purple-800/40 hover:text-purple-200'
-                  : 'bg-purple-50/70 border-purple-200/70 text-purple-700 shadow-md hover:bg-purple-100/80 hover:text-purple-800'
+                  ? 'bg-blue-500/10 border-blue-500/50 hover:bg-blue-500/20'
+                  : 'bg-blue-50 border-blue-500/50 hover:bg-blue-100'
                 : darkMode
-                ? 'bg-gray-800/40 border-gray-600/40 text-gray-300 hover:bg-gray-700/50 hover:text-gray-200'
-                : 'bg-white/50 border-gray-200/50 text-gray-700 hover:bg-white/80 hover:text-gray-800'
+                ? 'bg-slate-800 border-slate-700 hover:bg-slate-750'
+                : 'bg-white border-slate-200 hover:bg-slate-50'
             }`}>
-            <div className='flex items-center space-x-2 min-w-0 flex-1'>
+            <div className='flex items-center gap-3 min-w-0 flex-1'>
               {currentConversation &&
               currentConversation.personaId === selectedPersona ? (
                 <>
-                  <div
-                    className={`w-6 h-6 rounded-lg ${currentPersona?.accentColor} flex items-center justify-center text-white text-xs font-bold`}>
-                    {currentPersona?.avatar}
-                  </div>
+                  <img
+                    src={currentPersona?.avatarUrl}
+                    alt={currentPersona?.name}
+                    className='w-8 h-8 rounded-lg object-cover shadow-sm flex-shrink-0'
+                  />
                   <div className='min-w-0 flex-1'>
-                    <span className='text-xs font-medium truncate block'>
-                      {currentConversation.title.length > 20
-                        ? currentConversation.title.slice(0, 20) + '...'
+                    <span className={`text-sm font-semibold truncate block ${
+                      darkMode ? 'text-white' : 'text-slate-900'
+                    }`}>
+                      {currentConversation.title.length > 25
+                        ? currentConversation.title.slice(0, 25) + '...'
                         : currentConversation.title}
                     </span>
-                    <span className='text-xs opacity-60'>
+                    <span className={`text-xs ${
+                      darkMode ? 'text-slate-400' : 'text-slate-600'
+                    }`}>
                       {currentConversation.messages?.length || 0} messages
                     </span>
                   </div>
                 </>
               ) : (
                 <>
-                  <MessageCircle className='w-4 h-4 opacity-50' />
-                  <span className='text-xs opacity-70'>
-                    Browse {currentPersona?.name} chats...
+                  <MessageCircle className={`w-4 h-4 ${
+                    darkMode ? 'text-slate-400' : 'text-slate-600'
+                  }`} />
+                  <span className={`text-sm ${
+                    darkMode ? 'text-slate-400' : 'text-slate-600'
+                  }`}>
+                    Select a conversation
                   </span>
                 </>
               )}
             </div>
-            <ChevronsUpDown className='ml-1 h-3 w-3 shrink-0 opacity-50' />
+            <ChevronsUpDown className={`ml-2 h-4 w-4 shrink-0 ${
+              darkMode ? 'text-slate-400' : 'text-slate-600'
+            }`} />
           </Button>
         </PopoverTrigger>
 
         <PopoverContent
           className={`w-96 p-0 ${
             darkMode
-              ? 'bg-gray-800/95 border-gray-700/50'
-              : 'bg-white/95 border-gray-200/50'
-          } backdrop-blur-xl shadow-2xl`}
+              ? 'bg-slate-800 border-slate-700'
+              : 'bg-white border-slate-200'
+          } shadow-xl`}
           align='start'>
           <Command className='bg-transparent'>
-            <div className='p-3 border-b border-gray-200/10'>
-              <div className='flex items-center space-x-2'>
-                <div
-                  className={`w-6 h-6 rounded-lg ${currentPersona?.accentColor} flex items-center justify-center text-white text-xs font-bold`}>
-                  {currentPersona?.avatar}
-                </div>
-                <span
-                  className={`text-sm font-semibold ${
-                    darkMode ? 'text-gray-200' : 'text-gray-800'
-                  }`}>
-                  {currentPersona?.name} Chat History
+            <div className={`p-4 border-b ${
+              darkMode ? 'border-slate-700' : 'border-slate-200'
+            }`}>
+              <div className='flex items-center gap-3'>
+                <img
+                  src={currentPersona?.avatarUrl}
+                  alt={currentPersona?.name}
+                  className='w-8 h-8 rounded-lg object-cover shadow-sm'
+                />
+                <span className={`text-sm font-semibold ${
+                  darkMode ? 'text-white' : 'text-slate-900'
+                }`}>
+                  {currentPersona?.name} Chats
                 </span>
               </div>
-              {/* <CommandInput
-                placeholder={`Search conversations with ${currentPersona?.name}...`}
-                className='text-xs'
-              /> */}
             </div>
 
             <CommandList className='max-h-80'>
               <CommandEmpty className='py-8 text-center'>
                 <MessageCircle
-                  className={`w-12 h-12 mx-auto mb-3 opacity-30 ${
-                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                  className={`w-10 h-10 mx-auto mb-3 ${
+                    darkMode ? 'text-slate-600' : 'text-slate-400'
                   }`}
                 />
-                <p
-                  className={`text-sm font-medium mb-1 ${
-                    darkMode ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                  No conversations found
+                <p className={`text-sm font-medium mb-1 ${
+                  darkMode ? 'text-slate-300' : 'text-slate-700'
+                }`}>
+                  No conversations yet
                 </p>
-                <p
-                  className={`text-xs ${
-                    darkMode ? 'text-gray-500' : 'text-gray-500'
-                  }`}>
+                <p className={`text-xs ${
+                  darkMode ? 'text-slate-400' : 'text-slate-600'
+                }`}>
                   Start a new chat with {currentPersona?.name}
                 </p>
               </CommandEmpty>
@@ -243,15 +243,14 @@ const ConversationCombobox = () => {
                   <CommandGroup
                     key={groupName}
                     heading={
-                      <div className='flex items-center space-x-2 py-2'>
+                      <div className='flex items-center gap-2 py-2 px-4'>
                         <Calendar className='w-3 h-3' />
-                        <span>{groupName}</span>
-                        <span
-                          className={`text-xs px-1.5 py-0.5 rounded-full ${
-                            darkMode
-                              ? 'bg-gray-700 text-gray-400'
-                              : 'bg-gray-100 text-gray-600'
-                          }`}>
+                        <span className='text-xs font-semibold uppercase tracking-wide'>{groupName}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          darkMode
+                            ? 'bg-slate-700 text-slate-400'
+                            : 'bg-slate-100 text-slate-600'
+                        }`}>
                           {convs.length}
                         </span>
                       </div>
@@ -266,62 +265,55 @@ const ConversationCombobox = () => {
                             setOpen(false);
                           }
                         }}
-                        className={`flex items-start justify-between p-3 cursor-pointer text-xs group transition-colors ${
+                        className={`flex items-start justify-between p-3 mx-2 rounded-lg cursor-pointer group transition-colors ${
                           darkMode
-                            ? 'hover:bg-gray-700/50 data-[selected=true]:bg-gray-700/70 hover:text-gray-200'
-                            : 'hover:bg-gray-100/70 data-[selected=true]:bg-gray-100/90 hover:text-gray-800'
+                            ? 'hover:bg-slate-700/50 data-[selected=true]:bg-slate-700'
+                            : 'hover:bg-slate-50 data-[selected=true]:bg-slate-100'
                         }`}>
-                        <div className='flex items-start space-x-3 min-w-0 flex-1'>
+                        <div className='flex items-start gap-3 min-w-0 flex-1'>
                           <Check
                             className={cn(
-                              'h-4 w-4 flex-shrink-0 mt-0.5',
+                              'h-4 w-4 flex-shrink-0 mt-1',
                               currentConversation?.id === conv.id &&
                                 currentConversation?.personaId ===
                                   selectedPersona
-                                ? 'opacity-100 text-green-500'
+                                ? 'opacity-100 text-blue-500'
                                 : 'opacity-0',
                             )}
                           />
 
                           <div className='min-w-0 flex-1'>
                             {/* Chat Title */}
-                            <div className='flex items-center justify-between mb-2'>
-                              <h4
-                                className={`text-sm font-semibold truncate transition-colors ${
-                                  darkMode
-                                    ? 'text-gray-200 group-hover:text-gray-100'
-                                    : 'text-gray-900 group-hover:text-gray-800'
-                                }`}>
+                            <div className='flex items-center justify-between mb-1.5'>
+                              <h4 className={`text-sm font-semibold truncate ${
+                                darkMode ? 'text-white' : 'text-slate-900'
+                              }`}>
                                 {conv.title.length > 30
                                   ? conv.title.slice(0, 30) + '...'
                                   : conv.title}
                               </h4>
-                              <span
-                                className={`text-xs px-2 py-1 rounded-full ml-2 flex-shrink-0 font-medium ${
-                                  conv.dateInfo.type === 'today'
-                                    ? darkMode
-                                      ? 'bg-green-900/30 text-green-400'
-                                      : 'bg-green-100 text-green-700'
-                                    : conv.dateInfo.type === 'yesterday'
-                                    ? darkMode
-                                      ? 'bg-blue-900/30 text-blue-400'
-                                      : 'bg-blue-100 text-blue-700'
-                                    : darkMode
-                                    ? 'bg-gray-700/50 text-gray-400'
-                                    : 'bg-gray-100 text-gray-600'
-                                }`}>
+                              <span className={`text-xs px-2 py-0.5 rounded-full ml-2 flex-shrink-0 font-medium ${
+                                conv.dateInfo.type === 'today'
+                                  ? darkMode
+                                    ? 'bg-blue-500/20 text-blue-400'
+                                    : 'bg-blue-100 text-blue-700'
+                                  : conv.dateInfo.type === 'yesterday'
+                                  ? darkMode
+                                    ? 'bg-slate-700 text-slate-400'
+                                    : 'bg-slate-100 text-slate-600'
+                                  : darkMode
+                                  ? 'bg-slate-700 text-slate-400'
+                                  : 'bg-slate-100 text-slate-600'
+                              }`}>
                                 {conv.dateInfo.primary}
                               </span>
                             </div>
 
                             {/* Last Message Preview */}
                             {conv.messages && conv.messages.length > 0 && (
-                              <p
-                                className={`text-xs line-clamp-2 leading-relaxed mb-2 transition-colors ${
-                                  darkMode
-                                    ? 'text-gray-400 group-hover:text-gray-300'
-                                    : 'text-gray-600 group-hover:text-gray-700'
-                                }`}>
+                              <p className={`text-xs line-clamp-2 leading-relaxed mb-2 ${
+                                darkMode ? 'text-slate-400' : 'text-slate-600'
+                              }`}>
                                 {conv.messages[
                                   conv.messages.length - 1
                                 ]?.content?.slice(0, 80)}
@@ -331,52 +323,24 @@ const ConversationCombobox = () => {
 
                             {/* Chat Metadata */}
                             <div className='flex items-center justify-between'>
-                              <div className='flex items-center space-x-3'>
-                                <div className='flex items-center space-x-1'>
-                                  <Clock
-                                    className={`w-3 h-3 transition-colors ${
-                                      darkMode
-                                        ? 'text-gray-500 group-hover:text-gray-400'
-                                        : 'text-gray-400 group-hover:text-gray-500'
-                                    }`}
-                                  />
-                                  <span
-                                    className={`text-xs transition-colors ${
-                                      darkMode
-                                        ? 'text-gray-500 group-hover:text-gray-400'
-                                        : 'text-gray-500 group-hover:text-gray-600'
-                                    }`}>
+                              <div className='flex items-center gap-3'>
+                                <div className='flex items-center gap-1'>
+                                  <Clock className={`w-3 h-3 ${
+                                    darkMode ? 'text-slate-500' : 'text-slate-400'
+                                  }`} />
+                                  <span className={`text-xs ${
+                                    darkMode ? 'text-slate-500' : 'text-slate-500'
+                                  }`}>
                                     {conv.dateInfo.secondary}
                                   </span>
                                 </div>
 
-                                <div className='flex items-center space-x-1'>
-                                  <User
-                                    className={`w-3 h-3 transition-colors ${
-                                      darkMode
-                                        ? 'text-gray-500 group-hover:text-gray-400'
-                                        : 'text-gray-400 group-hover:text-gray-500'
-                                    }`}
-                                  />
-                                  <span
-                                    className={`text-xs transition-colors ${
-                                      darkMode
-                                        ? 'text-gray-500 group-hover:text-gray-400'
-                                        : 'text-gray-500 group-hover:text-gray-600'
-                                    }`}>
-                                    {currentPersona?.name}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className='flex items-center space-x-2'>
-                                {conv.messages && conv.messages.length > 1 && (
-                                  <span
-                                    className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                                      darkMode
-                                        ? 'bg-gray-700 text-gray-300'
-                                        : 'bg-gray-100 text-gray-700'
-                                    }`}>
+                                {conv.messages && conv.messages.length > 0 && (
+                                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                    darkMode
+                                      ? 'bg-slate-700 text-slate-400'
+                                      : 'bg-slate-100 text-slate-600'
+                                  }`}>
                                     {conv.messages.length} msgs
                                   </span>
                                 )}
@@ -393,8 +357,12 @@ const ConversationCombobox = () => {
                             deleteConversation(conv.id);
                             toast.success('Conversation deleted');
                           }}
-                          className='h-6 w-6 p-0 opacity-0 group-hover:opacity-100 ml-2 text-red-500 hover:text-red-600 hover:bg-red-100/50 dark:hover:bg-red-900/30 cursor-pointer'>
-                          <Trash2 className='w-3 h-3' />
+                          className={`h-7 w-7 p-0 opacity-0 group-hover:opacity-100 ml-2 cursor-pointer transition-all ${
+                            darkMode
+                              ? 'text-red-400 hover:text-red-300 hover:bg-red-500/20'
+                              : 'text-red-500 hover:text-red-600 hover:bg-red-50'
+                          }`}>
+                          <Trash2 className='w-3.5 h-3.5' />
                         </Button>
                       </CommandItem>
                     ))}
@@ -410,41 +378,38 @@ const ConversationCombobox = () => {
       {currentConversation &&
         currentConversation.personaId === selectedPersona && (
           <motion.div
-            className={`p-3 rounded-xl border backdrop-blur-sm ${
+            className={`p-3 rounded-lg border ${
               darkMode
-                ? 'bg-gradient-to-r from-purple-900/20 to-pink-900/20 border-purple-700/30'
-                : 'bg-gradient-to-r from-purple-50/80 to-pink-50/80 border-purple-200/50'
-            } shadow-sm`}
+                ? 'bg-blue-500/10 border-blue-500/30'
+                : 'bg-blue-50 border-blue-200'
+            }`}
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}>
-            <div className='flex items-center justify-between mb-2'>
-              <div className='flex items-center space-x-2 min-w-0 flex-1'>
+            <div className='flex items-center justify-between mb-1.5'>
+              <div className='flex items-center gap-2 min-w-0 flex-1'>
                 <motion.div
-                  className='w-2 h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0'
-                  animate={{ scale: [1, 1.2, 1] }}
+                  className='w-2 h-2 bg-blue-500 rounded-full flex-shrink-0'
+                  animate={{ scale: [1, 1.2, 1], opacity: [1, 0.5, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
-                <span
-                  className={`text-xs font-semibold ${
-                    darkMode ? 'text-purple-300' : 'text-purple-700'
-                  }`}>
+                <span className={`text-xs font-semibold ${
+                  darkMode ? 'text-blue-400' : 'text-blue-700'
+                }`}>
                   Active Chat
                 </span>
               </div>
-              <span
-                className={`text-xs px-2 py-0.5 rounded-full cursor-default ${
-                  darkMode
-                    ? 'bg-purple-800/50 text-purple-300'
-                    : 'bg-purple-200/70 text-purple-700'
-                }`}>
-                {currentConversation.messages?.length || 0} messages
+              <span className={`text-xs px-2 py-0.5 rounded-full ${
+                darkMode
+                  ? 'bg-slate-700 text-slate-400'
+                  : 'bg-white text-slate-600'
+              }`}>
+                {currentConversation.messages?.length || 0} msgs
               </span>
             </div>
 
-            <p
-              className={`text-xs truncate ${
-                darkMode ? 'text-purple-200' : 'text-purple-600'
-              }`}>
+            <p className={`text-xs truncate ${
+              darkMode ? 'text-slate-300' : 'text-slate-700'
+            }`}>
               {currentConversation.title}
             </p>
           </motion.div>

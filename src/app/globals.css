@@ -29,46 +29,73 @@
 }
 
 :root {
-  --radius: 0.75rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --radius: 0.5rem;
+
+  /* Solid Light Theme - Pink/Magenta */
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: #fdf4ff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+
+  /* Primary - Darker Pink/Magenta */
+  --primary: #c026d3;
+  --primary-foreground: #ffffff;
+
+  /* Secondary - Soft purple gray */
+  --secondary: #f3e8ff;
+  --secondary-foreground: #4c1d95;
+
+  /* Muted */
+  --muted: #faf5ff;
+  --muted-foreground: #71717a;
+
+  /* Accent - Purple */
+  --accent: #fdf4ff;
+  --accent-foreground: #a855f7;
+
+  /* Destructive */
+  --destructive: #dc2626;
+
+  /* Borders */
+  --border: #f3e8ff;
+  --input: #f3e8ff;
+  --ring: #c026d3;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* Solid Dark Theme - Pink/Magenta */
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --card: #1a0a1f;
+  --card-foreground: #ffffff;
+  --popover: #1a1a1a;
+  --popover-foreground: #ffffff;
+
+  /* Primary - Bright Magenta */
+  --primary: #d946ef;
+  --primary-foreground: #ffffff;
+
+  /* Secondary - Dark purple */
+  --secondary: #2e1065;
+  --secondary-foreground: #ffffff;
+
+  /* Muted */
+  --muted: #1f1826;
+  --muted-foreground: #a8a29e;
+
+  /* Accent - Purple */
+  --accent: #2e1065;
+  --accent-foreground: #c084fc;
+
+  /* Destructive */
+  --destructive: #ef4444;
+
+  /* Borders */
+  --border: #2e1838;
+  --input: #2e1838;
+  --ring: #d946ef;
 }
 
 @layer base {

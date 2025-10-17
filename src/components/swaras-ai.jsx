@@ -335,11 +335,11 @@ const SwarasAI = () => {
     if (!selectedPersona) {
       return (
         <motion.div
-          className='h-full overflow-hidden'
-          initial={{ opacity: 0 }}
+          className={`h-full overflow-hidden ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.1 }}
           key='empty-persona-state'>
           <EmptyPersonaState />
         </motion.div>
@@ -354,11 +354,11 @@ const SwarasAI = () => {
     if (validConversation && validConversation.messages.length > 0) {
       return (
         <motion.div
-          className='flex flex-col h-full overflow-hidden chat-container'
-          initial={{ opacity: 0 }}
+          className={`flex flex-col h-full overflow-hidden chat-container ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.1 }}
           key={`conversation-${validConversation.id}-${selectedPersona}`}>
           <ChatHeader selectedPersona={selectedPersona} />
           <div className='flex-1 overflow-hidden chat-messages-area'>
@@ -381,11 +381,11 @@ const SwarasAI = () => {
 
     return (
       <motion.div
-        className='h-full overflow-hidden'
-        initial={{ opacity: 0 }}
+        className={`h-full overflow-hidden ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+        initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.1 }}
         key={`welcome-${selectedPersona}`}>
         <WelcomeScreen onQuickStart={handleQuickStart} />
       </motion.div>
@@ -394,10 +394,10 @@ const SwarasAI = () => {
 
   return (
     <div
-      className={`min-h-screen py-6 px-4 transition-colors duration-300 ${
+      className={`min-h-screen transition-colors duration-300 ${
         darkMode
-          ? 'bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800'
-          : 'bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100'
+          ? 'bg-[#0a0a0a]'
+          : 'bg-white'
       }`}>
       {/* Enhanced Toast Configuration with Better Styling */}
       <Toaster
@@ -443,425 +443,85 @@ const SwarasAI = () => {
         }}
       />
 
-      {/* Main Application Card Container with Enhanced Styling */}
+      {/* Full-Screen Application Container */}
       <motion.div
-        className={`max-w-7xl mx-auto h-[calc(100vh-3rem)] backdrop-blur-xl rounded-3xl shadow-2xl border overflow-hidden transition-all duration-300 relative ${
+        className={`w-full h-screen border-0 overflow-hidden transition-all duration-300 relative ${
           darkMode
-            ? 'bg-gray-800/80 border-gray-700/50 shadow-gray-900/50'
-            : 'bg-white/80 border-white/30 shadow-gray-200/50'
+            ? 'bg-[#0a0a0a]'
+            : 'bg-white'
         }`}
-        initial={{ opacity: 0, scale: 0.9, y: 40 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-        style={{
-          boxShadow: darkMode
-            ? '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05)'
-            : '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8)',
-        }}>
-        {/* Enhanced AI Background Animation */}
-        <div className='absolute inset-0 overflow-hidden rounded-3xl'>
-          {/* Aurora Borealis Effect */}
-          <motion.div
-            className='absolute inset-0 opacity-30'
-            animate={{
-              background: darkMode
-                ? [
-                    'linear-gradient(45deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 25%, rgba(139, 92, 246, 0.1) 50%, rgba(16, 185, 129, 0.1) 75%, rgba(59, 130, 246, 0.1) 100%)',
-                    'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 25%, rgba(236, 72, 153, 0.1) 50%, rgba(59, 130, 246, 0.1) 75%, rgba(16, 185, 129, 0.1) 100%)',
-                    'linear-gradient(225deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 25%, rgba(16, 185, 129, 0.1) 50%, rgba(139, 92, 246, 0.1) 75%, rgba(59, 130, 246, 0.1) 100%)',
-                    'linear-gradient(315deg, rgba(236, 72, 153, 0.1) 0%, rgba(16, 185, 129, 0.1) 25%, rgba(59, 130, 246, 0.1) 50%, rgba(236, 72, 153, 0.1) 75%, rgba(139, 92, 246, 0.1) 100%)',
-                  ]
-                : [
-                    'linear-gradient(45deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.05) 25%, rgba(139, 92, 246, 0.05) 50%, rgba(16, 185, 129, 0.05) 75%, rgba(59, 130, 246, 0.05) 100%)',
-                    'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 25%, rgba(236, 72, 153, 0.05) 50%, rgba(59, 130, 246, 0.05) 75%, rgba(16, 185, 129, 0.05) 100%)',
-                    'linear-gradient(225deg, rgba(139, 92, 246, 0.05) 0%, rgba(236, 72, 153, 0.05) 25%, rgba(16, 185, 129, 0.05) 50%, rgba(139, 92, 246, 0.05) 75%, rgba(59, 130, 246, 0.05) 100%)',
-                    'linear-gradient(315deg, rgba(236, 72, 153, 0.05) 0%, rgba(16, 185, 129, 0.05) 25%, rgba(59, 130, 246, 0.05) 50%, rgba(236, 72, 153, 0.05) 75%, rgba(139, 92, 246, 0.05) 100%)',
-                  ],
-            }}
-            transition={{
-              duration: 15,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-
-          {/* AI Neural Network Pattern */}
-          <svg
-            className='absolute inset-0 w-full h-full opacity-10'
-            viewBox='0 0 800 600'>
-            {/* Neural Network Nodes */}
-            <motion.circle
-              cx='150'
-              cy='100'
-              r='3'
-              fill={darkMode ? '#8b5cf6' : '#6366f1'}
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, delay: 0 }}
-            />
-            <motion.circle
-              cx='300'
-              cy='80'
-              r='3'
-              fill={darkMode ? '#10b981' : '#059669'}
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-            />
-            <motion.circle
-              cx='450'
-              cy='120'
-              r='3'
-              fill={darkMode ? '#f59e0b' : '#d97706'}
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-            />
-
-            {/* Neural Network Connections */}
-            <motion.line
-              x1='150'
-              y1='100'
-              x2='300'
-              y2='80'
-              stroke={darkMode ? '#8b5cf6' : '#6366f1'}
-              strokeWidth='1'
-              animate={{
-                strokeOpacity: [0.1, 0.5, 0.1],
-                pathLength: [0, 1, 0],
-              }}
-              transition={{ duration: 4, repeat: Infinity, delay: 0 }}
-            />
-            <motion.line
-              x1='300'
-              y1='80'
-              x2='450'
-              y2='120'
-              stroke={darkMode ? '#10b981' : '#059669'}
-              strokeWidth='1'
-              animate={{
-                strokeOpacity: [0.1, 0.5, 0.1],
-                pathLength: [0, 1, 0],
-              }}
-              transition={{ duration: 4, repeat: Infinity, delay: 0.5 }}
-            />
-          </svg>
-
-          {/* Floating AI Particles */}
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              className={`absolute w-1 h-1 rounded-full ${
-                darkMode ? 'bg-purple-400/30' : 'bg-purple-500/20'
-              }`}
-              style={{
-                left: `${20 + i * 15}%`,
-                top: `${30 + Math.sin(i) * 20}%`,
-              }}
-              animate={{
-                y: [0, -30, 0],
-                x: [0, Math.cos(i) * 20, 0],
-                opacity: [0.3, 1, 0.3],
-                scale: [1, 1.5, 1],
-              }}
-              transition={{
-                duration: 4 + i,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: i * 0.5,
-              }}
-            />
-          ))}
-        </div>
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}>
 
         {/* Main Application Layout */}
         <div className='flex h-full overflow-hidden relative z-10'>
-          {/* Enhanced Sidebar */}
+          {/* Sidebar - Wider */}
           <motion.div
-            className='w-[30%] h-full flex-shrink-0 overflow-hidden'
-            initial={{ x: -300, opacity: 0 }}
+            className={`w-[340px] h-full flex-shrink-0 overflow-hidden border-r ${
+              darkMode ? 'border-[#2a2a2a]' : 'border-[#e5e7eb]'
+            }`}
+            initial={{ x: -340, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}>
+            transition={{ duration: 0.3 }}>
             <AppSidebar />
           </motion.div>
 
           {/* Main Content Area */}
           <motion.div
             className='flex-1 h-full overflow-hidden'
-            initial={{ x: 300, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}>
-            <div
-              className={`h-full flex flex-col main-content-area ${
-                darkMode ? 'bg-gray-900/20' : 'bg-white/20'
-              } backdrop-blur-sm`}>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}>
+            <div className='h-full flex flex-col main-content-area'>
               <AnimatePresence mode='wait'>{getMainContent()}</AnimatePresence>
             </div>
           </motion.div>
         </div>
 
-        {/* Enhanced Status Indicators - Only show during active conversations */}
+        {/* Status Indicators - Minimal and static */}
         {currentConversation &&
           currentConversation.messages &&
           currentConversation.messages.length > 0 && (
-            <motion.div
-              className='absolute top-4 right-4 flex space-x-3 z-50'
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0 }}
-              transition={{ delay: 0.8, duration: 0.3 }}>
-              {/* Enhanced Connection Status with Previous Animations */}
-              <AnimatePresence mode='wait'>
-                {mentorsLoading ? (
-                  <motion.div
-                    key='loading'
-                    className='flex items-center space-x-2 bg-yellow-500/10 backdrop-blur-sm border border-yellow-500/20 rounded-full px-3 py-2'
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    title='Connecting to AI mentors...'>
-                    <motion.div
-                      className='w-2 h-2 bg-yellow-400 rounded-full'
-                      animate={{ scale: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                    />
-                    <span className='text-xs font-medium text-yellow-600 dark:text-yellow-400'>
-                      Connecting...
-                    </span>
-
-                    {/* Additional pulsating loading indicators */}
-                    <div className='flex space-x-0.5 ml-1'>
-                      {[...Array(3)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className='w-1 h-1 bg-yellow-400/60 rounded-full'
-                          animate={{
-                            scale: [0.5, 1, 0.5],
-                            opacity: [0.3, 1, 0.3],
-                          }}
-                          transition={{
-                            duration: 0.8,
-                            repeat: Infinity,
-                            delay: i * 0.2,
-                            ease: 'easeInOut',
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </motion.div>
-                ) : mentorsOnline ? (
-                  <motion.div
-                    key='online'
-                    className='flex items-center space-x-2 bg-green-500/10 backdrop-blur-sm border border-green-500/20 rounded-full px-3 py-2 relative overflow-hidden'
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    title='AI mentors online and ready'>
-                    {/* Animated background glow */}
-                    <motion.div
-                      className='absolute inset-0 bg-gradient-to-r from-green-400/10 via-emerald-400/20 to-green-400/10'
-                      animate={{
-                        x: ['-100%', '100%'],
-                        opacity: [0.3, 0.6, 0.3],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: 'linear',
-                      }}
-                    />
-
-                    <motion.div
-                      className='w-2 h-2 bg-green-400 rounded-full relative z-10'
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-
-                    <span className='text-xs font-medium text-green-600 dark:text-green-400 relative z-10'>
-                      Enhanced AI
-                    </span>
-
-                    {/* Connection quality indicators with staggered animation */}
-                    <div className='flex space-x-0.5 ml-2 relative z-10'>
-                      {[...Array(3)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className='w-1 rounded-full bg-green-400'
-                          style={{ height: `${(i + 1) * 3}px` }}
-                          animate={{
-                            scaleY: [1, 1.4, 1],
-                            opacity: [0.6, 1, 0.6],
-                          }}
-                          transition={{
-                            duration: 1.2,
-                            repeat: Infinity,
-                            delay: i * 0.15,
-                            ease: 'easeInOut',
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key='offline'
-                    className='flex items-center space-x-2 bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-full px-3 py-2'
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    title='AI mentors currently offline'>
-                    <motion.div
-                      className='w-2 h-2 bg-red-400 rounded-full'
-                      animate={{ opacity: [1, 0.3, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    />
-
-                    <span className='text-xs font-medium text-red-600 dark:text-red-400'>
-                      Offline
-                    </span>
-
-                    {/* Subtle warning pulse */}
-                    <motion.div
-                      className='w-3 h-3 border border-red-400/30 rounded-full ml-1'
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.4, 0.8, 0.4],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                      }}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Performance Indicator - Only show during active conversations */}
-              {responseMetadata && debugMode && (
-                <motion.div
-                  className='flex items-center space-x-2 bg-blue-500/10 backdrop-blur-sm border border-blue-500/20 rounded-full px-3 py-2'
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  title={`Response time: ${responseMetadata.responseTime}ms`}>
-                  <motion.div
-                    className={`w-2 h-2 rounded-full ${
-                      responseMetadata.responseTime < 2000
-                        ? 'bg-green-400'
-                        : responseMetadata.responseTime < 5000
-                        ? 'bg-yellow-400'
-                        : 'bg-red-400'
-                    }`}
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 1 }}
-                  />
-                  <span className='text-xs font-medium text-blue-600 dark:text-blue-400'>
-                    {responseMetadata.responseTime < 2000 ? 'Fast' : 'Normal'}
-                  </span>
-                </motion.div>
+            <div className='absolute top-4 right-4 flex space-x-2 z-50'>
+              {mentorsLoading ? (
+                <div
+                  className={`flex items-center space-x-2 border rounded-lg px-3 py-1.5 ${
+                    darkMode
+                      ? 'bg-[#1a1a1a] border-[#2a2a2a] text-yellow-400'
+                      : 'bg-white border-[#e5e7eb] text-yellow-600'
+                  }`}
+                  title='Connecting to AI mentors...'>
+                  <div className='w-2 h-2 bg-yellow-400 rounded-full' />
+                  <span className='text-xs font-medium'>Connecting...</span>
+                </div>
+              ) : mentorsOnline ? (
+                <div
+                  className={`flex items-center space-x-2 border rounded-lg px-3 py-1.5 ${
+                    darkMode
+                      ? 'bg-[#1a1a1a] border-[#2a2a2a] text-green-400'
+                      : 'bg-white border-[#e5e7eb] text-green-600'
+                  }`}
+                  title='AI mentors online and ready'>
+                  <div className='w-2 h-2 bg-green-500 rounded-full' />
+                  <span className='text-xs font-medium'>Online</span>
+                </div>
+              ) : (
+                <div
+                  className={`flex items-center space-x-2 border rounded-lg px-3 py-1.5 ${
+                    darkMode
+                      ? 'bg-[#1a1a1a] border-[#2a2a2a] text-red-400'
+                      : 'bg-white border-[#e5e7eb] text-red-600'
+                  }`}
+                  title='AI mentors currently offline'>
+                  <div className='w-2 h-2 bg-red-500 rounded-full' />
+                  <span className='text-xs font-medium'>Offline</span>
+                </div>
               )}
-            </motion.div>
+            </div>
           )}
 
-        {/* Debug Panel (Development Only) */}
-        {debugMode &&
-          responseMetadata &&
-          currentConversation &&
-          currentConversation.messages &&
-          currentConversation.messages.length > 0 && (
-            <motion.div
-              className='absolute bottom-4 left-4 z-50'
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ delay: 1.5, duration: 0.5 }}>
-              <div
-                className={`px-3 py-2 rounded-lg text-xs backdrop-blur-sm border ${
-                  darkMode
-                    ? 'bg-gray-800/80 text-gray-300 border-gray-700/40'
-                    : 'bg-white/80 text-gray-600 border-gray-200/40'
-                }`}>
-                <div className='font-bold mb-1'>Debug Info:</div>
-                <div>Persona: {responseMetadata.persona}</div>
-                <div>Response: {responseMetadata.responseTime}ms</div>
-                <div>Length: {responseMetadata.messageLength} chars</div>
-                <div>Messages: {responseMetadata.conversationLength}</div>
-              </div>
-            </motion.div>
-          )}
       </motion.div>
-
-      {/* Enhanced Background Elements */}
-      <div className='fixed inset-0 pointer-events-none overflow-hidden -z-10'>
-        <motion.div
-          className='absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl'
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 180, 270, 360],
-            x: [0, 50, 0, -50, 0],
-            y: [0, -30, 0, 30, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-
-        <motion.div
-          className='absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl'
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
-            x: [0, -40, 0, 40, 0],
-            y: [0, 40, 0, -40, 0],
-          }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-
-        <motion.div
-          className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-400/5 to-purple-400/5 rounded-full blur-3xl'
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.3, 0.6, 0.3],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-
-        {/* Additional AI-themed background elements */}
-        <motion.div
-          className='absolute top-1/4 right-1/4 w-32 h-32 bg-gradient-to-r from-green-400/8 to-emerald-400/8 rounded-full blur-2xl'
-          animate={{
-            scale: [0.8, 1.4, 0.8],
-            opacity: [0.2, 0.5, 0.2],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-
-        <motion.div
-          className='absolute bottom-1/4 left-1/4 w-48 h-48 bg-gradient-to-r from-orange-400/6 to-red-400/6 rounded-full blur-3xl'
-          animate={{
-            scale: [1.1, 0.9, 1.1],
-            opacity: [0.4, 0.7, 0.4],
-            rotate: [0, -360],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-      </div>
     </div>
   );
 };

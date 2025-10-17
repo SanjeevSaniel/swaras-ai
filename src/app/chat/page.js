@@ -3,16 +3,16 @@
 import { useUser } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ElegantLanding from '@/components/landing/elegant-landing';
+import SwarasAI from '@/components/swaras-ai';
 import { Loader2 } from 'lucide-react';
 
-export default function Home() {
+export default function ChatPage() {
   const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      router.push('/chat');
+    if (isLoaded && !isSignedIn) {
+      router.push('/');
     }
   }, [isSignedIn, isLoaded, router]);
 
@@ -28,11 +28,11 @@ export default function Home() {
     );
   }
 
-  // Show landing page for non-authenticated users
+  // Redirect if not signed in
   if (!isSignedIn) {
-    return <ElegantLanding />;
+    return null;
   }
 
-  // This shouldn't render due to the useEffect redirect, but just in case
-  return null;
+  // Show the main app
+  return <SwarasAI />;
 }
