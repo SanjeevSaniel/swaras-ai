@@ -3,8 +3,8 @@
 import { useUser } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ElegantLanding from '@/components/landing/landing-page';
-import { Loader2 } from 'lucide-react';
+import EnhancedLandingPage from '@/components/landing/enhanced-landing-page';
+import { Loader2, Sparkles } from 'lucide-react';
 
 export default function Home() {
   const { isSignedIn, isLoaded } = useUser();
@@ -19,10 +19,15 @@ export default function Home() {
   // Show loading state while checking authentication
   if (!isLoaded) {
     return (
-      <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900'>
+      <div className='min-h-screen flex items-center justify-center bg-slate-950'>
         <div className='flex flex-col items-center gap-4'>
-          <Loader2 className='w-8 h-8 animate-spin text-indigo-600' />
-          <p className='text-slate-600 dark:text-slate-400'>Loading...</p>
+          <div className='relative'>
+            <div className='w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg shadow-purple-500/50 animate-pulse'>
+              <Sparkles className='w-8 h-8 text-white' />
+            </div>
+            <div className='absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 blur-xl opacity-50 animate-pulse' />
+          </div>
+          <p className='text-slate-400 animate-pulse'>Loading Swaras AI...</p>
         </div>
       </div>
     );
@@ -30,7 +35,7 @@ export default function Home() {
 
   // Show landing page for non-authenticated users
   if (!isSignedIn) {
-    return <ElegantLanding />;
+    return <EnhancedLandingPage />;
   }
 
   // This shouldn't render due to the useEffect redirect, but just in case
