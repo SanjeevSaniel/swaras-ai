@@ -8,10 +8,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import ChatHeader from './chat/chat-header';
-import ModernChatInput from './chat/modern-chat-input';
-import ModernChatMessages from './chat/modern-chat-messages';
+import RefinedChatInput from './chat/refined-chat-input';
+import RefinedChatMessages from './chat/refined-chat-messages';
 import EmptyPersonaState from './empty-persona-state';
-import ModernSidebar from './sidebar/modern-sidebar';
+import RefinedSidebar from './sidebar/refined-sidebar';
 import WelcomeScreen from './welcome/welcome-screen';
 
 const SwarasAI = () => {
@@ -365,13 +365,13 @@ const SwarasAI = () => {
           key={`conversation-${validConversation.id}-${selectedPersona}`}>
           <ChatHeader selectedPersona={selectedPersona} />
           <div className='flex-1 overflow-hidden chat-messages-area'>
-            <ModernChatMessages
+            <RefinedChatMessages
               messages={validConversation.messages}
               isTyping={isTyping}
               selectedPersona={selectedPersona}
             />
           </div>
-          <ModernChatInput
+          <RefinedChatInput
             onSendMessage={handleSendMessage}
             selectedPersona={selectedPersona}
             disabled={!mentorsOnline || mentorsLoading || isTyping}
@@ -463,19 +463,19 @@ const SwarasAI = () => {
             initial={{ x: -340, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}>
-            <ModernSidebar
+            <RefinedSidebar
               conversations={conversations}
               currentConversation={currentConversation}
               onSelectConversation={setCurrentConversation}
               onNewConversation={() => {
                 if (!selectedPersona || !mentorsOnline || mentorsLoading) {
-                  toast.error('Please select a persona first', { icon: '⚠️' });
+                  toast.error('Please select a mentor first', { icon: '⚠️' });
                   return;
                 }
                 const conversation = AIService.createConversation(selectedPersona);
                 addConversation(conversation);
                 setCurrentConversation(conversation);
-                toast.success('New conversation started!', { icon: '🎉' });
+                toast.success('Chat started successfully!', { icon: '✨' });
               }}
               onDeleteConversation={deleteConversation}
               selectedPersona={selectedPersona}
