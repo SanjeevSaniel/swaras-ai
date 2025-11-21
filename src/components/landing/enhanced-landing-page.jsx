@@ -113,20 +113,20 @@ const EnhancedLandingPage = () => {
   const howItWorks = [
     {
       step: '1',
-      title: 'Choose Your Persona',
-      description: 'Select from coding mentors, life coaches, business advisors, and more.',
+      title: 'Choose Your Mentor',
+      description: 'Browse AI mentors across technology, business, health, creativity, and personal development.',
       icon: Target,
     },
     {
       step: '2',
-      title: 'Start Conversing',
-      description: 'Ask questions, get advice, or have a meaningful discussion.',
+      title: 'Start a Conversation',
+      description: 'Ask questions, seek guidance, brainstorm ideas, or explore new topics with your chosen mentor.',
       icon: MessageSquare,
     },
     {
       step: '3',
-      title: 'Learn & Grow',
-      description: 'Get personalized guidance tailored to your needs and goals.',
+      title: 'Achieve Your Goals',
+      description: 'Receive personalized, actionable advice that helps you learn faster and reach your objectives.',
       icon: TrendingUp,
     },
   ];
@@ -269,9 +269,9 @@ const EnhancedLandingPage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className='text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed'
             >
-              Choose from <span className='text-purple-400 font-semibold'>{allPersonas.length}+ AI personas</span> across{' '}
-              <span className='text-pink-400 font-semibold'>{categories.length} categories</span>. Get instant, personalized guidance
-              from coding mentors, life coaches, business advisors, and more.
+              Access <span className='text-purple-400 font-semibold'>{allPersonas.length}+ specialized AI mentors</span> spanning{' '}
+              <span className='text-pink-400 font-semibold'>{categories.length} expert domains</span>. From technology and business to health and creativity—
+              get personalized guidance tailored to your goals, available 24/7.
             </motion.p>
 
             <motion.div
@@ -340,10 +340,10 @@ const EnhancedLandingPage = () => {
             className='text-center mb-16'
           >
             <h2 className='text-5xl md:text-6xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent mb-4'>
-              Powerful Features
+              Why Choose Swaras AI
             </h2>
             <p className='text-xl text-slate-400 max-w-2xl mx-auto'>
-              Everything you need for personalized AI mentorship in one platform
+              A complete AI mentorship platform designed to accelerate your learning and growth across any domain
             </p>
           </motion.div>
 
@@ -547,13 +547,14 @@ const EnhancedLandingPage = () => {
               </motion.div>
 
               <h2 className='text-5xl md:text-6xl font-bold text-white'>
-                Ready to Transform
+                Start Your Journey
                 <br />
-                Your Learning Journey?
+                with AI Mentorship Today
               </h2>
 
               <p className='text-xl text-slate-300 max-w-2xl mx-auto'>
-                Join thousands of learners getting personalized AI mentorship. Start for free, no credit card required.
+                Join a growing community of learners achieving their goals with expert AI guidance.
+                Access all mentors instantly—completely free, forever.
               </p>
 
               <SignUpButton mode='modal'>
