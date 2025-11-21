@@ -8,10 +8,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import ChatHeader from './chat/chat-header';
-import ChatInput from './chat/chat-input';
-import ChatMessages from './chat/chat-messages';
+import ModernChatInput from './chat/modern-chat-input';
+import ModernChatMessages from './chat/modern-chat-messages';
 import EmptyPersonaState from './empty-persona-state';
-import AppSidebar from './sidebar/app-sidebar';
+import ModernSidebar from './sidebar/modern-sidebar';
 import WelcomeScreen from './welcome/welcome-screen';
 
 const SwarasAI = () => {
@@ -22,14 +22,17 @@ const SwarasAI = () => {
   );
 
   const {
+    conversations,
     currentConversation,
     selectedPersona,
     darkMode,
     mentorsOnline,
     mentorsLoading,
     setCurrentConversation,
+    setSelectedPersona,
     updateConversation,
     addConversation,
+    deleteConversation,
     initializeTheme,
     initializeMentorStatus,
   } = useChatStore();
@@ -362,18 +365,16 @@ const SwarasAI = () => {
           key={`conversation-${validConversation.id}-${selectedPersona}`}>
           <ChatHeader selectedPersona={selectedPersona} />
           <div className='flex-1 overflow-hidden chat-messages-area'>
-            <ChatMessages
+            <ModernChatMessages
               messages={validConversation.messages}
               isTyping={isTyping}
               selectedPersona={selectedPersona}
-              responseMetadata={responseMetadata}
             />
           </div>
-          <ChatInput
+          <ModernChatInput
             onSendMessage={handleSendMessage}
             selectedPersona={selectedPersona}
-            isTyping={isTyping}
-            disabled={!mentorsOnline || mentorsLoading}
+            disabled={!mentorsOnline || mentorsLoading || isTyping}
           />
         </motion.div>
       );
@@ -456,15 +457,30 @@ const SwarasAI = () => {
 
         {/* Main Application Layout */}
         <div className='flex h-full overflow-hidden relative z-10'>
-          {/* Sidebar - Wider */}
+          {/* Sidebar - Modern */}
           <motion.div
-            className={`w-[340px] h-full flex-shrink-0 overflow-hidden border-r ${
-              darkMode ? 'border-white/10' : 'border-slate-200'
-            }`}
+            className='flex-shrink-0 overflow-hidden'
             initial={{ x: -340, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}>
-            <AppSidebar />
+            <ModernSidebar
+              conversations={conversations}
+              currentConversation={currentConversation}
+              onSelectConversation={setCurrentConversation}
+              onNewConversation={() => {
+                if (!selectedPersona || !mentorsOnline || mentorsLoading) {
+                  toast.error('Please select a persona first', { icon: '⚠️' });
+                  return;
+                }
+                const conversation = AIService.createConversation(selectedPersona);
+                addConversation(conversation);
+                setCurrentConversation(conversation);
+                toast.success('New conversation started!', { icon: '🎉' });
+              }}
+              onDeleteConversation={deleteConversation}
+              selectedPersona={selectedPersona}
+              onSelectPersona={setSelectedPersona}
+            />
           </motion.div>
 
           {/* Main Content Area */}
