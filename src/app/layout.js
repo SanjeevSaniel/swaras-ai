@@ -1,15 +1,28 @@
 // src/app/layout.js
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/providers/theme-provider';
-import { Manrope } from 'next/font/google';
+import { Inter, Manrope } from 'next/font/google';
 import './globals.css';
 
-const manrope = Manrope({ subsets: ['latin'], weight: '400' });
+// Professional font system with multiple weights
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-manrope',
+  display: 'swap',
+});
 
 export const metadata = {
-  title: 'Swaras AI - Code with Legends',
+  title: 'Swaras AI - Your AI Mentor Ecosystem',
   description:
-    'AI-powered chat with coding legends Hitesh Choudhary and Piyush Garg',
+    'Chat with specialized AI mentors across technology, business, health, and more. Get expert guidance tailored to your needs.',
   icons: {
     icon: '/favicon.ico',
   },
@@ -33,7 +46,7 @@ const RootLayout = ({ children }) => {
             sizes='any'
           />
         </head>
-        <body className={`${manrope.className} antialiased`}>
+        <body className={`${inter.variable} ${manrope.variable} font-sans antialiased`}>
           <ThemeProvider
             attribute='class'
             defaultTheme='system'

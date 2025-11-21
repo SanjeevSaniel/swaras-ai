@@ -4,8 +4,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), var(--font-manrope), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), sans-serif;
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -22,80 +22,81 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 
-  /* Solid Light Theme - Pink/Magenta */
-  --background: #ffffff;
-  --foreground: #1a1a1a;
-  --card: #fdf4ff;
-  --card-foreground: #1a1a1a;
+  /* Refined Light Theme - Warm Professional Palette */
+  --background: #fafafa;
+  --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
   --popover: #ffffff;
-  --popover-foreground: #1a1a1a;
+  --popover-foreground: #171717;
 
-  /* Primary - Darker Pink/Magenta */
-  --primary: #c026d3;
+  /* Primary - Deep Indigo (Professional & Trustworthy) */
+  --primary: #4f46e5;
   --primary-foreground: #ffffff;
 
-  /* Secondary - Soft purple gray */
-  --secondary: #f3e8ff;
-  --secondary-foreground: #4c1d95;
+  /* Secondary - Soft Slate */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #334155;
 
-  /* Muted */
-  --muted: #faf5ff;
-  --muted-foreground: #71717a;
+  /* Muted - Subtle Gray */
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
 
-  /* Accent - Purple */
-  --accent: #fdf4ff;
-  --accent-foreground: #a855f7;
+  /* Accent - Vibrant Violet */
+  --accent: #f8fafc;
+  --accent-foreground: #7c3aed;
 
-  /* Destructive */
-  --destructive: #dc2626;
+  /* Destructive - Modern Red */
+  --destructive: #ef4444;
 
-  /* Borders */
-  --border: #f3e8ff;
-  --input: #f3e8ff;
-  --ring: #c026d3;
+  /* Borders - Clean & Subtle */
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #4f46e5;
 }
 
 .dark {
-  /* Solid Dark Theme - Pink/Magenta */
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-  --card: #1a0a1f;
-  --card-foreground: #ffffff;
-  --popover: #1a1a1a;
-  --popover-foreground: #ffffff;
+  /* Refined Dark Theme - Deep Space Professional */
+  --background: #0f0f10;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --card-foreground: #fafafa;
+  --popover: #18181b;
+  --popover-foreground: #fafafa;
 
-  /* Primary - Bright Magenta */
-  --primary: #d946ef;
-  --primary-foreground: #ffffff;
+  /* Primary - Bright Indigo (High Contrast) */
+  --primary: #6366f1;
+  --primary-foreground: #fafafa;
 
-  /* Secondary - Dark purple */
-  --secondary: #2e1065;
-  --secondary-foreground: #ffffff;
+  /* Secondary - Rich Charcoal */
+  --secondary: #27272a;
+  --secondary-foreground: #e4e4e7;
 
-  /* Muted */
-  --muted: #1f1826;
-  --muted-foreground: #a8a29e;
+  /* Muted - Warm Gray */
+  --muted: #1c1c1e;
+  --muted-foreground: #a1a1aa;
 
-  /* Accent - Purple */
-  --accent: #2e1065;
-  --accent-foreground: #c084fc;
+  /* Accent - Electric Violet */
+  --accent: #27272a;
+  --accent-foreground: #8b5cf6;
 
-  /* Destructive */
-  --destructive: #ef4444;
+  /* Destructive - Vibrant Red */
+  --destructive: #f87171;
 
-  /* Borders */
-  --border: #2e1838;
-  --input: #2e1838;
-  --ring: #d946ef;
+  /* Borders - Subtle Zinc */
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #6366f1;
 }
 
 @layer base {
@@ -107,9 +108,16 @@
     @apply bg-background text-foreground antialiased;
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-family: var(--font-inter), var(--font-manrope), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-manrope), var(--font-inter), sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
   
   html {
