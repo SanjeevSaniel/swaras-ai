@@ -1,77 +1,115 @@
-// src/services/response-service.js
-import { allResponses } from '@/data/responses/index.js';
-import { personaConfigs, topicMappings } from '@/data/personas/index.js';
+// src/services/response-service.js - Enhanced response service with fast-path logic
+import { FEATURES, RESPONSE_SOURCES, personaManager } from '@/constants/config';
 
+/**
+ * Response Service - Provides fast-path responses for simple queries
+ */
 export class ResponseService {
-  static getResponse(persona, topic, level, message, context) {
-    try {
-      const responses = allResponses[persona];
-      if (!responses) {
-        return this.getDefaultResponse(persona, message);
-      }
-
-      // Try to get specific response
-      const topicResponses = responses[topic];
-      if (topicResponses && typeof topicResponses[level] === 'function') {
-        return topicResponses[level](message, context);
-      }
-
-      // Fallback to intermediate level
-      if (topicResponses && typeof topicResponses.intermediate === 'function') {
-        return topicResponses.intermediate(message, context);
-      }
-
-      // Fallback to general response
-      if (typeof responses.general === 'function') {
-        return responses.general(message, context);
-      }
-
-      return this.getDefaultResponse(persona, message);
-    } catch (error) {
-      console.error('Error getting response:', error);
-      return this.getDefaultResponse(persona, message);
+  /**
+   * Determines if a query can be handled via fast path
+   *
+   * @param {string} message - User message
+   * @returns {boolean} - True if fast path is applicable
+   */
+  static canUseFastPath(message) {
+    if (!FEATURES.ENABLE_FAST_PATH) {
+      return false;
     }
+
+    const lowerMessage = message.toLowerCase().trim();
+
+    // Fast path for simple greetings
+    const greetings = ['hi', 'hello', 'hey', 'haanji', 'namaste', 'hola'];
+    if (greetings.some((g) => lowerMessage === g || lowerMessage === `${g}!`)) {
+      return true;
+    }
+
+    // Fast path for very short messages (likely simple queries)
+    if (lowerMessage.length < 15 && !lowerMessage.includes('?')) {
+      return true;
+    }
+
+    return false;
   }
 
-  static getDefaultResponse(persona, message) {
-    const config = personaConfigs[persona];
-    if (!config) {
+  /**
+   * Gets fast-path response for simple queries
+   *
+   * @param {string} personaId - Persona identifier
+   * @param {string} message - User message
+   * @returns {Object|null} - Fast response or null if not applicable
+   */
+  static getFastResponse(personaId, message) {
+    if (!this.canUseFastPath(message)) {
+      return null;
+    }
+
+    const lowerMessage = message.toLowerCase().trim();
+
+    // Handle greetings
+    if (this.isGreeting(lowerMessage)) {
+      return {
+        response: this.getGreeting(personaId),
+        metadata: {
+          source: RESPONSE_SOURCES.FAST_PATH,
+          confidence: 0.9,
+          processingTime: 0,
+          isFastPath: true,
+        },
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * Checks if message is a greeting
+   *
+   * @param {string} message - Lowercase message
+   * @returns {boolean} - True if greeting
+   */
+  static isGreeting(message) {
+    const greetings = ['hi', 'hello', 'hey', 'haanji', 'namaste', 'hola', 'yo'];
+    return greetings.some((g) => message === g || message === `${g}!`);
+  }
+
+  /**
+   * Gets persona-specific greeting
+   *
+   * @param {string} personaId - Persona identifier
+   * @returns {string} - Greeting message
+   */
+  static getGreeting(personaId) {
+    const persona = personaManager.getPersona(personaId);
+    if (!persona) {
       return 'Hello! How can I help you today?';
     }
 
-    const defaults = {
-      hitesh: `${config.personality.greeting} That's an interesting question, bhai! 😊
-
-You know, after teaching 1.6M+ students and working in the industry for 15+ years, I've learned that every question has value.
-
-Chaliye, let me help you understand this better! The key is to break down complex problems step by step - just like making perfect chai.
-
-Don't worry, we'll figure this out together! Main yahan hun aapki help karne ke liye.
-
-Samjho? ☕️`,
-
-      piyush: `${config.personality.greeting} 🔥
-
-You know what I love about software engineering? Every problem has a solution, and every challenge is an opportunity to build something better.
-
-My approach is always:
-1. **Understand the problem** completely
-2. **Choose the right tools** for the job
-3. **Build incrementally** and test often
-4. **Scale when needed**
-
-Trust me, I'm a software engineer - let's tackle this together and build something real!
-
-Ready to dive deep? 🚀`,
-    };
-
-    return defaults[persona] || 'Hello! How can I help you today?';
+    // Return the persona's defined greeting
+    return persona.greeting || `Hello! I'm ${persona.name}. How can I help you today?`;
   }
 
+  /**
+   * Classifies topic from message
+   *
+   * @param {string} message - User message
+   * @returns {string} - Topic category
+   */
   static classifyTopic(message) {
     const lowerMessage = message.toLowerCase();
 
-    for (const [topic, keywords] of Object.entries(topicMappings)) {
+    const topicKeywords = {
+      react: ['react', 'jsx', 'component', 'hook', 'useeffect', 'usestate'],
+      javascript: ['javascript', 'js', 'promise', 'async', 'closure', 'es6'],
+      nodejs: ['node', 'nodejs', 'express', 'npm', 'backend'],
+      career: ['career', 'job', 'interview', 'resume', 'portfolio', 'salary'],
+      mern: ['mern', 'mongodb', 'full stack', 'fullstack'],
+      css: ['css', 'styling', 'flexbox', 'grid', 'tailwind'],
+      database: ['database', 'sql', 'mongodb', 'postgres', 'mysql'],
+      deployment: ['deploy', 'deployment', 'hosting', 'vercel', 'aws'],
+    };
+
+    for (const [topic, keywords] of Object.entries(topicKeywords)) {
       if (keywords.some((keyword) => lowerMessage.includes(keyword))) {
         return topic;
       }
@@ -80,6 +118,12 @@ Ready to dive deep? 🚀`,
     return 'general';
   }
 
+  /**
+   * Analyzes skill level from message
+   *
+   * @param {string} message - User message
+   * @returns {string} - Skill level (beginner/intermediate/advanced)
+   */
   static analyzeLevel(message) {
     const lowerMessage = message.toLowerCase();
 
@@ -91,7 +135,9 @@ Ready to dive deep? 🚀`,
       'how to',
       'tutorial',
       'basic',
+      'beginner',
     ];
+
     const advancedKeywords = [
       'architecture',
       'scale',
@@ -99,11 +145,14 @@ Ready to dive deep? 🚀`,
       'advanced',
       'enterprise',
       'performance',
+      'microservices',
+      'distributed',
     ];
 
     const beginnerScore = beginnerKeywords.filter((keyword) =>
       lowerMessage.includes(keyword),
     ).length;
+
     const advancedScore = advancedKeywords.filter((keyword) =>
       lowerMessage.includes(keyword),
     ).length;
@@ -111,5 +160,22 @@ Ready to dive deep? 🚀`,
     if (beginnerScore >= 2) return 'beginner';
     if (advancedScore >= 1) return 'advanced';
     return 'intermediate';
+  }
+
+  /**
+   * Analyzes query complexity
+   *
+   * @param {string} message - User message
+   * @returns {Object} - Analysis result
+   */
+  static analyzeQuery(message) {
+    return {
+      topic: this.classifyTopic(message),
+      level: this.analyzeLevel(message),
+      length: message.length,
+      isQuestion: message.includes('?'),
+      isGreeting: this.isGreeting(message.toLowerCase()),
+      canUseFastPath: this.canUseFastPath(message),
+    };
   }
 }
