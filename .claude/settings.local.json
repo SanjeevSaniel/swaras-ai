@@ -6,7 +6,8 @@
       "WebFetch(domain:ui.aceternity.com)",
       "Bash(curl:*)",
       "Bash(taskkill:*)",
-      "Bash(timeout /t 2)"
+      "Bash(timeout /t 2)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
