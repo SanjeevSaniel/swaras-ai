@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Paperclip, Mic, Sparkles } from 'lucide-react';
+import { Send, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const RefinedChatInput = ({ onSendMessage, disabled, selectedPersona }) => {
@@ -21,7 +21,7 @@ const RefinedChatInput = ({ onSendMessage, disabled, selectedPersona }) => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = Math.min(scrollHeight, 120) + 'px';
+      textareaRef.current.style.height = Math.min(scrollHeight, 100) + 'px';
     }
   }, [message]);
 
@@ -51,21 +51,21 @@ const RefinedChatInput = ({ onSendMessage, disabled, selectedPersona }) => {
   const showSuggestions = !message.trim() && !disabled;
 
   return (
-    <div className='border-t border-border bg-background'>
+    <div className='border-t border-border/50 bg-background/95 backdrop-blur-sm'>
       {/* Suggestions */}
       {showSuggestions && (
-        <div className='p-3 border-b border-border'>
-          <div className='flex items-center gap-2 flex-wrap'>
+        <div className='p-2.5 border-b border-border/50'>
+          <div className='flex items-center gap-1.5 flex-wrap'>
             {suggestions.map((suggestion, index) => (
               <motion.button
                 key={index}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.04 }}
                 onClick={() => handleSuggestionClick(suggestion)}
-                className='px-3 py-1.5 rounded-lg bg-card border border-border hover:border-primary/50 hover:bg-accent transition-colors text-xs font-medium text-foreground'
+                className='px-2.5 py-1.5 rounded-lg bg-card border border-border/50 hover:border-[#FA8072]/30 hover:bg-accent transition-all duration-150 text-[10px] font-medium text-foreground'
               >
-                <span className='text-muted-foreground mr-1.5'>{suggestion.category}</span>
+                <span className='text-[#FA8072] mr-1'>{suggestion.category}</span>
                 {suggestion.text}
               </motion.button>
             ))}
@@ -74,25 +74,14 @@ const RefinedChatInput = ({ onSendMessage, disabled, selectedPersona }) => {
       )}
 
       {/* Input Area */}
-      <form onSubmit={handleSubmit} className='p-4'>
+      <form onSubmit={handleSubmit} className='p-3'>
         <div
-          className={`relative flex items-end gap-2 p-3 rounded-2xl border transition-all ${
+          className={`relative flex items-end gap-2 p-2.5 rounded-xl border transition-all duration-200 ${
             isFocused
-              ? 'border-primary bg-card shadow-sm'
-              : 'border-border bg-card'
+              ? 'border-[#FA8072]/40 bg-card shadow-sm'
+              : 'border-border/50 bg-card'
           }`}
         >
-          {/* Attachment Button */}
-          <Button
-            type='button'
-            variant='ghost'
-            size='sm'
-            className='h-8 w-8 p-0 hover:bg-accent flex-shrink-0'
-            disabled={disabled}
-          >
-            <Paperclip className='w-4.5 h-4.5 text-muted-foreground' />
-          </Button>
-
           {/* Textarea */}
           <textarea
             ref={textareaRef}
@@ -103,47 +92,47 @@ const RefinedChatInput = ({ onSendMessage, disabled, selectedPersona }) => {
             onBlur={() => setIsFocused(false)}
             placeholder={
               disabled
-                ? 'Please select a mentor first...'
-                : 'Type your message...'
+                ? 'Select a mentor to start...'
+                : 'Message your AI mentor...'
             }
             disabled={disabled}
             rows={1}
-            className='flex-1 resize-none bg-transparent border-none outline-none text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground disabled:opacity-50 min-h-[32px] max-h-[120px]'
+            className='flex-1 resize-none bg-transparent border-none outline-none text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/60 disabled:opacity-50 min-h-[28px] max-h-[100px]'
             style={{ height: 'auto' }}
           />
-
-          {/* Voice Input Button */}
-          <Button
-            type='button'
-            variant='ghost'
-            size='sm'
-            className='h-8 w-8 p-0 hover:bg-accent flex-shrink-0'
-            disabled={disabled}
-          >
-            <Mic className='w-4.5 h-4.5 text-muted-foreground' />
-          </Button>
 
           {/* Send Button */}
           <Button
             type='submit'
             size='sm'
             disabled={!message.trim() || disabled}
-            className='h-8 w-8 p-0 bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-50 flex-shrink-0'
+            className='h-7 w-7 p-0 text-white disabled:opacity-40 flex-shrink-0 shadow-sm transition-all duration-200'
+            style={!message.trim() || disabled ? {} : {
+              background: 'linear-gradient(to right, #FA8072, #FF8E8E)',
+            }}
+            onMouseEnter={(e) => {
+              if (message.trim() && !disabled) {
+                e.currentTarget.style.background = 'linear-gradient(to right, #FF9189, #FFA3A3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (message.trim() && !disabled) {
+                e.currentTarget.style.background = 'linear-gradient(to right, #FA8072, #FF8E8E)';
+              }
+            }}
           >
-            <Send className='w-4.5 h-4.5' />
+            <Send className='w-3.5 h-3.5' />
           </Button>
         </div>
 
         {/* Footer Hints */}
         <div className='flex items-center justify-between mt-2 px-1'>
-          <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-            <Sparkles className='w-3.5 h-3.5' />
+          <div className='flex items-center gap-1.5 text-[10px] text-muted-foreground/70'>
+            <Sparkles className='w-3 h-3 text-[#FA8072]' />
             <span>AI-powered responses</span>
           </div>
-          <div className='text-xs text-muted-foreground'>
-            <kbd className='px-1.5 py-0.5 rounded bg-muted text-xs'>Enter</kbd> to send
-            <span className='mx-1'>•</span>
-            <kbd className='px-1.5 py-0.5 rounded bg-muted text-xs'>Shift + Enter</kbd> for new line
+          <div className='text-[10px] text-muted-foreground/70'>
+            <kbd className='px-1 py-0.5 rounded bg-muted text-[9px] font-medium'>Enter</kbd> to send
           </div>
         </div>
       </form>
