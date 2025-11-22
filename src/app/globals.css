@@ -30,73 +30,81 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 1rem;
 
-  /* Refined Light Theme - Warm Professional Palette */
-  --background: #fafafa;
-  --foreground: #171717;
-  --card: #ffffff;
-  --card-foreground: #171717;
+  /* Modern Light Theme - Clean & Professional */
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #fafafa;
+  --card-foreground: #0a0a0a;
   --popover: #ffffff;
-  --popover-foreground: #171717;
+  --popover-foreground: #0a0a0a;
 
-  /* Primary - Deep Indigo (Professional & Trustworthy) */
-  --primary: #4f46e5;
+  /* Primary - Sophisticated Blue */
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
 
-  /* Secondary - Soft Slate */
-  --secondary: #f1f5f9;
-  --secondary-foreground: #334155;
+  /* Secondary - Soft Neutral */
+  --secondary: #f5f5f5;
+  --secondary-foreground: #525252;
 
-  /* Muted - Subtle Gray */
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
+  /* Muted - Ultra Subtle */
+  --muted: #fafafa;
+  --muted-foreground: #737373;
 
-  /* Accent - Vibrant Violet */
-  --accent: #f8fafc;
-  --accent-foreground: #7c3aed;
+  /* Accent - Refined Teal */
+  --accent: #f0fdfa;
+  --accent-foreground: #0d9488;
 
-  /* Destructive - Modern Red */
-  --destructive: #ef4444;
+  /* Destructive - Calm Red */
+  --destructive: #dc2626;
 
-  /* Borders - Clean & Subtle */
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #4f46e5;
+  /* Borders - Whisper Gray */
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #2563eb;
+
+  /* Custom - Success */
+  --success: #059669;
+  --success-foreground: #ffffff;
 }
 
 .dark {
-  /* Refined Dark Theme - Deep Space Professional */
-  --background: #0f0f10;
+  /* Modern Dark Theme - Sophisticated & Minimal */
+  --background: #0a0a0a;
   --foreground: #fafafa;
-  --card: #18181b;
+  --card: #141414;
   --card-foreground: #fafafa;
-  --popover: #18181b;
+  --popover: #141414;
   --popover-foreground: #fafafa;
 
-  /* Primary - Bright Indigo (High Contrast) */
-  --primary: #6366f1;
-  --primary-foreground: #fafafa;
+  /* Primary - Vibrant Blue */
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
 
-  /* Secondary - Rich Charcoal */
-  --secondary: #27272a;
-  --secondary-foreground: #e4e4e7;
+  /* Secondary - Deep Neutral */
+  --secondary: #1a1a1a;
+  --secondary-foreground: #d4d4d4;
 
-  /* Muted - Warm Gray */
-  --muted: #1c1c1e;
-  --muted-foreground: #a1a1aa;
+  /* Muted - Warm Dark */
+  --muted: #171717;
+  --muted-foreground: #a3a3a3;
 
-  /* Accent - Electric Violet */
-  --accent: #27272a;
-  --accent-foreground: #8b5cf6;
+  /* Accent - Bright Teal */
+  --accent: #0f1f1e;
+  --accent-foreground: #14b8a6;
 
-  /* Destructive - Vibrant Red */
-  --destructive: #f87171;
+  /* Destructive - Soft Red */
+  --destructive: #ef4444;
 
-  /* Borders - Subtle Zinc */
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #6366f1;
+  /* Borders - Subtle Gray */
+  --border: #262626;
+  --input: #262626;
+  --ring: #3b82f6;
+
+  /* Custom - Success */
+  --success: #10b981;
+  --success-foreground: #ffffff;
 }
 
 @layer base {
@@ -112,12 +120,31 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
+    font-size: 15px;
+    line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-manrope), var(--font-inter), sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  h1 { font-size: 2.5rem; font-weight: 700; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.25rem; }
+  h5 { font-size: 1.125rem; }
+  h6 { font-size: 1rem; }
+
+  p {
+    line-height: 1.65;
+    margin-bottom: 1rem;
+  }
+
+  button, input, textarea, select {
+    font-family: inherit;
   }
   
   html {
