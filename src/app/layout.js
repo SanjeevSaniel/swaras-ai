@@ -1,21 +1,22 @@
 // src/app/layout.js
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/providers/theme-provider';
-import { Inter, Manrope } from 'next/font/google';
+import { Zain, Inter } from 'next/font/google';
 import './globals.css';
 
-// Professional font system with multiple weights
+// Zain font for modern, elegant typography
+const zain = Zain({
+  subsets: ['latin'],
+  weight: ['200', '300', '400', '700', '800', '900'],
+  variable: '--font-zain',
+  display: 'swap',
+});
+
+// Inter as fallback
 const inter = Inter({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-inter',
-  display: 'swap',
-});
-
-const manrope = Manrope({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-manrope',
   display: 'swap',
 });
 
@@ -24,7 +25,7 @@ export const metadata = {
   description:
     'Chat with specialized AI mentors across technology, business, health, and more. Get expert guidance tailored to your needs.',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/favicon.svg',
   },
 };
 
@@ -42,11 +43,11 @@ const RootLayout = ({ children }) => {
           />
           <link
             rel='icon'
-            href='/favicon.ico'
-            sizes='any'
+            href='/favicon.svg'
+            type='image/svg+xml'
           />
         </head>
-        <body className={`${inter.variable} ${manrope.variable} font-sans antialiased`}>
+        <body className={`${zain.variable} ${inter.variable} font-sans antialiased`}>
           <ThemeProvider
             attribute='class'
             defaultTheme='system'
