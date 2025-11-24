@@ -7,7 +7,20 @@
       "Bash(curl:*)",
       "Bash(taskkill:*)",
       "Bash(timeout /t 2)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebFetch(domain:dribbble.com)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: update color system to modern blue/teal palette\n\n- Replace purple/pink/indigo with sophisticated blue/teal scheme\n- Update light theme with cleaner whites and neutral grays\n- Refine dark theme with deeper blacks and subtle borders\n- Improve typography with better line-height and font sizing\n- Add success color variants for both themes\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: create refined sidebar with modern minimal design\n\n- Cleaner layout with better spacing and typography\n- Simplified persona selector with dropdown\n- Improved conversation cards with better visual hierarchy\n- Smooth micro-interactions and transitions\n- Updated language to be more professional (\"mentors\" instead of \"personas\")\n- Better empty states and search functionality\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:cdn.dribbble.com)",
+      "WebSearch",
+      "Bash(nul)",
+      "Bash(timeout /t 5)",
+      "Bash(cat:*)",
+      "WebFetch(domain:ai-sdk.dev)",
+      "WebFetch(domain:antigravity.google)"
     ],
     "deny": [],
     "ask": []
