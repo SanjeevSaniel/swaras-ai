@@ -3,7 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import NixtioApp from '@/components/nixtio-app';
+import SwarasAI from '@/components/swaras-app';
 import { Loader2 } from 'lucide-react';
 
 export default function ChatPage() {
@@ -34,5 +34,5 @@ export default function ChatPage() {
   }
 
   // Show the main app
-  return <NixtioApp />;
+  return <SwarasAI />;
 }
