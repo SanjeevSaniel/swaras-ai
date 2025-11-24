@@ -7,7 +7,7 @@ import { Toaster } from 'react-hot-toast';
 import AiChatContainer from './chat/ai-chat-container';
 import SwarasSidebar from './sidebar/swaras-sidebar';
 
-const NixtioApp = () => {
+const SwarasAI = () => {
   const {
     selectedPersona,
     setSelectedPersona,
@@ -80,4 +80,4 @@ const NixtioApp = () => {
   );
 };
 
-export default NixtioApp;
+export default SwarasAI;
