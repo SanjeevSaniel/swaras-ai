@@ -1,6 +1,6 @@
 'use client';
 
-import LandingPage from '@/components/landing/landing-page';
+import LightLandingPage from '@/components/landing/light-landing-page';
 import { useUser } from '@clerk/nextjs';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -32,7 +32,7 @@ export default function Home() {
 
   // Show landing page for non-authenticated users
   if (!isSignedIn) {
-    return <LandingPage />;
+    return <LightLandingPage />;
   }
 
   // This shouldn't render due to the useEffect redirect, but just in case
