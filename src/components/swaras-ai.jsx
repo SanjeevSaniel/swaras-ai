@@ -7,22 +7,22 @@ import { useChatStore } from '@/store/chat-store';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import { useChat } from '@ai-sdk/react';
 import ChatHeader from './chat/chat-header';
-import RefinedChatInput from './chat/refined-chat-input';
-import RefinedChatMessages from './chat/refined-chat-messages';
+import ChatInput from './chat/chat-input';
+import ChatMessages from './chat/chat-messages';
 import EmptyPersonaState from './empty-persona-state';
-import RefinedSidebar from './sidebar/refined-sidebar';
+import AppSidebar from './sidebar/app-sidebar';
 import WelcomeScreen from './welcome/welcome-screen';
 
 const SwarasAI = () => {
-  const [isTyping, setIsTyping] = useState(false);
   const [responseMetadata, setResponseMetadata] = useState(null);
   const [debugMode, setDebugMode] = useState(
     process.env.NODE_ENV === 'development',
   );
 
   const {
-    conversations,
+    personaConversations,
     currentConversation,
     selectedPersona,
     darkMode,
@@ -35,12 +35,217 @@ const SwarasAI = () => {
     deleteConversation,
     initializeTheme,
     initializeMentorStatus,
+    getConversations,
   } = useChatStore();
+
+  // Get conversations as array for sidebar
+  const conversations = getConversations ? getConversations() : Object.values(personaConversations || {});
+
+  // Initialize AI SDK's useChat hook
+  const chatApi = useChat({
+    api: '/api/chat-ai',
+    body: {
+      persona: selectedPersona,
+    },
+    onResponse: (response) => {
+      console.log('✅ AI response started streaming', response);
+    },
+    onFinish: (message) => {
+      console.log('✅ AI response completed:', message);
+      console.log('📊 Current messages count:', chatApi.messages.length);
+      // Update conversation with the new message
+      if (currentConversation) {
+        const updatedConversation = {
+          ...currentConversation,
+          messages: chatApi.messages,
+          lastMessageAt: Date.now(),
+          messageCount: chatApi.messages.length,
+        };
+        updateConversation(currentConversation.id, updatedConversation);
+        console.log('💾 Conversation updated in store');
+      }
+    },
+    onError: (error) => {
+      console.error('❌ Streaming error:', error);
+      toast.error('Failed to get response from mentor', {
+        icon: '❌',
+        duration: 4000,
+      });
+    },
+  });
+
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit: originalHandleSubmit,
+    isLoading,
+    setMessages,
+  } = chatApi;
+
+  console.log('🎯 useChat values:', {
+    input,
+    hasHandleInputChange: !!handleInputChange,
+    hasHandleSubmit: !!originalHandleSubmit,
+    messagesCount: messages.length,
+  });
+
+  // Custom message sending handler
+  const handleSendMessage = async (messageText) => {
+    console.log('🔄 handleSendMessage called with:', messageText);
+
+    // Prevent message sending if mentors are offline
+    if (!mentorsOnline || mentorsLoading) {
+      console.log('⚠️ Mentors offline or loading');
+      toast.error(
+        'AI mentors are currently offline. Please wait for connection.',
+        {
+          duration: 4000,
+          icon: '⚠️',
+        },
+      );
+      return;
+    }
+
+    if (!messageText || !messageText.trim() || !selectedPersona || isLoading) {
+      console.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isLoading });
+      return;
+    }
+
+    // Ensure conversation exists before sending
+    const conversation = ensureConversation();
+    if (!conversation) {
+      console.log('❌ Failed to create/get conversation');
+      return;
+    }
+
+    console.log('✅ Conversation ready:', conversation.id);
+
+    const personaName = personas[selectedPersona]?.name;
+    toast.success(`Message sent to ${personaName}! 🚀`, {
+      duration: 2000,
+      icon: personas[selectedPersona]?.avatar,
+    });
+
+    // Manually create user message
+    const userMessage = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: messageText.trim(),
+      createdAt: new Date(),
+    };
+
+    // Add user message to messages array
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    console.log('📝 Added user message, total:', updatedMessages.length);
+
+    // Call AI API directly
+    try {
+      console.log('📤 Calling AI API...');
+
+      const response = await fetch('/api/chat-ai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: updatedMessages,
+          persona: selectedPersona,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ API Error:', response.status, errorData);
+        throw new Error(`API request failed: ${response.status} - ${errorData.message || 'Unknown error'}`);
+      }
+
+      console.log('✅ Got response, reading stream...');
+
+      // Read the streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantMessage = '';
+      let assistantMessageId = `assistant-${Date.now()}`;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('0:')) {
+            // Text chunk
+            const text = line.substring(3, line.length - 1);
+            assistantMessage += text;
+
+            // Update messages with partial response
+            setMessages([
+              ...updatedMessages,
+              {
+                id: assistantMessageId,
+                role: 'assistant',
+                content: assistantMessage,
+                createdAt: new Date(),
+              },
+            ]);
+          }
+        }
+      }
+
+      console.log('✅ Streaming complete, final message length:', assistantMessage.length);
+
+      // Update conversation in store
+      const finalMessages = [
+        ...updatedMessages,
+        {
+          id: assistantMessageId,
+          role: 'assistant',
+          content: assistantMessage,
+          createdAt: new Date(),
+        },
+      ];
+
+      if (currentConversation) {
+        const updatedConversation = {
+          ...currentConversation,
+          messages: finalMessages,
+          lastMessageAt: Date.now(),
+          messageCount: finalMessages.length,
+        };
+        updateConversation(currentConversation.id, updatedConversation);
+        console.log('💾 Conversation updated in store');
+      }
+    } catch (error) {
+      console.error('❌ Error in handleSendMessage:', error);
+      toast.error('Failed to send message. Please try again.');
+    }
+  };
 
   useEffect(() => {
     initializeTheme();
     initializeMentorStatus();
   }, [initializeTheme, initializeMentorStatus]);
+
+  // Sync messages from current conversation to useChat
+  useEffect(() => {
+    if (currentConversation && currentConversation.messages) {
+      // Convert conversation messages to AI SDK format
+      const aiSdkMessages = currentConversation.messages.map((msg) => ({
+        id: msg.id || `${msg.timestamp}`,
+        role: msg.role === 'ai' || msg.role === 'assistant' ? 'assistant' : 'user',
+        content: msg.content,
+      }));
+      setMessages(aiSdkMessages);
+      console.log('📋 Synced messages to AI SDK:', aiSdkMessages.length);
+    } else {
+      setMessages([]);
+      console.log('📋 Cleared messages (no conversation)');
+    }
+  }, [currentConversation?.id, setMessages]);
 
   // Clear conversation if persona changes
   useEffect(() => {
@@ -50,27 +255,13 @@ const SwarasAI = () => {
       currentConversation.personaId !== selectedPersona
     ) {
       setCurrentConversation(null);
+      setMessages([]);
     }
   }, [selectedPersona, currentConversation, setCurrentConversation]);
 
-  // Enhanced message sending with comprehensive analysis and error handling
-  const handleSendMessage = async (messageText) => {
-    // Prevent message sending if mentors are offline
-    if (!mentorsOnline || mentorsLoading) {
-      toast.error(
-        'AI mentors are currently offline. Please wait for connection.',
-        {
-          duration: 4000,
-          icon: '⚠️',
-          style: {
-            borderLeft: '4px solid #f59e0b',
-          },
-        },
-      );
-      return;
-    }
-
-    if (!messageText.trim() || !selectedPersona || isTyping) return;
+  // Create conversation before first message if needed
+  const ensureConversation = () => {
+    if (!selectedPersona || !mentorsOnline || mentorsLoading) return null;
 
     let conversation = currentConversation;
 
@@ -79,173 +270,32 @@ const SwarasAI = () => {
       conversation = null;
     }
 
-    // Create new conversation if none exists using Enhanced AI Service
+    // Create new conversation if none exists
     if (!conversation) {
       try {
         conversation = AIService.createConversation(selectedPersona);
+
+        // Add initial greeting message
+        const greetingMessage = AIService.createMessage(
+          AIService.getPersonaGreeting(selectedPersona),
+          'assistant',
+          { isGreeting: true },
+        );
+
+        conversation.messages = [greetingMessage];
+        conversation.messageCount = 1;
+        conversation.lastMessageAt = Date.now();
+
         addConversation(conversation);
         setCurrentConversation(conversation);
       } catch (error) {
         console.error('Failed to create conversation:', error);
         toast.error('Failed to start conversation. Please try again.');
-        return;
+        return null;
       }
     }
 
-    const userMessage = AIService.createMessage(messageText, 'user', {
-      timestamp: Date.now(),
-      personaContext: selectedPersona,
-    });
-
-    const updatedMessages = [...conversation.messages, userMessage];
-    const updatedConversation = {
-      ...conversation,
-      messages: updatedMessages,
-      title:
-        conversation.title === 'New Chat'
-          ? messageText.slice(0, 30) + (messageText.length > 30 ? '...' : '')
-          : conversation.title,
-      lastMessageAt: Date.now(),
-      messageCount: updatedMessages.length,
-    };
-
-    updateConversation(conversation.id, updatedConversation);
-    setIsTyping(true);
-
-    try {
-      // Show immediate feedback with persona context
-      const personaName = personas[selectedPersona]?.name;
-      const personaAvatar = personas[selectedPersona]?.avatar;
-
-      toast.success(`Message sent to ${personaName}! 🚀`, {
-        duration: 2000,
-        icon: personaAvatar,
-        style: {
-          borderLeft: '4px solid #10b981',
-        },
-      });
-
-      // Get enhanced AI response with full context analysis
-      console.log('🤖 Requesting enhanced AI response...');
-      const startTime = Date.now();
-
-      console.log('🚀 Sending message to AI Service:', {
-        message: messageText,
-        persona: selectedPersona,
-        conversationLength: conversation.messages.length,
-      });
-
-      const aiResponse = await AIService.getPersonaResponse(
-        messageText,
-        selectedPersona,
-        conversation.messages,
-      );
-
-      console.log(
-        '📦 Received AI response:',
-        aiResponse.substring(0, 100) + '...',
-      );
-
-      const responseTime = Date.now() - startTime;
-
-      // Create AI message with enhanced metadata
-      const aiMessage = AIService.createMessage(aiResponse, 'ai', {
-        generatedAt: Date.now(),
-        responseTime: responseTime,
-        responseLength: aiResponse.length,
-        personaUsed: selectedPersona,
-        conversationLength: conversation.messages.length,
-      });
-
-      const finalConversation = {
-        ...updatedConversation,
-        messages: [...updatedMessages, aiMessage],
-        lastMessageAt: Date.now(),
-        messageCount: updatedMessages.length + 1,
-        totalResponseTime: (conversation.totalResponseTime || 0) + responseTime,
-      };
-
-      updateConversation(conversation.id, finalConversation);
-
-      // Set metadata for debug mode
-      if (debugMode) {
-        setResponseMetadata({
-          persona: selectedPersona,
-          responseTime: responseTime,
-          messageLength: aiResponse.length,
-          conversationLength: finalConversation.messages.length,
-        });
-      }
-
-      // Show success feedback with response time
-      toast.success(
-        `${personaName} responded! ${responseTime < 3000 ? '⚡' : '💬'}`,
-        {
-          duration: 2000,
-          icon: '✨',
-          style: {
-            borderLeft: '4px solid #8b5cf6',
-          },
-        },
-      );
-
-      console.log(`✅ Response generated in ${responseTime}ms`);
-    } catch (error) {
-      console.error('Failed to get AI response:', error);
-
-      // Enhanced error handling with specific error types and solutions
-      let errorMessage =
-        'Failed to get response from mentor. Please try again.';
-      let errorIcon = '❌';
-      let errorSuggestion = '';
-
-      if (
-        error.message.includes('network') ||
-        error.message.includes('fetch')
-      ) {
-        errorMessage = 'Network connection issue detected.';
-        errorIcon = '🌐';
-        errorSuggestion = 'Please check your internet connection.';
-      } else if (
-        error.message.includes('rate limit') ||
-        error.message.includes('429')
-      ) {
-        errorMessage = 'Too many requests sent.';
-        errorIcon = '⏳';
-        errorSuggestion = 'Please wait a moment before trying again.';
-      } else if (
-        error.message.includes('persona') ||
-        error.message.includes('prompt')
-      ) {
-        errorMessage = 'Mentor configuration error.';
-        errorIcon = '⚙️';
-        errorSuggestion = 'Try selecting the mentor again.';
-      } else if (error.message.includes('timeout')) {
-        errorMessage = 'Response took too long.';
-        errorIcon = '⏰';
-        errorSuggestion = 'The AI is thinking hard! Please try again.';
-      }
-
-      toast.error(
-        errorSuggestion ? `${errorMessage} ${errorSuggestion}` : errorMessage,
-        {
-          duration: 6000,
-          icon: errorIcon,
-          style: {
-            borderLeft: '4px solid #ef4444',
-          },
-        },
-      );
-
-      // Remove user message on error to maintain conversation state
-      updateConversation(conversation.id, {
-        ...conversation,
-        messages: conversation.messages,
-        errorCount: (conversation.errorCount || 0) + 1,
-      });
-    } finally {
-      setIsTyping(false);
-    }
+    return conversation;
   };
 
   const handleQuickStart = async (question) => {
@@ -257,13 +307,46 @@ const SwarasAI = () => {
       return;
     }
 
-    // Add loading state for quick start
-    toast.loading('Preparing your question...', {
-      duration: 1000,
-      icon: '🎯',
-    });
+    // Create a new conversation if none exists
+    let conversation = currentConversation;
 
-    await handleSendMessage(question);
+    // Ensure conversation matches selected persona
+    if (conversation && conversation.personaId !== selectedPersona) {
+      conversation = null;
+    }
+
+    // Create new conversation if none exists
+    if (!conversation) {
+      try {
+        conversation = AIService.createConversation(selectedPersona);
+
+        // Add initial greeting message from the mentor
+        const greetingMessage = AIService.createMessage(
+          AIService.getPersonaGreeting(selectedPersona),
+          'assistant',
+          { isGreeting: true },
+        );
+
+        // Update conversation with greeting
+        const conversationWithGreeting = {
+          ...conversation,
+          messages: [greetingMessage],
+          messageCount: 1,
+          lastMessageAt: Date.now(),
+        };
+
+        addConversation(conversationWithGreeting);
+        setCurrentConversation(conversationWithGreeting);
+      } catch (error) {
+        console.error('Failed to create conversation:', error);
+        toast.error('Failed to start conversation. Please try again.');
+        return;
+      }
+    }
+
+    // Just fill the input - don't send the message
+    // The event will be dispatched to the input component
+    window.dispatchEvent(new CustomEvent('setInputValue', { detail: question }));
   };
 
   // Enhanced auto-send with better error handling and user feedback
@@ -354,32 +437,50 @@ const SwarasAI = () => {
         ? currentConversation
         : null;
 
-    if (validConversation && validConversation.messages.length > 0) {
+    // Always show chat interface when persona is selected
+    if (selectedPersona) {
+      // Use AI SDK messages directly - they are the source of truth
+      const displayMessages = messages || [];
+      const hasMessages = displayMessages.length > 0;
+
+      console.log('🎨 Rendering chat view:', {
+        selectedPersona,
+        messagesCount: displayMessages.length,
+        hasMessages,
+        isLoading,
+      });
+
       return (
         <motion.div
-          className={`flex flex-col h-full overflow-hidden chat-container ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+          className={`relative flex flex-col h-full overflow-hidden chat-container ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.1 }}
-          key={`conversation-${validConversation.id}-${selectedPersona}`}>
+          key={`conversation-${validConversation?.id || 'new'}-${selectedPersona}`}>
           <ChatHeader selectedPersona={selectedPersona} />
-          <div className='flex-1 overflow-hidden chat-messages-area'>
-            <RefinedChatMessages
-              messages={validConversation.messages}
-              isTyping={isTyping}
-              selectedPersona={selectedPersona}
-            />
+          <div className='flex-1 overflow-hidden chat-messages-area pb-32'>
+            {hasMessages ? (
+              <ChatMessages
+                messages={displayMessages}
+                isTyping={isLoading}
+                selectedPersona={selectedPersona}
+              />
+            ) : (
+              <WelcomeScreen onQuickStart={handleQuickStart} />
+            )}
           </div>
-          <RefinedChatInput
+          <ChatInput
             onSendMessage={handleSendMessage}
             selectedPersona={selectedPersona}
-            disabled={!mentorsOnline || mentorsLoading || isTyping}
+            disabled={!mentorsOnline || mentorsLoading || isLoading}
+            isLoading={isLoading}
           />
         </motion.div>
       );
     }
 
+    // No persona selected - show empty state
     return (
       <motion.div
         className={`h-full overflow-hidden ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
@@ -387,8 +488,8 @@ const SwarasAI = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.1 }}
-        key={`welcome-${selectedPersona}`}>
-        <WelcomeScreen onQuickStart={handleQuickStart} />
+        key='no-persona'>
+        <EmptyPersonaState />
       </motion.div>
     );
   };
@@ -463,7 +564,7 @@ const SwarasAI = () => {
             initial={{ x: -340, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}>
-            <RefinedSidebar
+            <AppSidebar
               conversations={conversations}
               currentConversation={currentConversation}
               onSelectConversation={setCurrentConversation}

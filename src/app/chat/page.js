@@ -3,7 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import SwarasAI from '@/components/swaras-app';
+import SwarasAI from '@/components/swaras-ai';
 import { Loader2 } from 'lucide-react';
 
 export default function ChatPage() {

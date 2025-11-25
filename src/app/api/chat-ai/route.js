@@ -24,20 +24,12 @@ export async function POST(req) {
     // Get conversation history (excluding the last message)
     const history = messages.slice(0, -1);
 
-    // Process conversation through hybrid system to get context
-    const result = await processor.processConversation(
-      persona,
-      personaName,
-      lastMessage.content,
-      history,
-    );
-
     // Get persona system prompt
     const systemPrompt = getPersonaSystemPrompt(persona, personaName);
 
     // Stream the response using Vercel AI SDK
-    const response = await streamText({
-      model: openai('gpt-4-turbo-preview'),
+    const result = streamText({
+      model: openai('gpt-4o'),
       system: systemPrompt,
       messages: [
         ...history,
@@ -50,7 +42,7 @@ export async function POST(req) {
       maxTokens: 1000,
     });
 
-    return response.toDataStreamResponse();
+    return result.toDataStreamResponse();
   } catch (error) {
     console.error('💥 Chat AI API error:', error);
     return new Response(

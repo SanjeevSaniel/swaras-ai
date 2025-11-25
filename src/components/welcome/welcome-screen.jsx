@@ -47,7 +47,7 @@ const FloatingParticles = () => {
   );
 };
 
-const WelcomeScreen = () => {
+const WelcomeScreen = ({ onQuickStart }) => {
   const {
     selectedPersona,
     setSelectedPersona,
@@ -58,6 +58,27 @@ const WelcomeScreen = () => {
   } = useChatStore();
   const [startingChat, setStartingChat] = useState(false);
   const persona = selectedPersona ? personas[selectedPersona] : null;
+
+  // Conversation starters based on persona
+  const getConversationStarters = (personaId) => {
+    const starters = {
+      hitesh: [
+        'Explain JavaScript fundamentals',
+        'How to learn React effectively?',
+        'Career advice for developers'
+      ],
+      piyush: [
+        'System design best practices',
+        'Building scalable applications',
+        'Modern full-stack architecture'
+      ]
+    };
+    return starters[personaId] || [
+      'Ask about their expertise',
+      'Get career advice',
+      'Learn best practices'
+    ];
+  };
 
   // Function to start a new chat
   const startNewChat = async () => {
@@ -590,232 +611,117 @@ const WelcomeScreen = () => {
     );
   }
 
-  // Selected persona view with working start chat button and social links
+  // Compact modern welcome view for chat interface
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className={`relative min-h-screen flex items-center justify-center p-6 overflow-hidden ${
-        darkMode ? 'bg-[#0a0f1e] text-white' : 'bg-white text-gray-900'
-      }`}>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6 }}
-        className='relative z-10 max-w-2xl text-center'>
-        <div className='relative mb-6 flex justify-center'>
-          <div className='relative w-32 h-32'>
-            <img
-              src={persona.avatarUrl}
-              alt={`${persona.name} avatar`}
-              className='w-32 h-32 rounded-full object-cover border-4 border-white/50 shadow-xl'
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextElementSibling.style.display = 'flex';
-              }}
-            />
-            <div
-              className='w-32 h-32 rounded-full bg-gradient-to-br from-[#0073e6] to-[#0052cc] flex items-center justify-center text-5xl border-4 border-white/50 shadow-xl'
-              style={{ display: 'none' }}>
-              {persona.avatar}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className='h-full flex items-center justify-center px-6 py-12 overflow-y-auto'>
+      <div className='max-w-xl w-full'>
+        {/* Compact Header */}
+        <div className='text-center mb-8'>
+          <div className='relative mb-4 inline-block'>
+            <div className='relative w-16 h-16'>
+              <img
+                src={persona.avatarUrl}
+                alt={persona.name}
+                className='w-16 h-16 rounded-full object-cover shadow-md'
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextElementSibling.style.display = 'flex';
+                }}
+              />
+              <div
+                className='w-16 h-16 rounded-full bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center text-2xl shadow-md'
+                style={{ display: 'none' }}>
+                {persona.avatar}
+              </div>
+              <div
+                className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-background ${
+                  mentorsOnline ? 'bg-green-500' : 'bg-gray-400'
+                }`}
+              />
             </div>
+          </div>
 
-            {/* Properly positioned status badge */}
-            <div
-              className={`absolute -bottom-2 -right-2 p-2 rounded-full border-3 border-white shadow-lg ${
-                mentorsOnline ? 'bg-green-500' : 'bg-gray-400'
-              }`}>
-              <Star className='w-4 h-4 text-white' />
+          <h2 className='text-2xl font-semibold mb-1 text-foreground'>
+            {persona.name}
+          </h2>
+          <p className='text-base text-muted-foreground/80'>
+            {persona.title} • {persona.subtitle}
+          </p>
+        </div>
+
+        {/* Quick Start Prompts */}
+        {onQuickStart && (
+          <div className='space-y-2 mb-6'>
+            <p className='text-sm font-medium text-muted-foreground/70 px-1 mb-3'>
+              Try asking about...
+            </p>
+            <div className='grid gap-2'>
+              {getConversationStarters(selectedPersona).map((starter, index) => (
+                <motion.button
+                  key={index}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + index * 0.05 }}
+                  onClick={() => {
+                    if (mentorsOnline) {
+                      window.dispatchEvent(new CustomEvent('setInputValue', { detail: starter }));
+                    }
+                  }}
+                  disabled={!mentorsOnline}
+                  className={`group relative px-3.5 py-3 rounded-lg text-sm text-left transition-all ${
+                    !mentorsOnline
+                      ? 'opacity-50 cursor-not-allowed bg-accent/50'
+                      : 'cursor-pointer bg-accent/50 hover:bg-accent border border-transparent hover:border-[#FA8072]/20'
+                  }`}>
+                  <div className='flex items-center justify-between gap-2'>
+                    <span className='text-foreground/90 font-medium line-clamp-1'>{starter}</span>
+                    <svg
+                      className='w-4 h-4 text-muted-foreground/50 group-hover:text-[#FA8072] group-hover:translate-x-0.5 transition-all flex-shrink-0'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      stroke='currentColor'
+                      strokeWidth={2}>
+                      <path strokeLinecap='round' strokeLinejoin='round' d='M9 5l7 7-7 7' />
+                    </svg>
+                  </div>
+                </motion.button>
+              ))}
             </div>
+          </div>
+        )}
+
+        {/* Expertise Tags */}
+        <div className='mb-6'>
+          <p className='text-sm font-medium text-muted-foreground/70 px-1 mb-2'>
+            Expertise
+          </p>
+          <div className='flex flex-wrap gap-1.5'>
+            {persona.expertise.slice(0, 6).map((skill, index) => (
+              <span
+                key={index}
+                className='px-2.5 py-1 text-xs font-medium rounded-md bg-accent/60 text-foreground/70 border border-border/30'>
+                {skill}
+              </span>
+            ))}
+            {persona.expertise.length > 6 && (
+              <span className='px-2.5 py-1 text-xs font-medium rounded-md bg-accent/60 text-foreground/70 border border-border/30'>
+                +{persona.expertise.length - 6}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}>
-          <h1 className='text-3xl md:text-4xl font-bold mb-4'>
-            Hello, I'm{' '}
-            <span className='bg-gradient-to-r from-[#0073e6] to-[#0052cc] bg-clip-text text-transparent'>
-              {persona.name}
-            </span>
-          </h1>
-
-          <p
-            className={`text-lg mb-6 ${
-              darkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-            {persona.description}
+        {/* Footer Note */}
+        <div className='text-center'>
+          <p className='text-xs text-muted-foreground/60 leading-relaxed'>
+            Type your question below or click a suggestion to get started
           </p>
-
-          {/* Status indicator */}
-          <div
-            className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full mb-6 ${
-              mentorsOnline
-                ? darkMode
-                  ? 'bg-green-900/30 text-green-400'
-                  : 'bg-green-100 text-green-700'
-                : darkMode
-                ? 'bg-gray-800/30 text-gray-400'
-                : 'bg-gray-100 text-gray-700'
-            }`}>
-            <div
-              className={`w-2 h-2 rounded-full ${
-                mentorsOnline ? 'bg-green-500' : 'bg-gray-400'
-              }`}></div>
-            <span className='text-sm font-medium'>
-              {mentorsOnline ? 'Online & Ready' : 'Connecting...'}
-            </span>
-          </div>
-
-          {/* Skills */}
-          <div className='flex flex-wrap justify-center gap-2 mb-6'>
-            {persona.expertise.slice(0, 4).map((skill, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 + index * 0.1 }}>
-                <Badge
-                  variant='outline'
-                  className={`px-3 py-1 ${
-                    darkMode
-                      ? 'bg-blue-950/50 text-blue-400 border-slate-700'
-                      : 'bg-blue-50 text-blue-700 border-blue-200'
-                  }`}>
-                  {skill}
-                </Badge>
-              </motion.div>
-            ))}
-            {persona.expertise.length > 4 && (
-              <Badge
-                variant='outline'
-                className={`px-3 py-1 ${
-                  darkMode
-                    ? 'bg-blue-950/50 text-blue-400 border-slate-700'
-                    : 'bg-blue-50 text-blue-700 border-blue-200'
-                }`}>
-                +{persona.expertise.length - 4} more
-              </Badge>
-            )}
-          </div>
-
-          {/* Social Links for selected persona */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className='flex justify-center space-x-4 mb-8'>
-            {persona.websiteUrl && (
-              <a
-                href={persona.websiteUrl}
-                target='_blank'
-                rel='noopener noreferrer'
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
-                  darkMode
-                    ? 'bg-slate-800 border-slate-700 text-gray-400 hover:bg-[#0073e6] hover:text-white hover:border-[#0073e6]'
-                    : 'bg-white border-slate-200 text-gray-500 hover:bg-[#0073e6] hover:text-white hover:border-[#0073e6]'
-                }`}>
-                <Globe className='w-4 h-4' />
-                <span className='text-sm font-medium'>Website</span>
-              </a>
-            )}
-
-            {persona.youtubeUrl && (
-              <a
-                href={persona.youtubeUrl}
-                target='_blank'
-                rel='noopener noreferrer'
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
-                  darkMode
-                    ? 'bg-slate-800 border-slate-700 text-gray-400 hover:bg-[#dc2626] hover:text-white hover:border-[#dc2626]'
-                    : 'bg-white border-slate-200 text-gray-500 hover:bg-[#dc2626] hover:text-white hover:border-[#dc2626]'
-                }`}>
-                <Play className='w-4 h-4' />
-                <span className='text-sm font-medium'>YouTube</span>
-              </a>
-            )}
-          </motion.div>
-
-          {/* Bio */}
-          <div
-            className={`p-6 rounded-lg border mb-8 ${
-              darkMode
-                ? 'bg-slate-800/50 border-slate-700'
-                : 'bg-slate-50 border-slate-200'
-            }`}>
-            <p
-              className={`leading-relaxed ${
-                darkMode ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-              {persona.bio ||
-                "I'm here to guide you through your programming journey with practical advice and real-world insights. Let's start coding together!"}
-            </p>
-          </div>
-
-          {/* CTA Button - Now with working onClick handler */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-            whileHover={{ scale: mentorsOnline ? 1.05 : 1 }}
-            whileTap={{ scale: mentorsOnline ? 0.95 : 1 }}>
-            <Button
-              onClick={startNewChat}
-              disabled={!mentorsOnline || startingChat}
-              className={`px-8 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
-                mentorsOnline
-                  ? 'bg-[#0073e6] hover:bg-[#0052cc] text-white'
-                  : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-              }`}>
-              {startingChat ? (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{
-                      duration: 1,
-                      repeat: Infinity,
-                      ease: 'linear',
-                    }}
-                    className='w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full'
-                  />
-                  Starting Chat...
-                </>
-              ) : mentorsOnline ? (
-                <>
-                  <Play className='w-4 h-4 mr-2' />
-                  Start Chatting with {persona.name.split(' ')[0]}
-                  <MessageCircle className='w-4 h-4 ml-2' />
-                </>
-              ) : (
-                <>
-                  <MessageCircle className='w-4 h-4 mr-2' />
-                  Mentor Connecting...
-                </>
-              )}
-            </Button>
-          </motion.div>
-
-          {/* Back button */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.6 }}
-            className='mt-6'>
-            <Button
-              variant='ghost'
-              onClick={() => setSelectedPersona(null)}
-              className={`text-sm ${
-                darkMode
-                  ? 'text-gray-400 hover:text-gray-200'
-                  : 'text-gray-600 hover:text-gray-800'
-              }`}>
-              ← Choose Different Mentor
-            </Button>
-          </motion.div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </motion.div>
   );
 };

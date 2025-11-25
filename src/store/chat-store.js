@@ -5,8 +5,8 @@ import { persist } from 'zustand/middleware';
 export const useChatStore = create(
   persist(
     (set, get) => ({
-      // State
-      conversations: [],
+      // State - Modified to use persona-based conversations
+      personaConversations: {}, // { personaId: conversation }
       currentConversation: null,
       selectedPersona: null,
       darkMode: false,
@@ -51,7 +51,7 @@ export const useChatStore = create(
         }, Math.random() * 2000 + 3000);
       },
 
-      // Enhanced persona selection with analytics
+      // Enhanced persona selection - loads persona's conversation
       setSelectedPersona: (persona) => {
         const currentState = get();
 
@@ -70,24 +70,19 @@ export const useChatStore = create(
           return;
         }
 
-        // Update favorite persona statistics
-        const personaConversations = currentState.conversations.filter(
-          (conv) => conv.personaId === persona,
-        );
+        // Load the persona's conversation or null if none exists
+        const personaConversation = currentState.personaConversations[persona] || null;
 
         set({
           selectedPersona: persona,
-          currentConversation: null,
+          currentConversation: personaConversation,
           conversationStats: {
             ...currentState.conversationStats,
-            favoritePersona:
-              personaConversations.length > 0
-                ? persona
-                : currentState.conversationStats.favoritePersona,
+            favoritePersona: personaConversation ? persona : currentState.conversationStats.favoritePersona,
           },
         });
 
-        console.log(`✨ Selected persona: ${persona}`);
+        console.log(`✨ Selected persona: ${persona}`, personaConversation ? 'with existing conversation' : 'new conversation');
       },
 
       // Enhanced conversation management
@@ -110,7 +105,7 @@ export const useChatStore = create(
         }
       },
 
-      // Enhanced conversation creation with better titles
+      // Enhanced conversation creation - one per persona
       addConversation: (conv) => {
         const state = get();
 
@@ -119,18 +114,26 @@ export const useChatStore = create(
           return;
         }
 
-        // Generate better conversation title based on first message
+        const personaId = conv.personaId || state.selectedPersona;
+
+        // Create or update the persona's conversation
         const enhancedConv = {
           ...conv,
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          tags: [], // For future categorization
-          rating: null, // User can rate conversations
+          id: `${personaId}-conversation`,
+          personaId,
+          tags: [],
+          rating: null,
           archived: false,
           lastAccessedAt: Date.now(),
+          createdAt: state.personaConversations[personaId]?.createdAt || Date.now(),
         };
 
         set((state) => ({
-          conversations: [enhancedConv, ...state.conversations],
+          personaConversations: {
+            ...state.personaConversations,
+            [personaId]: enhancedConv,
+          },
+          currentConversation: enhancedConv,
           conversationStats: {
             ...state.conversationStats,
             totalMessages:
@@ -138,85 +141,91 @@ export const useChatStore = create(
               enhancedConv.messages.length,
           },
         }));
+
+        console.log(`💾 Saved conversation for persona: ${personaId}`);
       },
 
-      // Enhanced conversation updates with analytics
+      // Enhanced conversation updates - persona-based
       updateConversation: (convId, updates) => {
         set((state) => {
-          const updatedConversations = state.conversations.map((c) => {
-            if (c.id === convId) {
-              const updatedConv = {
-                ...c,
-                ...updates,
-                lastAccessedAt: Date.now(),
-                messageCount: updates.messages
-                  ? updates.messages.length
-                  : c.messageCount || 0,
-              };
+          // Find which persona this conversation belongs to
+          const personaId = Object.keys(state.personaConversations).find(
+            pid => state.personaConversations[pid]?.id === convId
+          );
 
-              // Track longest conversation
-              const isLongest =
-                !state.conversationStats.longestConversation ||
-                updatedConv.messageCount >
-                  (state.conversationStats.longestConversation?.messageCount ||
-                    0);
+          if (!personaId) {
+            console.warn('Conversation not found:', convId);
+            return state;
+          }
 
-              if (isLongest) {
-                state.conversationStats.longestConversation = {
-                  id: updatedConv.id,
-                  messageCount: updatedConv.messageCount,
-                  personaId: updatedConv.personaId,
-                };
-              }
+          const existingConv = state.personaConversations[personaId];
+          const updatedConv = {
+            ...existingConv,
+            ...updates,
+            lastAccessedAt: Date.now(),
+            messageCount: updates.messages
+              ? updates.messages.length
+              : existingConv.messageCount || 0,
+          };
 
-              return updatedConv;
-            }
-            return c;
+          // Track longest conversation
+          const isLongest =
+            !state.conversationStats.longestConversation ||
+            updatedConv.messageCount >
+              (state.conversationStats.longestConversation?.messageCount || 0);
+
+          const newStats = { ...state.conversationStats };
+          if (isLongest) {
+            newStats.longestConversation = {
+              id: updatedConv.id,
+              messageCount: updatedConv.messageCount,
+              personaId: updatedConv.personaId,
+            };
+          }
+
+          // Calculate total messages
+          const allConversations = Object.values({
+            ...state.personaConversations,
+            [personaId]: updatedConv,
           });
-
-          const newTotalMessages = updatedConversations.reduce(
+          newStats.totalMessages = allConversations.reduce(
             (total, conv) => total + (conv.messages?.length || 0),
             0,
           );
 
           return {
-            conversations: updatedConversations,
+            personaConversations: {
+              ...state.personaConversations,
+              [personaId]: updatedConv,
+            },
             currentConversation:
               state.currentConversation?.id === convId
-                ? { ...state.currentConversation, ...updates }
+                ? updatedConv
                 : state.currentConversation,
-            conversationStats: {
-              ...state.conversationStats,
-              totalMessages: newTotalMessages,
-            },
+            conversationStats: newStats,
           };
         });
       },
 
-      // Enhanced conversation deletion with confirmation
-      deleteConversation: (convId) => {
+      // Delete conversation for a persona
+      deleteConversation: (personaId) => {
         set((state) => {
-          const conversationToDelete = state.conversations.find(
-            (c) => c.id === convId,
-          );
-
+          const conversationToDelete = state.personaConversations[personaId];
           if (!conversationToDelete) return state;
 
-          const updatedConversations = state.conversations.filter(
-            (c) => c.id !== convId,
-          );
+          const { [personaId]: deleted, ...remaining } = state.personaConversations;
 
           // Recalculate stats
-          const newTotalMessages = updatedConversations.reduce(
+          const remainingConversations = Object.values(remaining);
+          const newTotalMessages = remainingConversations.reduce(
             (total, conv) => total + (conv.messages?.length || 0),
             0,
           );
 
           // Update longest conversation if deleted
-          let newLongestConversation =
-            state.conversationStats.longestConversation;
-          if (state.conversationStats.longestConversation?.id === convId) {
-            newLongestConversation = updatedConversations.reduce(
+          let newLongestConversation = state.conversationStats.longestConversation;
+          if (state.conversationStats.longestConversation?.personaId === personaId) {
+            newLongestConversation = remainingConversations.reduce(
               (longest, conv) => {
                 const messageCount = conv.messages?.length || 0;
                 return messageCount > (longest?.messageCount || 0)
@@ -228,9 +237,9 @@ export const useChatStore = create(
           }
 
           return {
-            conversations: updatedConversations,
+            personaConversations: remaining,
             currentConversation:
-              state.currentConversation?.id === convId
+              state.currentConversation?.personaId === personaId
                 ? null
                 : state.currentConversation,
             conversationStats: {
@@ -240,6 +249,8 @@ export const useChatStore = create(
             },
           };
         });
+
+        console.log(`🗑️ Deleted conversation for persona: ${personaId}`);
       },
 
       // Enhanced theme management
@@ -391,7 +402,7 @@ export const useChatStore = create(
       // Enhanced: Clear all conversations with confirmation
       clearAllConversations: () => {
         set({
-          conversations: [],
+          personaConversations: {},
           currentConversation: null,
           conversationStats: {
             totalMessages: 0,
@@ -400,6 +411,12 @@ export const useChatStore = create(
             totalSessions: get().conversationStats.totalSessions, // Keep session count
           },
         });
+      },
+
+      // Helper: Get all conversations as array
+      getConversations: () => {
+        const state = get();
+        return Object.values(state.personaConversations);
       },
 
       // New: User preferences management
@@ -465,9 +482,9 @@ export const useChatStore = create(
       },
     }),
     {
-      name: 'swaras-ai-enhanced-storage',
+      name: 'swaras-ai-persona-storage',
       partialize: (state) => ({
-        conversations: state.conversations,
+        personaConversations: state.personaConversations,
         selectedPersona: state.selectedPersona,
         darkMode: state.darkMode,
         conversationStats: state.conversationStats,

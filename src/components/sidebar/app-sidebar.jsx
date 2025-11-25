@@ -1,424 +1,237 @@
-// src/components/sidebar/app-sidebar.jsx
 'use client';
 
-import { personas } from '@/constants/personas-dataset';
-import { useChatStore } from '@/store/chat-store';
-import { useUser, useClerk, SignInButton } from '@clerk/nextjs';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  AlertCircle,
-  Loader2,
-  MessageSquare,
+  MessageSquarePlus,
+  Search,
+  Clock,
+  Star,
+  Archive,
+  Trash2,
+  MoreHorizontal,
   Sparkles,
-  Users,
-  WifiOff,
-  Zap,
-  ChevronDown,
-  LogOut,
   Settings,
   Moon,
   Sun,
-  User as UserIcon,
+  X,
+  Check,
+  ChevronDown,
+  Users,
+  Bot,
 } from 'lucide-react';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { useState } from 'react';
-import ConversationCombobox from './conversation-combobox';
-import PersonaSelector from './persona-selector';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useChatStore } from '@/store/chat-store';
+import { personaManager } from '@/constants/config';
+import { UserButton } from '@clerk/nextjs';
 
-const AppSidebar = () => {
-  const {
-    darkMode,
-    toggleDarkMode,
-    selectedPersona,
-    conversations,
-    mentorsOnline,
-    mentorsLoading,
-  } = useChatStore();
+const AppSidebar = ({
+  conversations,
+  currentConversation,
+  onSelectConversation,
+  onNewConversation,
+  onDeleteConversation,
+  selectedPersona,
+  onSelectPersona,
+}) => {
+  const { darkMode, toggleDarkMode, personaConversations } = useChatStore();
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const { user, isSignedIn, isLoaded } = useUser();
-  const { signOut, openSignIn } = useClerk();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const allPersonas = personaManager.getAllPersonas({ enabled: true });
+  const currentPersona = selectedPersona ? personaManager.getPersona(selectedPersona) : null;
 
-  const currentPersona = personas[selectedPersona];
-  const personaConversations = conversations.filter(
-    (conv) => conv.personaId === selectedPersona,
-  );
+  // Get persona-conversation map for showing message counts
+  const personaConversationMap = personaConversations || {};
 
-  // Enhanced status configuration with better colors and animations
-  const getStatusConfig = () => {
-    if (mentorsLoading) {
-      return {
-        icon: Loader2,
-        text: 'Connecting...',
-        dotColor: 'bg-gradient-to-r from-amber-400 to-orange-400',
-        bgColor: darkMode
-          ? 'bg-gradient-to-r from-amber-900/20 to-orange-900/20 border-amber-700/30'
-          : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200/50',
-        textColor: darkMode ? 'text-amber-300' : 'text-amber-700',
-        iconColor: darkMode ? 'text-amber-400' : 'text-amber-600',
-        iconAnimation: { rotate: 360 },
-        iconTransition: { duration: 1, repeat: Infinity, ease: 'linear' },
-        pulseColor: 'shadow-amber-400/20',
-      };
-    } else if (mentorsOnline) {
-      return {
-        icon: Zap,
-        text: 'Online',
-        dotColor: 'bg-gradient-to-r from-emerald-400 to-green-400',
-        bgColor: darkMode
-          ? 'bg-gradient-to-r from-emerald-900/20 to-green-900/20 border-emerald-700/30'
-          : 'bg-gradient-to-r from-emerald-50 to-green-50 border-emerald-200/50',
-        textColor: darkMode ? 'text-emerald-300' : 'text-emerald-700',
-        iconColor: darkMode ? 'text-emerald-400' : 'text-emerald-600',
-        iconAnimation: { scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] },
-        iconTransition: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
-        pulseColor: 'shadow-emerald-400/20',
-      };
-    } else {
-      return {
-        icon: WifiOff,
-        text: 'Offline',
-        dotColor: 'bg-gradient-to-r from-rose-400 to-red-400',
-        bgColor: darkMode
-          ? 'bg-gradient-to-r from-rose-900/20 to-red-900/20 border-rose-700/30'
-          : 'bg-gradient-to-r from-rose-50 to-red-50 border-rose-200/50',
-        textColor: darkMode ? 'text-rose-300' : 'text-rose-700',
-        iconColor: darkMode ? 'text-rose-400' : 'text-rose-600',
-        iconAnimation: { opacity: [1, 0.4, 1] },
-        iconTransition: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' },
-        pulseColor: 'shadow-rose-400/20',
-      };
-    }
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now - date;
+
+    if (diff < 60000) return 'Just now';
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}m`;
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h`;
+    if (diff < 604800000) return `${Math.floor(diff / 86400000)}d`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  const statusConfig = getStatusConfig();
-
   return (
-    <div
-      className={`h-full flex flex-col transition-colors duration-300 ${
-        darkMode ? 'bg-[#0a0f1e]' : 'bg-white'
-      } border-r ${
-        darkMode ? 'border-slate-800' : 'border-slate-200'
-      }`}>
-
-      {/* Header */}
-      <div className={`flex-shrink-0 p-4 border-b ${
-        darkMode ? 'border-slate-800' : 'border-slate-200'
-      }`}>
-        {/* Main Brand Section with Dropdown */}
-        <motion.div
-          className='flex items-center justify-between mb-3'
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}>
-          <Popover open={dropdownOpen} onOpenChange={setDropdownOpen}>
-            <PopoverTrigger asChild>
-              <button className='flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity'>
-                {/* Logo */}
-                <div className='w-10 h-10 bg-gradient-to-br from-[#0073e6] to-[#0052cc] rounded-lg flex items-center justify-center shadow-sm'>
-                  <Sparkles className='w-5 h-5 text-white' />
-                </div>
-
-                <div className='min-w-0 flex-1 text-left'>
-                  <div className='flex items-center gap-1.5'>
-                    <h1 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                      Swaras AI
-                    </h1>
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''} ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} />
-                  </div>
-                  <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                    AI Mentors
-                  </p>
-                </div>
-              </button>
-            </PopoverTrigger>
-
-            <PopoverContent
-              className={`w-56 p-2 ${darkMode ? 'bg-[#1a1a1a] border-[#2a2a2a]' : 'bg-white border-[#e5e7eb]'}`}
-              align="start"
-              sideOffset={8}>
-              <div className='space-y-1'>
-                {/* User Info */}
-                {isLoaded && (
-                  <>
-                    {isSignedIn ? (
-                      <div className={`px-3 py-2 rounded-lg ${darkMode ? 'bg-[#262626]' : 'bg-[#f5f5f5]'}`}>
-                        <div className='flex items-center space-x-2'>
-                          {user?.imageUrl ? (
-                            <img
-                              src={user.imageUrl}
-                              alt={user.fullName || 'User'}
-                              className='w-8 h-8 rounded-full object-cover'
-                            />
-                          ) : (
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${darkMode ? 'bg-[#2563eb]' : 'bg-[#2563eb]'}`}>
-                              <UserIcon className='w-4 h-4 text-white' />
-                            </div>
-                          )}
-                          <div className='flex-1 min-w-0'>
-                            <p className={`text-sm font-medium truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                              {user?.fullName || user?.firstName || 'User'}
-                            </p>
-                            <p className={`text-xs truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                              {user?.primaryEmailAddress?.emailAddress || 'No email'}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className={`px-3 py-2 rounded-lg ${darkMode ? 'bg-[#262626]' : 'bg-[#f5f5f5]'}`}>
-                        <button
-                          onClick={() => {
-                            openSignIn();
-                            setDropdownOpen(false);
-                          }}
-                          className={`w-full text-left ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                          <div className='flex items-center space-x-2'>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${darkMode ? 'bg-[#2563eb]' : 'bg-[#2563eb]'}`}>
-                              <UserIcon className='w-4 h-4 text-white' />
-                            </div>
-                            <div>
-                              <p className='text-sm font-medium'>Sign In</p>
-                              <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                Click to sign in
-                              </p>
-                            </div>
-                          </div>
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-
-                {/* Divider */}
-                <div className={`h-px ${darkMode ? 'bg-[#2a2a2a]' : 'bg-[#e5e7eb]'}`} />
-
-                {/* Theme Toggle */}
-                <button
-                  onClick={() => {
-                    toggleDarkMode();
-                    setDropdownOpen(false);
-                  }}
-                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                    darkMode
-                      ? 'hover:bg-[#262626] text-gray-300'
-                      : 'hover:bg-[#f5f5f5] text-gray-700'
-                  }`}>
-                  {darkMode ? <Sun className='w-4 h-4' /> : <Moon className='w-4 h-4' />}
-                  <span className='text-sm'>
-                    {darkMode ? 'Light Mode' : 'Dark Mode'}
-                  </span>
-                </button>
-
-                {/* Settings */}
-                <button
-                  onClick={() => {
-                    console.log('Settings clicked');
-                    setDropdownOpen(false);
-                  }}
-                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                    darkMode
-                      ? 'hover:bg-[#262626] text-gray-300'
-                      : 'hover:bg-[#f5f5f5] text-gray-700'
-                  }`}>
-                  <Settings className='w-4 h-4' />
-                  <span className='text-sm'>Settings</span>
-                </button>
-
-                {/* Divider */}
-                <div className={`h-px ${darkMode ? 'bg-[#2a2a2a]' : 'bg-[#e5e7eb]'}`} />
-
-                {/* Logout - Only show if signed in */}
-                {isSignedIn && (
-                  <button
-                    onClick={() => {
-                      signOut();
-                      setDropdownOpen(false);
-                    }}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                      darkMode
-                        ? 'hover:bg-red-900/20 text-red-400'
-                        : 'hover:bg-red-50 text-red-600'
-                    }`}>
-                    <LogOut className='w-4 h-4' />
-                    <span className='text-sm'>Sign Out</span>
-                  </button>
-                )}
-              </div>
-            </PopoverContent>
-          </Popover>
-        </motion.div>
-
-        {/* Status Section */}
-        <div className={`p-3 rounded-lg ${
-          darkMode ? 'bg-slate-800/50' : 'bg-slate-50'
-        }`}>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-2'>
-              <div className={`w-2 h-2 rounded-full ${
-                mentorsLoading
-                  ? 'bg-yellow-500'
-                  : mentorsOnline
-                  ? 'bg-green-500'
-                  : 'bg-gray-400'
-              }`}></div>
-              <span className={`text-sm font-medium ${
-                darkMode ? 'text-slate-300' : 'text-slate-700'
-              }`}>
-                {mentorsLoading ? 'Connecting' : mentorsOnline ? Object.keys(personas).length + ' Mentors Online' : 'Offline'}
-              </span>
+    <div className='w-80 h-full bg-background border-r border-border/40 flex flex-col'>
+      {/* Modern Header */}
+      <div className='p-4 border-b border-border/40'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2.5'>
+            {/* Refined Logo */}
+            <div className='relative w-9 h-9 rounded-xl overflow-hidden shadow-md' style={{ background: 'linear-gradient(135deg, #FA8072, #FF8E8E)' }}>
+              <svg className='w-9 h-9 p-1.5' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                <path d='M12 3C10 3 8 4 7 5.5C6 5 5 5.5 5 7C4 7.5 3.5 8.5 3.5 9.5C3.5 11 4.5 12 6 12C6 14 7 15.5 8.5 16.5'
+                      stroke='white' strokeWidth='1.8' strokeLinecap='round' opacity='0.95'/>
+                <path d='M12 3C14 3 16 4 17 5.5C18 5 19 5.5 19 7C20 7.5 20.5 8.5 20.5 9.5C20.5 11 19.5 12 18 12C18 14 17 15.5 15.5 16.5'
+                      stroke='white' strokeWidth='1.8' strokeLinecap='round' opacity='0.95'/>
+                <path d='M8 13H16C17.1 13 18 13.9 18 15V18C18 19.1 17.1 20 16 20H13L11 22L9 20H8C6.9 20 6 19.1 6 18V15C6 13.9 6.9 13 8 13Z'
+                      stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round' opacity='0.95'/>
+                <circle cx='10' cy='16.5' r='1' fill='white' opacity='0.95'/>
+                <circle cx='12' cy='16.5' r='1' fill='white' opacity='0.95'/>
+                <circle cx='14' cy='16.5' r='1' fill='white' opacity='0.95'/>
+              </svg>
             </div>
-            <span className={`text-xs ${
-              darkMode ? 'text-slate-500' : 'text-slate-500'
-            }`}>
-              24/7
-            </span>
+            <div>
+              <h1 className='text-base font-bold text-foreground'>Swaras AI</h1>
+              <p className='text-xs text-muted-foreground/60'>AI Mentorship Platform</p>
+            </div>
+          </div>
+          <UserButton
+            afterSignOutUrl='/'
+            appearance={{
+              elements: {
+                avatarBox: 'w-9 h-9 rounded-xl',
+              },
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Section Header */}
+      <div className='px-4 pt-4 pb-2'>
+        <div className='flex items-center justify-between'>
+          <h2 className='text-sm font-semibold text-muted-foreground/70 uppercase tracking-wide'>
+            Your Mentors
+          </h2>
+          <div className='flex items-center gap-1'>
+            <div className='w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse'></div>
+            <span className='text-xs text-muted-foreground/60'>{allPersonas.length} online</span>
           </div>
         </div>
       </div>
 
-      {/* Persona Selector */}
-      <div className='flex-shrink-0'>
-        <PersonaSelector />
+      {/* Personas List - Modern Cards */}
+      <div className='flex-1 overflow-y-auto px-3 pb-3'>
+        <div className='space-y-2'>
+          <AnimatePresence mode='popLayout'>
+            {allPersonas.map((persona) => {
+              const isActive = selectedPersona === persona.id;
+              const personaConversation = personaConversationMap[persona.id];
+              const messageCount = personaConversation?.messages?.length || 0;
+              const lastMessage = personaConversation?.messages?.[personaConversation.messages.length - 1];
+
+              return (
+                <motion.div
+                  key={persona.id}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  layout
+                  whileHover={{ scale: isActive ? 1 : 1.01 }}
+                  className={`group relative rounded-xl p-3.5 cursor-pointer transition-all duration-200 ${
+                    isActive
+                      ? 'bg-gradient-to-br from-accent via-accent to-accent/80 border border-[#FA8072]/30 shadow-md'
+                      : 'bg-accent/30 hover:bg-accent/50 border border-transparent hover:border-border/50'
+                  }`}
+                  onClick={() => onSelectPersona(persona.id)}
+                >
+                  <div className='flex items-start gap-3'>
+                    {/* Enhanced Avatar with Profile Image */}
+                    <div className='relative flex-shrink-0'>
+                      <div className={`w-12 h-12 rounded-xl overflow-hidden shadow-sm transition-all ${
+                        isActive ? 'ring-2 ring-[#FA8072]/40 ring-offset-2 ring-offset-background' : ''
+                      }`}>
+                        <img
+                          src={persona.avatarUrl}
+                          alt={persona.name}
+                          className='w-12 h-12 object-cover'
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div
+                          className='w-12 h-12 bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center text-xl'
+                          style={{ display: 'none' }}>
+                          {persona.avatar || '👤'}
+                        </div>
+                      </div>
+                      {/* Status Badge */}
+                      <div className='absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-background shadow-sm'></div>
+                    </div>
+
+                    <div className='flex-1 min-w-0'>
+                      {/* Name & Time */}
+                      <div className='flex items-start justify-between gap-2 mb-1'>
+                        <h3 className={`text-base font-semibold truncate leading-tight ${
+                          isActive ? 'text-foreground' : 'text-foreground/90'
+                        }`}>
+                          {persona.name}
+                        </h3>
+                        {messageCount > 0 && (
+                          <span className='text-xs text-muted-foreground/60 flex-shrink-0 font-medium'>
+                            {formatTime(personaConversation.lastMessageAt || personaConversation.createdAt)}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <p className='text-sm text-muted-foreground/70 truncate leading-tight mb-2'>
+                        {persona.title}
+                      </p>
+
+                      {/* Message Count Badge */}
+                      {messageCount > 0 && (
+                        <div className='flex items-center gap-1.5 mt-2'>
+                          <div className='flex items-center gap-1 px-2 py-0.5 rounded-md bg-background/50 border border-border/30'>
+                            <MessageSquarePlus className='w-3 h-3 text-[#FA8072]' />
+                            <span className='text-xs text-muted-foreground/70 font-medium'>
+                              {messageCount}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Delete Button - Subtle */}
+                    {personaConversation && (
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 h-7 w-7 p-0 rounded-lg hover:bg-background/80 transition-all'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteConversation(persona.id);
+                        }}
+                      >
+                        <Trash2 className='h-3 w-3 text-muted-foreground/60 hover:text-red-500' />
+                      </Button>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
       </div>
 
-      <style jsx>{`
-        .scrollbar-thin::-webkit-scrollbar {
-          width: 2px;
-        }
-
-        .scrollbar-thin::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
-        .scrollbar-thin::-webkit-scrollbar-thumb {
-          background: transparent;
-          border-radius: 1px;
-          transition: background 0.3s ease;
-        }
-
-        .scrollbar-thin:hover::-webkit-scrollbar-thumb {
-          background: rgba(156, 163, 175, 0.6);
-        }
-
-        .dark .scrollbar-thin:hover::-webkit-scrollbar-thumb {
-          background: rgba(107, 114, 128, 0.6);
-        }
-
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-          background: rgba(156, 163, 175, 0.8) !important;
-        }
-
-        .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-          background: rgba(107, 114, 128, 0.8) !important;
-        }
-
-        /* Firefox */
-        .scrollbar-thin {
-          scrollbar-width: thin;
-          scrollbar-color: transparent transparent;
-        }
-
-        .scrollbar-thin:hover {
-          scrollbar-color: rgba(156, 163, 175, 0.6) transparent;
-        }
-
-        .dark .scrollbar-thin:hover {
-          scrollbar-color: rgba(107, 114, 128, 0.6) transparent;
-        }
-      `}</style>
-
-      {/* Enhanced Footer - Chat History */}
-      {selectedPersona && personaConversations.length > 0 && mentorsOnline && (
-        <motion.div
-          className={`flex-shrink-0 border-t p-4 backdrop-blur-sm ${
-            darkMode
-              ? 'border-gray-700/40 bg-gradient-to-r from-gray-900/30 to-gray-800/30'
-              : 'border-gray-200/40 bg-gradient-to-r from-white/30 to-gray-50/30'
-          }`}
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.5 }}>
-          <div className='mb-3'>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center space-x-2'>
-                <div
-                  className={`w-6 h-6 rounded-lg ${
-                    currentPersona?.bgColor || 'bg-gray-200'
-                  } flex items-center justify-center text-sm`}>
-                  {currentPersona?.avatar || '🤖'}
-                </div>
-                <h3
-                  className={`text-sm font-semibold ${
-                    darkMode ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                  {currentPersona?.name || 'AI Assistant'}
-                </h3>
-              </div>
-
-              <motion.span
-                className={`text-xs px-2 py-1 rounded-full font-medium ${
-                  darkMode
-                    ? 'bg-purple-900/30 text-purple-400 border border-purple-700/30'
-                    : 'bg-purple-100 text-purple-600 border border-purple-200'
-                }`}
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}>
-                {personaConversations.length} chats
-              </motion.span>
-            </div>
-          </div>
-
-          <ConversationCombobox />
-        </motion.div>
-      )}
-
-      {/* Enhanced Offline Notice */}
-      {!mentorsOnline && !mentorsLoading && (
-        <motion.div
-          className={`flex-shrink-0 border-t px-4 py-3 backdrop-blur-sm ${
-            darkMode
-              ? 'border-rose-700/40 bg-gradient-to-r from-rose-900/20 to-red-900/20'
-              : 'border-rose-200/40 bg-gradient-to-r from-rose-50/20 to-red-50/20'
-          }`}
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.5 }}>
-          <div className='flex items-center space-x-3'>
-            <motion.div
-              className={`w-8 h-8 rounded-xl ${
-                darkMode ? 'bg-rose-900/30' : 'bg-rose-100'
-              } flex items-center justify-center`}
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}>
-              <AlertCircle
-                className={`w-4 h-4 ${
-                  darkMode ? 'text-rose-400' : 'text-rose-600'
-                }`}
-              />
-            </motion.div>
-
-            <div>
-              <p
-                className={`text-sm font-medium ${
-                  darkMode ? 'text-rose-300' : 'text-rose-700'
-                }`}>
-                Mentors Offline
-              </p>
-              <p
-                className={`text-xs ${
-                  darkMode ? 'text-rose-400' : 'text-rose-600'
-                }`}>
-                Reconnecting automatically...
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      )}
+      {/* Modern Footer */}
+      <div className='p-3 border-t border-border/40'>
+        <div className='flex items-center gap-2'>
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={toggleDarkMode}
+            className='flex-1 h-9 justify-center gap-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all rounded-lg'
+          >
+            {darkMode ? <Sun className='w-4 h-4' /> : <Moon className='w-4 h-4' />}
+            <span className='text-xs font-medium'>{darkMode ? 'Light' : 'Dark'}</span>
+          </Button>
+          <Button
+            variant='ghost'
+            size='sm'
+            className='flex-1 h-9 justify-center gap-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all rounded-lg'
+          >
+            <Settings className='w-4 h-4' />
+            <span className='text-xs font-medium'>Settings</span>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
