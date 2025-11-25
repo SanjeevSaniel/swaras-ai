@@ -81,7 +81,6 @@ const SwarasAI = () => {
     handleSubmit: originalHandleSubmit,
     isLoading,
     setMessages,
-    append,
   } = chatApi;
 
   console.log('🎯 useChat values:', {
@@ -91,7 +90,7 @@ const SwarasAI = () => {
     messagesCount: messages.length,
   });
 
-  // Use AI SDK's append method for sending messages with streaming
+  // Custom message sending with manual streaming
   const handleSendMessage = async (messageText) => {
     console.log('🔄 handleSendMessage called with:', messageText);
 
@@ -124,20 +123,91 @@ const SwarasAI = () => {
 
     const personaName = personas[selectedPersona]?.name;
 
+    // Create user message
+    const userMessage = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: messageText.trim(),
+      createdAt: new Date(),
+    };
+
+    // Add user message immediately
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+
     try {
-      // Use AI SDK's append method for proper streaming
-      await append({
-        role: 'user',
-        content: messageText.trim(),
+      // Call streaming API
+      const response = await fetch('/api/chat-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: updatedMessages,
+          persona: selectedPersona,
+        }),
       });
 
-      console.log('✅ Message sent via AI SDK');
-      toast.success(`Message sent to ${personaName}! 🚀`, {
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      // Read streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+      const assistantId = `assistant-${Date.now()}`;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('0:')) {
+            const text = line.slice(2).replace(/^"(.*)"$/, '$1');
+            assistantContent += text;
+
+            // Update with streaming content
+            setMessages([
+              ...updatedMessages,
+              {
+                id: assistantId,
+                role: 'assistant',
+                content: assistantContent,
+                createdAt: new Date(),
+              },
+            ]);
+          }
+        }
+      }
+
+      // Save final state
+      const finalMessages = [
+        ...updatedMessages,
+        {
+          id: assistantId,
+          role: 'assistant',
+          content: assistantContent,
+          createdAt: new Date(),
+        },
+      ];
+
+      if (currentConversation) {
+        updateConversation(currentConversation.id, {
+          ...currentConversation,
+          messages: finalMessages,
+          lastMessageAt: Date.now(),
+          messageCount: finalMessages.length,
+        });
+      }
+
+      toast.success(`${personaName} replied! ✨`, {
         duration: 1500,
         icon: personas[selectedPersona]?.avatar,
       });
     } catch (error) {
-      console.error('❌ Error in handleSendMessage:', error);
+      console.error('❌ Error:', error);
       toast.error('Failed to send message. Please try again.');
     }
   };
