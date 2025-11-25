@@ -1,7 +1,7 @@
 // src/components/sidebar/persona-selector.jsx
 'use client';
 
-import { personas } from '@/constants/personas-dataset';
+import { getEnabledPersonas } from '@/constants/personas';
 import { useChatStore } from '@/store/chat-store';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Loader2 } from 'lucide-react';
@@ -20,6 +20,9 @@ const PersonaSelector = () => {
     setSelectedPersona(selectedPersona === personaId ? null : personaId);
   };
 
+  // Get only enabled personas
+  const enabledPersonas = getEnabledPersonas();
+
   return (
     <div className='p-4 space-y-3'>
       <div className={`text-xs font-semibold uppercase tracking-wide mb-3 ${
@@ -29,7 +32,7 @@ const PersonaSelector = () => {
       </div>
 
       <div className='space-y-2'>
-        {Object.entries(personas).map(([personaId, persona], index) => {
+        {Object.entries(enabledPersonas).map(([personaId, persona], index) => {
           const isSelected = selectedPersona === personaId;
           const isAvailable = mentorsOnline && !mentorsLoading;
 
