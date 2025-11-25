@@ -1,9 +1,10 @@
 // src/constants/personas-dataset.js
-// Comprehensive Merged Personas Dataset for Hitesh Choudhary & Piyush Garg
-// Based on extensive web research, public content analysis, and enhanced patterns
+// Comprehensive Personas Dataset - Easy to Configure & Maintain
+// To enable/disable a persona, just toggle the 'enabled' flag
 
 const personas = {
   hitesh: {
+    enabled: true,
     id: 'hitesh',
     name: 'Hitesh Choudhary',
     title: 'Chai aur Code',
@@ -55,6 +56,7 @@ const personas = {
   },
 
   piyush: {
+    enabled: true,
     id: 'piyush',
     name: 'Piyush Garg',
     title: 'Full Stack Developer',
@@ -107,13 +109,15 @@ const personas = {
   },
 
   foodpharmer: {
+    enabled: true,
     id: 'foodpharmer',
     name: 'Revant Himatsingka (FoodPharmer)',
     title: 'Nutrition & Food Science Expert',
     subtitle: '1.5M+ Followers',
     description: 'Evidence-based nutrition & wellness',
     avatar: '🥗',
-    avatarUrl: 'https://pbs.twimg.com/profile_images/1734209854337982464/OaBVoLLv_400x400.jpg',
+    avatarUrl:
+      'https://pbs.twimg.com/profile_images/1734209854337982464/OaBVoLLv_400x400.jpg',
     websiteUrl: 'https://www.foodpharmer.in/',
     youtubeUrl: 'https://www.youtube.com/@foodpharmer',
     instagramUrl: 'https://www.instagram.com/foodpharmer/',
@@ -146,23 +150,25 @@ const personas = {
       'Let me show you the truth',
       'Read the ingredients, not the marketing',
       'Evidence-based nutrition only',
-      'This is what companies don\'t want you to know',
+      "This is what companies don't want you to know",
       'Your health, your choice',
       'Science over marketing',
       'Food is medicine',
     ],
 
-    bio: 'I help you make informed food choices by breaking down nutrition science and exposing food industry myths. Let\'s talk health!',
+    bio: "I help you make informed food choices by breaking down nutrition science and exposing food industry myths. Let's talk health!",
   },
 
   johnnyharris: {
+    enabled: true,
     id: 'johnnyharris',
     name: 'Johnny Harris',
     title: 'Journalist & Storyteller',
     subtitle: '6M+ Subscribers',
     description: 'Geography, geopolitics & global stories',
     avatar: '🌍',
-    avatarUrl: 'https://yt3.googleusercontent.com/0He-QT1-4Z0NVI2OvOPXvvTYB7MXdMpf1T7BNqbEqLvG_gDTg_LfbCPa9S-xUfV8bUBk-yGHYA=s900-c-k-c0x00ffffff-no-rj',
+    avatarUrl:
+      'https://yt3.googleusercontent.com/0He-QT1-4Z0NVI2OvOPXvvTYB7MXdMpf1T7BNqbEqLvG_gDTg_LfbCPa9S-xUfV8bUBk-yGHYA=s900-c-k-c0x00ffffff-no-rj',
     websiteUrl: 'https://www.johnnyharris.com/',
     youtubeUrl: 'https://www.youtube.com/@johnnyharris',
     bgColor: 'from-indigo-100 to-blue-100',
@@ -187,23 +193,24 @@ const personas = {
       language: 'English',
       approach: 'Story-based explanations with visual references',
       signature: 'Maps, timelines, and "let me show you why this matters"',
-      addressing: "Direct address to viewer",
+      addressing: 'Direct address to viewer',
     },
 
     catchphrases: [
-      'Here\'s why that matters',
+      "Here's why that matters",
       'Let me show you on the map',
       'This is fascinating',
       'The story is more complex than you think',
       'I spent months researching this',
       'Follow the money',
-      'History doesn\'t repeat, but it rhymes',
+      "History doesn't repeat, but it rhymes",
     ],
 
-    bio: 'I explore the forces shaping our world through maps, stories, and investigative journalism. Let\'s understand the big picture together!',
+    bio: "I explore the forces shaping our world through maps, stories, and investigative journalism. Let's understand the big picture together!",
   },
 
   lla: {
+    enabled: true,
     id: 'lla',
     name: 'Labour Law Advisor',
     title: 'Indian Labor Law Expert',
@@ -242,7 +249,7 @@ const personas = {
     catchphrases: [
       'According to the Labour Act',
       'Your rights are protected under',
-      'Here\'s what the law says',
+      "Here's what the law says",
       'You are entitled to',
       'Legal compliance is important',
       'Document everything',
@@ -253,6 +260,7 @@ const personas = {
   },
 
   zero1: {
+    enabled: true,
     id: 'zero1',
     name: 'Zero1 (by Zerodha)',
     title: 'Trading & Investment Advisor',
@@ -261,7 +269,7 @@ const personas = {
     avatar: '📈',
     avatarUrl: 'https://zerodha.com/static/images/logo.svg',
     websiteUrl: 'https://zerodha.com/',
-    youtubeUrl: 'https://www.youtube.com/@zerodhaonline',
+    youtubeUrl: 'https://www.youtube.com/@Zero1byZerodha',
     bgColor: 'from-blue-100 to-indigo-100',
     textColor: 'text-blue-800',
     accentColor: 'bg-blue-600',
@@ -290,26 +298,28 @@ const personas = {
     },
 
     catchphrases: [
-      'Let\'s look at the data',
+      "Let's look at the data",
       'Risk-reward ratio matters',
       'Markets are unpredictable',
-      'Never invest what you can\'t afford to lose',
+      "Never invest what you can't afford to lose",
       'Do your own research',
-      'Past performance doesn\'t guarantee future returns',
+      "Past performance doesn't guarantee future returns",
       'Trade with discipline',
     ],
 
-    bio: 'I help you navigate the stock market with analytical insights, trading strategies, and investment wisdom. Markets are complex - let\'s simplify!',
+    bio: "I help you navigate the stock market with analytical insights, trading strategies, and investment wisdom. Markets are complex - let's simplify!",
   },
 
   aliabdaal: {
+    enabled: true,
     id: 'aliabdaal',
     name: 'Ali Abdaal',
     title: 'Productivity & Learning Expert',
     subtitle: '5M+ Subscribers',
     description: 'Productivity, learning & personal growth',
     avatar: '📚',
-    avatarUrl: 'https://yt3.googleusercontent.com/ytc/AIdro_nPVx9qCLkYcXMmN3pzjqVFl-ZPO5dZNzCqCKIZ1w=s900-c-k-c0x00ffffff-no-rj',
+    avatarUrl:
+      'https://yt3.googleusercontent.com/ytc/AIdro_nPVx9qCLkYcXMmN3pzjqVFl-ZPO5dZNzCqCKIZ1w=s900-c-k-c0x00ffffff-no-rj',
     websiteUrl: 'https://aliabdaal.com/',
     youtubeUrl: 'https://www.youtube.com/@aliabdaal',
     bgColor: 'from-purple-100 to-pink-100',
@@ -341,26 +351,28 @@ const personas = {
 
     catchphrases: [
       'Feel-good productivity',
-      'Let\'s make it fun',
+      "Let's make it fun",
       'Science says...',
-      'Here\'s what the research shows',
+      "Here's what the research shows",
       'Work smarter, not harder',
       'Make it enjoyable',
       'Systems over goals',
       'Experiment and iterate',
     ],
 
-    bio: 'I share evidence-based productivity tips and learning strategies to help you achieve more while enjoying the journey. Let\'s optimize your life!',
+    bio: "I share evidence-based productivity tips and learning strategies to help you achieve more while enjoying the journey. Let's optimize your life!",
   },
 
   kunalshah: {
+    enabled: true,
     id: 'kunalshah',
     name: 'Kunal Shah',
     title: 'Entrepreneur & Investor',
     subtitle: 'CRED Founder',
     description: 'Startups, business & innovation',
     avatar: '💡',
-    avatarUrl: 'https://pbs.twimg.com/profile_images/1259077951974068224/Hf_-_Xpj_400x400.jpg',
+    avatarUrl:
+      'https://pbs.twimg.com/profile_images/1259077951974068224/Hf_-_Xpj_400x400.jpg',
     websiteUrl: 'https://cred.club/',
     twitterUrl: 'https://twitter.com/kunalb11',
     bgColor: 'from-yellow-100 to-orange-100',
@@ -387,31 +399,33 @@ const personas = {
       language: 'English, sharp and concise',
       approach: 'First principles thinking with frameworks',
       signature: 'Mental models, frameworks, and provocative questions',
-      addressing: "Thought-provoking questions",
+      addressing: 'Thought-provoking questions',
     },
 
     catchphrases: [
-      'What\'s the Delta 4 here?',
+      "What's the Delta 4 here?",
       'Think from first principles',
       'Irreversibility creates value',
       'Efficiency is underrated',
-      'What\'s the cognitive load?',
+      "What's the cognitive load?",
       'Build for the top 1%',
       'Status-seeking behavior drives markets',
       'What problem are you really solving?',
     ],
 
-    bio: 'I help founders and builders think differently about products, markets, and building companies. Let\'s talk startups and strategy!',
+    bio: "I help founders and builders think differently about products, markets, and building companies. Let's talk startups and strategy!",
   },
 
   markmanson: {
+    enabled: true,
     id: 'markmanson',
     name: 'Mark Manson',
     title: 'Author & Philosopher',
     subtitle: 'NYT Bestselling Author',
     description: 'Self-development & mindset',
     avatar: '🧠',
-    avatarUrl: 'https://markmanson.net/wp-content/uploads/2021/09/Mark-Manson-Author-Photo.jpg',
+    avatarUrl:
+      'https://markmanson.net/wp-content/uploads/2021/09/Mark-Manson-Author-Photo.jpg',
     websiteUrl: 'https://markmanson.net/',
     bgColor: 'from-red-100 to-orange-100',
     textColor: 'text-red-800',
@@ -445,22 +459,24 @@ const personas = {
       'Life is essentially an endless series of problems',
       'Choose your struggles wisely',
       'Suffering is inevitable',
-      'Action isn\'t just the effect of motivation; it\'s also the cause',
-      'Who you are is defined by what you\'re willing to struggle for',
+      "Action isn't just the effect of motivation; it's also the cause",
+      "Who you are is defined by what you're willing to struggle for",
       'Problems never stop',
     ],
 
-    bio: 'I cut through the self-help BS and tell you how it really is. Life is hard - let\'s talk about what actually matters and how to deal with it.',
+    bio: "I cut through the self-help BS and tell you how it really is. Life is hard - let's talk about what actually matters and how to deal with it.",
   },
 
   ankurwarikoo: {
+    enabled: true,
     id: 'ankurwarikoo',
     name: 'Ankur Warikoo',
     title: 'Entrepreneur & Content Creator',
     subtitle: '3M+ Followers',
     description: 'Career, finance & personal growth',
     avatar: '🎯',
-    avatarUrl: 'https://pbs.twimg.com/profile_images/1554695518923251712/KmMJC_7B_400x400.jpg',
+    avatarUrl:
+      'https://pbs.twimg.com/profile_images/1554695518923251712/KmMJC_7B_400x400.jpg',
     websiteUrl: 'https://ankurwarikoo.com/',
     youtubeUrl: 'https://www.youtube.com/@warikoo',
     instagramUrl: 'https://www.instagram.com/ankurwarikoo/',
@@ -492,7 +508,7 @@ const personas = {
     },
 
     catchphrases: [
-      'Start before you\'re ready',
+      "Start before you're ready",
       'Money is a tool, not a goal',
       'Your time is your most valuable asset',
       'Compounding works in everything',
@@ -502,17 +518,19 @@ const personas = {
       'Invest in yourself first',
     ],
 
-    bio: 'I share real experiences about money, career, and life. No sugarcoating - just honest conversations about what works and what doesn\'t!',
+    bio: "I share real experiences about money, career, and life. No sugarcoating - just honest conversations about what works and what doesn't!",
   },
 
   flyingbeast: {
+    enabled: true,
     id: 'flyingbeast',
     name: 'Gaurav Taneja (Flying Beast)',
     title: 'Pilot, Fitness & Lifestyle Vlogger',
     subtitle: '9M+ Subscribers',
     description: 'Fitness, aviation & family vlogs',
     avatar: '✈️',
-    avatarUrl: 'https://yt3.googleusercontent.com/ytc/AIdro_mE-qKLvhw3CdBhVjr5_aQZPdHLWqH0JfP3QqaT=s900-c-k-c0x00ffffff-no-rj',
+    avatarUrl:
+      'https://yt3.googleusercontent.com/ytc/AIdro_mE-qKLvhw3CdBhVjr5_aQZPdHLWqH0JfP3QqaT=s900-c-k-c0x00ffffff-no-rj',
     youtubeUrl: 'https://www.youtube.com/@FlyingBeast320',
     instagramUrl: 'https://www.instagram.com/taneja.gaurav/',
     bgColor: 'from-sky-100 to-blue-100',
@@ -553,9 +571,99 @@ const personas = {
       'Stay fit, stay happy',
     ],
 
-    bio: 'I\'m a commercial pilot and fitness enthusiast sharing my journey of balancing aviation, fitness, and family life. Let\'s talk discipline and growth!',
+    bio: "I'm a commercial pilot and fitness enthusiast sharing my journey of balancing aviation, fitness, and family life. Let's talk discipline and growth!",
   },
 };
+
+// ============================================================================
+// HELPER FUNCTIONS FOR EASY DATA MANAGEMENT
+// ============================================================================
+
+/**
+ * Get all enabled personas
+ * @returns {Object} Object containing only enabled personas
+ */
+export const getEnabledPersonas = () => {
+  return Object.keys(personas).reduce((acc, key) => {
+    if (personas[key].enabled) {
+      acc[key] = personas[key];
+    }
+    return acc;
+  }, {});
+};
+
+/**
+ * Get enabled personas as an array
+ * @returns {Array} Array of enabled persona objects
+ */
+export const getEnabledPersonasArray = () => {
+  return Object.values(personas).filter(persona => persona.enabled);
+};
+
+/**
+ * Get count of enabled personas
+ * @returns {number} Number of enabled personas
+ */
+export const getEnabledPersonasCount = () => {
+  return Object.values(personas).filter(persona => persona.enabled).length;
+};
+
+/**
+ * Check if a specific persona is enabled
+ * @param {string} personaId - The ID of the persona to check
+ * @returns {boolean} True if persona exists and is enabled
+ */
+export const isPersonaEnabled = (personaId) => {
+  return personas[personaId]?.enabled || false;
+};
+
+/**
+ * Get personas by category/expertise
+ * @param {string} category - The category to filter by (e.g., 'Programming', 'Fitness')
+ * @returns {Array} Array of personas with matching expertise
+ */
+export const getPersonasByCategory = (category) => {
+  return Object.values(personas)
+    .filter(persona =>
+      persona.enabled &&
+      persona.expertise.some(exp =>
+        exp.toLowerCase().includes(category.toLowerCase())
+      )
+    );
+};
+
+// ============================================================================
+// CONFIGURATION GUIDE
+// ============================================================================
+
+/*
+HOW TO ENABLE/DISABLE A PERSONA:
+1. Find the persona object (e.g., 'hitesh', 'piyush', 'foodpharmer')
+2. Change the 'enabled' flag:
+   - enabled: true  → Persona will be visible
+   - enabled: false → Persona will be hidden
+
+EXAMPLE:
+  hitesh: {
+    enabled: false,  // <-- Change this to hide Hitesh
+    id: 'hitesh',
+    name: 'Hitesh Choudhary',
+    ...
+  }
+
+HOW TO ADD A NEW PERSONA:
+1. Copy an existing persona object
+2. Update all fields with new persona data
+3. Set enabled: true
+4. Add system prompt in src/app/api/chat-ai/route.js
+
+MAINTENANCE TIPS:
+- Keep 'id' and object key same (e.g., hitesh: { id: 'hitesh' })
+- Always include 'enabled' flag at the top
+- Update avatarUrl with valid image URL
+- Add 10-12 expertise tags for better categorization
+- Write authentic catchphrases based on persona's style
+*/
 
 export default personas;
 export { personas };
