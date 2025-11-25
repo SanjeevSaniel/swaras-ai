@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, User, Copy, Check, Globe, Play, Star } from 'lucide-react';
+import { Bot, User, Copy, Check, Globe, Play, Star, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { personas } from '@/constants/personas-dataset';
 import { Badge } from '@/components/ui/badge';
