@@ -1,5 +1,5 @@
 // src/components/empty-persona-state.jsx
-import { personas } from '@/constants/personas-dataset';
+import { personas } from '@/constants/personas';
 import { useChatStore } from '@/store/chat-store';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Code, MessageSquare, Sparkles, Zap } from 'lucide-react';
