@@ -173,7 +173,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.15 }}
-                  className={`flex gap-2.5 ${isAssistant ? 'flex-row-reverse' : 'flex-row'}`}
+                  className={`flex gap-2.5 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
                 >
                   {/* Avatar */}
                   <div className='flex-shrink-0'>
@@ -182,18 +182,32 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                         <User className='w-4 h-4 text-white' />
                       </div>
                     ) : isAssistant ? (
-                      <div className='w-8 h-8 rounded-full bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center shadow-md ring-2 ring-[#FA8072]/20'>
-                        {persona?.avatar ? (
-                          <span className='text-base'>{persona.avatar}</span>
-                        ) : (
-                          <Bot className='w-4 h-4 text-white' />
-                        )}
+                      <div className='w-8 h-8 rounded-full overflow-hidden shadow-md ring-2 ring-[#FA8072]/20'>
+                        <img
+                          src={persona?.avatarUrl}
+                          alt={persona?.name}
+                          className='w-full h-full object-cover'
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div
+                          className='w-8 h-8 bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center'
+                          style={{ display: 'none' }}
+                        >
+                          {persona?.avatar ? (
+                            <span className='text-base'>{persona.avatar}</span>
+                          ) : (
+                            <Bot className='w-4 h-4 text-white' />
+                          )}
+                        </div>
                       </div>
                     ) : null}
                   </div>
 
                   {/* Message Content */}
-                  <div className={`flex-1 max-w-[70%] ${isAssistant ? 'flex flex-col items-end' : ''}`}>
+                  <div className={`flex-1 max-w-[70%] ${isUser ? 'flex flex-col items-end' : ''}`}>
                     {/* Persona name for assistant messages */}
                     {isAssistant && persona && (
                       <div className='text-xs font-semibold text-[#FA8072] mb-1.5 px-1'>
@@ -210,18 +224,18 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
 
                     <div
                       className={`group relative rounded-2xl px-4 py-3 shadow-md transition-all ${
-                        isAssistant
+                        isUser
                           ? 'text-white rounded-br-sm'
                           : 'bg-card border-2 border-border/60 rounded-bl-sm hover:border-border/80'
                       }`}
-                      style={isAssistant ? {
+                      style={isUser ? {
                         background: 'linear-gradient(135deg, #FA8072, #FF8E8E)',
                         boxShadow: '0 4px 12px rgba(250, 128, 114, 0.25)',
                       } : {}}
                     >
                       <div
                         className={`text-sm leading-relaxed ${
-                          isAssistant ? 'text-white font-medium' : 'text-foreground'
+                          isUser ? 'text-white font-medium' : 'text-foreground'
                         }`}
                       >
                         {message.content}
@@ -231,13 +245,13 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                       {isAssistant && (
                         <button
                           onClick={() => handleCopy(message.content, index)}
-                          className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-white/20 rounded-lg'
+                          className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-accent rounded-lg'
                           title='Copy message'
                         >
                           {copiedIndex === index ? (
-                            <Check className='w-3.5 h-3.5 text-white' />
+                            <Check className='w-3.5 h-3.5 text-[#FA8072]' />
                           ) : (
-                            <Copy className='w-3.5 h-3.5 text-white/80' />
+                            <Copy className='w-3.5 h-3.5 text-muted-foreground' />
                           )}
                         </button>
                       )}
@@ -246,7 +260,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                     {/* Timestamp */}
                     <div
                       className={`text-[10px] text-muted-foreground/60 mt-1.5 px-1 ${
-                        isAssistant ? 'text-right' : 'text-left'
+                        isUser ? 'text-right' : 'text-left'
                       }`}
                     >
                       <span>
@@ -270,53 +284,61 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className='flex gap-2.5 flex-row-reverse'
+            className='flex gap-2.5'
           >
-            <div className='w-8 h-8 rounded-full bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center shadow-md ring-2 ring-[#FA8072]/20'>
-              {persona?.avatar ? (
-                <span className='text-base'>{persona.avatar}</span>
-              ) : (
-                <Bot className='w-4 h-4 text-white' />
-              )}
+            <div className='w-8 h-8 rounded-full overflow-hidden shadow-md ring-2 ring-[#FA8072]/20'>
+              <img
+                src={persona?.avatarUrl}
+                alt={persona?.name}
+                className='w-full h-full object-cover'
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextElementSibling.style.display = 'flex';
+                }}
+              />
+              <div
+                className='w-8 h-8 bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center'
+                style={{ display: 'none' }}
+              >
+                {persona?.avatar ? (
+                  <span className='text-base'>{persona.avatar}</span>
+                ) : (
+                  <Bot className='w-4 h-4 text-white' />
+                )}
+              </div>
             </div>
-            <div className='flex-1 max-w-[70%] flex flex-col items-end'>
+            <div className='flex-1 max-w-[70%]'>
               {persona && (
                 <div className='text-xs font-semibold text-[#FA8072] mb-1.5 px-1'>
                   {persona.name}
                 </div>
               )}
-              <div
-                className='rounded-2xl rounded-br-sm px-4 py-3 shadow-md text-white'
-                style={{
-                  background: 'linear-gradient(135deg, #FA8072, #FF8E8E)',
-                  boxShadow: '0 4px 12px rgba(250, 128, 114, 0.25)',
-                }}
-              >
+              <div className='rounded-2xl rounded-bl-sm px-4 py-3 shadow-md bg-card border-2 border-border/60'>
                 <div className='flex items-center gap-2.5'>
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
                   >
-                    <Sparkles className='w-4 h-4 text-white/90' />
+                    <Sparkles className='w-4 h-4 text-[#FA8072]' />
                   </motion.div>
                   <div className='flex gap-1'>
                     <motion.div
-                      className='w-2 h-2 rounded-full bg-white/90'
+                      className='w-2 h-2 rounded-full bg-[#FA8072]'
                       animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1, repeat: Infinity, delay: 0 }}
                     />
                     <motion.div
-                      className='w-2 h-2 rounded-full bg-white/90'
+                      className='w-2 h-2 rounded-full bg-[#FA8072]'
                       animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
                     />
                     <motion.div
-                      className='w-2 h-2 rounded-full bg-white/90'
+                      className='w-2 h-2 rounded-full bg-[#FA8072]'
                       animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
                     />
                   </div>
-                  <span className='text-sm text-white font-medium'>Thinking...</span>
+                  <span className='text-sm text-foreground font-medium'>Thinking...</span>
                 </div>
               </div>
             </div>
