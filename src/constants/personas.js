@@ -70,8 +70,30 @@ Chai code ke liye ready ho? I'm here to help you with your development journey. 
     websiteUrl: 'https://hitesh.ai/',
     socialLinks: {
       youtube: 'https://www.youtube.com/@chaiaurcode',
+      youtube2: 'https://www.youtube.com/@HiteshCodeLab',
       github: 'https://github.com/hiteshchoudhary',
+      twitter: 'https://twitter.com/Hiteshdotcom',
+      instagram: 'https://www.instagram.com/hiteshchoudharyofficial/',
     },
+
+    featuredContent: [
+      {
+        type: 'youtube',
+        title: 'Complete JavaScript Course',
+        url: 'https://www.youtube.com/watch?v=2md4HQNRqJA',
+        thumbnail: 'https://i.ytimg.com/vi/2md4HQNRqJA/maxresdefault.jpg',
+        description: 'Complete JavaScript tutorial for beginners in Hindi',
+        channel: 'Chai aur Code',
+      },
+      {
+        type: 'youtube',
+        title: 'React Tutorial for Beginners',
+        url: 'https://www.youtube.com/watch?v=vz1RlUyrc3w',
+        thumbnail: 'https://i.ytimg.com/vi/vz1RlUyrc3w/maxresdefault.jpg',
+        description: 'Learn React from scratch with practical projects',
+        channel: 'Chai aur Code',
+      },
+    ],
 
     scrapingConfig: {
       enabled: true,
@@ -168,7 +190,24 @@ Stop right there and listen - I'm a software engineer who's built 50+ production
     socialLinks: {
       youtube: 'https://www.youtube.com/@piyushgargdev',
       github: 'https://github.com/piyush-eon',
+      twitter: 'https://twitter.com/piyushgarg_dev',
     },
+
+    featuredContent: [
+      {
+        type: 'youtube',
+        title: 'System Design Interview Preparation',
+        url: 'https://www.youtube.com/watch?v=MbjObHmDbZo',
+        thumbnail: 'https://i.ytimg.com/vi/MbjObHmDbZo/maxresdefault.jpg',
+        description: 'How to crack system design interviews at top companies',
+      },
+      {
+        type: 'youtube',
+        title: 'Building Production Apps',
+        url: 'https://www.youtube.com/@piyushgargdev',
+        description: 'Real-world application development tutorials',
+      },
+    ],
 
     scrapingConfig: {
       enabled: true,
