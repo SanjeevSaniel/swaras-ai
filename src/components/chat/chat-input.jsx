@@ -1,27 +1,98 @@
 'use client';
 import { logger } from '@/utils/logger';
 
-import { useState, useRef, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Send, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useEffect, useRef, useState } from 'react';
 
-const ChatInput = ({
-  onSendMessage,
-  disabled,
-  selectedPersona,
-  isLoading
-}) => {
+const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
   const [message, setMessage] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef(null);
 
-  const suggestions = [
-    { text: 'Explain this concept...', category: '💡', emoji: true },
-    { text: 'Help me build...', category: '🚀', emoji: true },
-    { text: 'Career advice on...', category: '🎯', emoji: true },
-    { text: 'Debug my code...', category: '🐛', emoji: true },
-  ];
+  // Persona-specific quick suggestions
+  const getPersonaSuggestions = (personaId) => {
+    const suggestions = {
+      hitesh: [
+        { text: 'Explain async/await...', category: '☕' },
+        { text: 'React best practices...', category: '⚛️' },
+        { text: 'Help debug this...', category: '🐛' },
+        { text: 'Career roadmap...', category: '🎯' },
+      ],
+      piyush: [
+        { text: 'System design for...', category: '🏗️' },
+        { text: 'Scale this feature...', category: '📈' },
+        { text: 'Interview prep...', category: '💼' },
+        { text: 'Architecture review...', category: '🎯' },
+      ],
+      foodpharmer: [
+        { text: 'Is this healthy?...', category: '🥗' },
+        { text: 'Decode label...', category: '🔍' },
+        { text: 'Best protein source...', category: '💪' },
+        { text: 'Diet myth check...', category: '🔬' },
+      ],
+      johnnyharris: [
+        { text: 'Why did this happen?...', category: '🗺️' },
+        { text: 'History behind...', category: '📜' },
+        { text: 'Geopolitics of...', category: '🌍' },
+        { text: 'Explain the conflict...', category: '⚔️' },
+      ],
+      lla: [
+        { text: 'My rights for...', category: '⚖️' },
+        { text: 'Legal action for...', category: '📋' },
+        { text: 'PF/ESI query...', category: '💼' },
+        { text: 'Termination issue...', category: '🚨' },
+      ],
+      zero1: [
+        { text: 'Start investing...', category: '💰' },
+        { text: 'Mutual funds vs stocks...', category: '📊' },
+        { text: 'SIP strategy...', category: '📈' },
+        { text: 'Emergency fund...', category: '🎯' },
+      ],
+      aliabdaal: [
+        { text: 'Productivity tips...', category: '⚡' },
+        { text: 'Study technique...', category: '📚' },
+        { text: 'Build habits...', category: '🎯' },
+        { text: 'Time management...', category: '⏰' },
+      ],
+      kunalshah: [
+        { text: 'Delta 4 for...', category: '🧠' },
+        { text: 'First principles...', category: '💡' },
+        { text: 'Market inefficiency...', category: '🎯' },
+        { text: 'Startup strategy...', category: '🚀' },
+      ],
+      markmanson: [
+        { text: 'Life advice on...', category: '💭' },
+        { text: 'Stop caring about...', category: '🎯' },
+        { text: 'Find meaning in...', category: '🌟' },
+        { text: 'Harsh truth about...', category: '💥' },
+      ],
+      ankurwarikoo: [
+        { text: 'Money advice...', category: '💰' },
+        { text: 'Career switch...', category: '💼' },
+        { text: 'Investment tips...', category: '📈' },
+        { text: 'Life lesson on...', category: '🎯' },
+      ],
+      flyingbeast: [
+        { text: 'Workout routine...', category: '💪' },
+        { text: 'Stay disciplined...', category: '⚡' },
+        { text: 'Diet plan...', category: '🥗' },
+        { text: 'Balance life...', category: '✈️' },
+      ],
+    };
+
+    return (
+      suggestions[personaId] || [
+        { text: 'Explain this concept...', category: '💡' },
+        { text: 'Help me with...', category: '🚀' },
+        { text: 'Advice on...', category: '🎯' },
+        { text: 'Tell me about...', category: '✨' },
+      ]
+    );
+  };
+
+  const suggestions = getPersonaSuggestions(selectedPersona);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -29,7 +100,8 @@ const ChatInput = ({
       const scrollHeight = textareaRef.current.scrollHeight;
       // Max height for 5 rows: line-height (1.5 * 14px) * 5 rows ≈ 105px
       const maxHeight = 105;
-      textareaRef.current.style.height = Math.min(scrollHeight, maxHeight) + 'px';
+      textareaRef.current.style.height =
+        Math.min(scrollHeight, maxHeight) + 'px';
     }
   }, [message]);
 
@@ -101,10 +173,11 @@ const ChatInput = ({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05, duration: 0.2 }}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className='group px-3 py-2 rounded-xl bg-background/95 backdrop-blur-sm border border-border/60 hover:border-[#FA8072]/40 hover:bg-accent/80 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md'
-                >
+                  className='group px-3 py-2 rounded-xl bg-background/95 backdrop-blur-sm border border-border/60 hover:border-[#FA8072]/40 hover:bg-accent/80 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md'>
                   <span className='mr-1.5'>{suggestion.category}</span>
-                  <span className='text-foreground/80 group-hover:text-foreground'>{suggestion.text}</span>
+                  <span className='text-foreground/80 group-hover:text-foreground'>
+                    {suggestion.text}
+                  </span>
                 </motion.button>
               ))}
             </div>
@@ -118,8 +191,7 @@ const ChatInput = ({
               isFocused
                 ? 'border-[#FA8072]/50 bg-background/98 shadow-2xl ring-2 ring-[#FA8072]/10'
                 : 'border-border/60 bg-background/95 shadow-lg hover:shadow-xl'
-            }`}
-          >
+            }`}>
             {/* Textarea */}
             <textarea
               ref={textareaRef}
@@ -137,7 +209,7 @@ const ChatInput = ({
               rows={1}
               className='flex-1 resize-none bg-transparent border-none outline-none text-sm leading-[1.5] text-foreground placeholder:text-muted-foreground/50 disabled:opacity-50 min-h-[21px] max-h-[105px] overflow-y-auto custom-scrollbar'
               style={{
-                height: 'auto'
+                height: 'auto',
               }}
             />
 
@@ -150,8 +222,7 @@ const ChatInput = ({
                 !message.trim() || disabled
                   ? 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed'
                   : 'bg-gradient-to-r from-[#FA8072] to-[#FF8E8E] text-white hover:from-[#FF9189] hover:to-[#FFA3A3] shadow-md hover:shadow-lg hover:scale-105 active:scale-95'
-              }`}
-            >
+              }`}>
               <Send className='w-4 h-4' />
             </Button>
           </div>

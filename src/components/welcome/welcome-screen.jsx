@@ -1,42 +1,12 @@
 // src/components/welcome/welcome-screen.jsx
 'use client';
 
-import { personas } from '@/constants/personas-dataset';
+import { getEnabledPersonas } from '@/constants/personas';
 import { AIService } from '@/services/ai-service';
 import { useChatStore } from '@/store/chat-store';
 import { motion } from 'framer-motion';
-import { MessageCircle, Users, Zap } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useState } from 'react';
-
-// Floating particles (minimal animations)
-const FloatingParticles = () => {
-  const particles = Array.from({ length: 12 }, (_, i) => i);
-
-  return (
-    <div className='absolute inset-0 overflow-hidden pointer-events-none'>
-      {particles.map((particle) => (
-        <motion.div
-          key={particle}
-          className='absolute w-1 h-1 bg-pink-400 rounded-full opacity-30'
-          animate={{
-            x: [0, Math.random() * 50 - 25],
-            y: [0, Math.random() * 50 - 25],
-            opacity: [0.3, 0.6, 0.3],
-          }}
-          transition={{
-            duration: Math.random() * 2 + 3,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
-        />
-      ))}
-    </div>
-  );
-};
 
 const WelcomeScreen = ({ onQuickStart }) => {
   const {
@@ -48,26 +18,72 @@ const WelcomeScreen = ({ onQuickStart }) => {
     mentorsOnline,
   } = useChatStore();
   const [startingChat, setStartingChat] = useState(false);
+  const personas = getEnabledPersonas();
   const persona = selectedPersona ? personas[selectedPersona] : null;
 
   // Conversation starters based on persona
   const getConversationStarters = (personaId) => {
     const starters = {
       hitesh: [
-        'Explain JavaScript fundamentals',
-        'How to learn React effectively?',
-        'Career advice for developers'
+        'Explain closures in JavaScript with chai analogy ☕',
+        'React hooks vs class components - samjhao bhai',
+        'Best roadmap for full-stack development in 2024'
       ],
       piyush: [
-        'System design best practices',
-        'Building scalable applications',
-        'Modern full-stack architecture'
+        'Design a scalable URL shortener system',
+        'Microservices vs monolith - real production perspective',
+        'How to crack system design interviews at FAANG?'
+      ],
+      foodpharmer: [
+        'Is brown sugar actually healthier than white sugar?',
+        'Decode this product label for hidden ingredients',
+        'Truth about protein powder vs natural sources'
+      ],
+      johnnyharris: [
+        'Why is the South China Sea so heavily contested?',
+        'What really caused the Ukraine-Russia conflict?',
+        'How does the Israel-Palestine situation work?'
+      ],
+      lla: [
+        'Can my employer fire me without notice period?',
+        'How to claim PF if company refuses to release it?',
+        'What to do about workplace harassment legally?'
+      ],
+      zero1: [
+        'How should I start investing with ₹10,000?',
+        'SIP vs lump sum - which is better for beginners?',
+        'Build an emergency fund - how much and where?'
+      ],
+      aliabdaal: [
+        'Active recall vs re-reading - what does research say?',
+        'How to build a sustainable morning routine?',
+        'Best way to use Notion for personal knowledge management'
+      ],
+      kunalshah: [
+        'Explain Delta 4 theory with real startup examples',
+        'How to spot inefficiencies in existing markets?',
+        'What makes a product truly irreversible for users?'
+      ],
+      markmanson: [
+        'How do I stop caring about what others think?',
+        'Finding meaning when everything feels pointless',
+        'Why positive thinking can actually be harmful'
+      ],
+      ankurwarikoo: [
+        'Mutual funds vs direct stocks - where to start?',
+        'How to negotiate salary without seeming greedy?',
+        'Money habits to build in your 20s'
+      ],
+      flyingbeast: [
+        'Best beginner gym routine for natural muscle gain',
+        'How to stay disciplined with early morning workouts?',
+        'Balancing pilot career, fitness and family life'
       ]
     };
     return starters[personaId] || [
       'Ask about their expertise',
-      'Get career advice',
-      'Learn best practices'
+      'Get personalized advice',
+      'Learn their proven strategies'
     ];
   };
 
@@ -129,476 +145,147 @@ const WelcomeScreen = ({ onQuickStart }) => {
     }, 100);
   };
 
-  const features = [
-    {
-      icon: Users,
-      title: 'Expert Mentorship',
-      description: 'Learn from coding legends with personalized guidance',
-      color: '#c026d3',
-    },
-    {
-      icon: MessageCircle,
-      title: 'Interactive Conversations',
-      description: 'Engage in dynamic programming discussions',
-      color: '#9333ea',
-    },
-    {
-      icon: Zap,
-      title: 'Instant Problem Solving',
-      description: 'Get immediate help with coding challenges',
-      color: '#d946ef',
-    },
-  ];
-
-
   if (!persona) {
     return (
-      <div
-        className={`relative min-h-screen ${
-          darkMode ? 'bg-[#27282c] text-white' : 'bg-[#fafafa] text-gray-900'
-        }`}>
-        {/* JetBrains-style subtle gradient overlay */}
-        <div
-          className={`absolute inset-0 ${
-            darkMode
-              ? 'bg-gradient-to-b from-[#27282c] via-[#27282c] to-[#1e1f23]'
-              : 'bg-gradient-to-b from-[#fafafa] via-[#fafafa] to-[#f5f5f5]'
-          }`}
-        />
-
-        <div className='relative z-10 max-w-[1280px] mx-auto px-8 py-16'>
-          {/* JetBrains-style Hero section */}
-          <div className='mb-24'>
-            <div className='grid lg:grid-cols-2 gap-16 items-center'>
-              {/* Left: Text content */}
-              <div className='space-y-8'>
-                {/* <div>
-                  <h1 className={`text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] ${
-                    darkMode ? 'text-white' : 'text-[#27282c]'
-                  }`}
-                    style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                    The AI-Powered<br/>
-                    <span className='bg-gradient-to-r from-[#c026d3] to-[#d946ef] bg-clip-text text-transparent'>
-                      Coding Mentor
-                    </span>
-                  </h1>
-
-                  <p className={`text-xl lg:text-2xl leading-relaxed mb-8 ${
-                    darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
-                  }`}>
-                    Learn from industry legends Hitesh Choudhary and Piyush Garg through personalized AI mentorship
-                  </p>
-
-                  <div className='flex flex-wrap gap-4 items-center'>
-                    <button className={`px-8 py-4 rounded-lg font-semibold text-lg transition-all ${
-                      mentorsOnline
-                        ? 'bg-[#c026d3] hover:bg-[#a21caf] text-white shadow-lg hover:shadow-xl'
-                        : 'bg-[#4d4d4d] text-[#999] cursor-not-allowed'
-                    }`}
-                      disabled={!mentorsOnline}>
-                      {mentorsOnline ? 'Start Learning' : 'Connecting...'}
-                    </button>
-
-                    <div className='flex items-center space-x-2'>
-                      <div className={`w-2 h-2 rounded-full ${
-                        mentorsOnline ? 'bg-green-500' : 'bg-gray-400'
-                      }`} />
-                      <span className={`text-sm ${darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'}`}>
-                        {mentorsOnline ? '2 Mentors Online' : 'Connecting...'}
-                      </span>
-                    </div>
-                  </div>
-                </div> */}
-
-                {/* Stats row */}
-                {/* <div className='grid grid-cols-3 gap-6 pt-8 border-t'
-                  style={{ borderColor: darkMode ? '#3c3d41' : '#e6e6e6' }}>
-                  <div>
-                    <div className={`text-3xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-[#27282c]'}`}>
-                      1.6M+
-                    </div>
-                    <div className={`text-sm ${darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'}`}>
-                      Students Taught
-                    </div>
-                  </div>
-                  <div>
-                    <div className={`text-3xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-[#27282c]'}`}>
-                      15+
-                    </div>
-                    <div className={`text-sm ${darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'}`}>
-                      Years Experience
-                    </div>
-                  </div>
-                  <div>
-                    <div className={`text-3xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-[#27282c]'}`}>
-                      24/7
-                    </div>
-                    <div className={`text-sm ${darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'}`}>
-                      AI Support
-                    </div>
-                  </div>
-                </div> */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className='h-full flex items-center justify-center px-6 py-12 overflow-y-auto'>
+        <div className='max-w-2xl w-full text-center'>
+          {/* Logo/Icon */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className='mb-8 inline-block'>
+            <div className='relative'>
+              <div className='w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center shadow-lg'>
+                <Sparkles className='w-10 h-10 text-white' />
               </div>
-
-              {/* Right: Visual element */}
-              <div
-                className={`relative h-[500px] rounded-2xl overflow-hidden ${
-                  darkMode ? 'bg-[#2b2d30]' : 'bg-white'
-                }`}
-                style={{
-                  boxShadow: darkMode
-                    ? '0 20px 60px rgba(0,0,0,0.3)'
-                    : '0 20px 60px rgba(0,0,0,0.08)',
-                }}>
-                {/* Code editor mockup */}
-                <div className='p-4'>
-                  <div className='flex items-center space-x-2 mb-4'>
-                    <div className='w-3 h-3 rounded-full bg-[#ff5f57]' />
-                    <div className='w-3 h-3 rounded-full bg-[#ffbd2e]' />
-                    <div className='w-3 h-3 rounded-full bg-[#28ca42]' />
-                  </div>
-
-                  <div className='space-y-3 font-mono text-sm'>
-                    <div className='flex'>
-                      <span
-                        className={darkMode ? 'text-[#4d4d4d]' : 'text-[#999]'}>
-                        1
-                      </span>
-                      <span className='ml-4'>
-                        <span
-                          className={
-                            darkMode ? 'text-[#cf8e6d]' : 'text-[#0033b3]'
-                          }>
-                          const
-                        </span>
-                        <span
-                          className={
-                            darkMode ? 'text-[#c77dbb]' : 'text-[#067d17]'
-                          }>
-                          {' '}
-                          mentor
-                        </span>
-                        <span
-                          className={darkMode ? 'text-white' : 'text-black'}>
-                          {' '}
-                          ={' '}
-                        </span>
-                        <span
-                          className={
-                            darkMode ? 'text-[#6a8759]' : 'text-[#1a8031]'
-                          }>
-                          "Hitesh"
-                        </span>
-                      </span>
-                    </div>
-                    <div className='flex'>
-                      <span
-                        className={darkMode ? 'text-[#4d4d4d]' : 'text-[#999]'}>
-                        2
-                      </span>
-                      <span className='ml-4'>
-                        <span
-                          className={
-                            darkMode ? 'text-[#cf8e6d]' : 'text-[#0033b3]'
-                          }>
-                          const
-                        </span>
-                        <span
-                          className={
-                            darkMode ? 'text-[#c77dbb]' : 'text-[#067d17]'
-                          }>
-                          {' '}
-                          learn
-                        </span>
-                        <span
-                          className={darkMode ? 'text-white' : 'text-black'}>
-                          {' '}
-                          ={' '}
-                        </span>
-                        <span
-                          className={
-                            darkMode ? 'text-[#c77dbb]' : 'text-[#00627a]'
-                          }>
-                          await{' '}
-                        </span>
-                        <span
-                          className={
-                            darkMode ? 'text-[#ffc66d]' : 'text-[#0033b3]'
-                          }>
-                          swarasAI
-                        </span>
-                        <span
-                          className={darkMode ? 'text-white' : 'text-black'}>
-                          .
-                        </span>
-                        <span
-                          className={
-                            darkMode ? 'text-[#ffc66d]' : 'text-[#00627a]'
-                          }>
-                          ask
-                        </span>
-                        <span
-                          className={darkMode ? 'text-white' : 'text-black'}>
-                          {' '}
-                          ()
-                        </span>
-                      </span>
-                    </div>
-                    <div className='flex'>
-                      <span
-                        className={darkMode ? 'text-[#4d4d4d]' : 'text-[#999]'}>
-                        3
-                      </span>
-                      <span className='ml-4'>
-                        <span
-                          className={
-                            darkMode ? 'text-[#ffc66d]' : 'text-[#00627a]'
-                          }>
-                          console
-                        </span>
-                        <span
-                          className={darkMode ? 'text-white' : 'text-black'}>
-                          .
-                        </span>
-                        <span
-                          className={
-                            darkMode ? 'text-[#ffc66d]' : 'text-[#00627a]'
-                          }>
-                          log
-                        </span>
-                        <span
-                          className={darkMode ? 'text-white' : 'text-black'}>
-                          {' '}
-                          (
-                        </span>
-                        <span
-                          className={
-                            darkMode ? 'text-[#6a8759]' : 'text-[#1a8031]'
-                          }>
-                          "Learning!"
-                        </span>
-                        <span
-                          className={darkMode ? 'text-white' : 'text-black'}>
-                          )
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* AI Response */}
-                  <div
-                    className={`mt-8 p-4 rounded-lg ${
-                      darkMode ? 'bg-[#1e1f23]' : 'bg-[#f5f5f5]'
-                    }`}>
-                    <div className='flex items-start space-x-3'>
-                      <div className='w-8 h-8 rounded-full bg-gradient-to-r from-[#c026d3] to-[#d946ef] flex items-center justify-center text-white text-sm font-bold'>
-                        AI
-                      </div>
-                      <div className='flex-1'>
-                        <p
-                          className={`text-sm leading-relaxed ${
-                            darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
-                          }`}>
-                          Great question! Let me help you understand async/await
-                          in JavaScript...
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <motion.div
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 0.8, 0.5]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className='absolute inset-0 w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] blur-xl -z-10'
+              />
             </div>
-          </div>
+          </motion.div>
 
-          {/* Features section - JetBrains style */}
-          <div className='mb-24'>
-            <h2
-              className={`text-4xl font-bold mb-12 ${
-                darkMode ? 'text-white' : 'text-[#27282c]'
-              }`}>
-              Why choose Swaras AI
-            </h2>
+          {/* Title */}
+          <motion.h1
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className='text-4xl md:text-5xl font-bold mb-4 text-foreground'>
+            Welcome to Swaras AI
+          </motion.h1>
 
-            <div className='grid md:grid-cols-3 gap-6'>
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  className={`p-8 rounded-xl transition-all ${
-                    darkMode
-                      ? 'bg-[#2b2d30] hover:bg-[#313438]'
-                      : 'bg-white hover:shadow-lg'
-                  }`}
-                  style={{
-                    border: `1px solid ${darkMode ? '#3c3d41' : '#e6e6e6'}`,
-                  }}>
-                  <div
-                    className='w-12 h-12 rounded-lg flex items-center justify-center mb-6'
-                    style={{ backgroundColor: feature.color }}>
-                    <feature.icon className='w-6 h-6 text-white' />
-                  </div>
+          {/* Description */}
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className='text-lg md:text-xl text-muted-foreground/80 mb-12 leading-relaxed'>
+            Select a mentor from the sidebar to start your personalized learning journey
+          </motion.p>
 
-                  <h3
-                    className={`font-bold text-xl mb-3 ${
-                      darkMode ? 'text-white' : 'text-[#27282c]'
-                    }`}>
-                    {feature.title}
-                  </h3>
-                  <p
-                    className={`text-base leading-relaxed ${
-                      darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
-                    }`}>
-                    {feature.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Mentors section - JetBrains style */}
-          <div className='mb-24'>
-            <h2
-              className={`text-4xl font-bold mb-4 ${
-                darkMode ? 'text-white' : 'text-[#27282c]'
-              }`}>
-              Meet your AI mentors
-            </h2>
-            <p
-              className={`text-xl mb-12 ${
-                darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
-              }`}>
-              Learn from industry legends with years of real-world experience
+          {/* Mentor Grid Preview */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className='mb-12'>
+            <p className='text-sm font-medium text-muted-foreground/70 mb-6'>
+              {Object.keys(personas).length} Expert Mentors Available
             </p>
 
-            <div className='grid md:grid-cols-2 gap-8'>
-              {Object.entries(personas).map(
-                ([personaId, personaData], index) => (
-                  <div
-                    key={personaId}
-                    onClick={() => selectPersonaAndStartChat(personaId)}
-                    className={`p-8 rounded-xl cursor-pointer transition-all ${
-                      darkMode
-                        ? 'bg-[#2b2d30] hover:bg-[#313438]'
-                        : 'bg-white hover:shadow-xl'
-                    } ${!mentorsOnline ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    style={{
-                      border: `1px solid ${darkMode ? '#3c3d41' : '#e6e6e6'}`,
-                      boxShadow: darkMode
-                        ? 'none'
-                        : '0 8px 24px rgba(0,0,0,0.06)',
-                    }}>
-                    <div className='flex items-start space-x-6'>
-                      <div className='relative flex-shrink-0'>
-                        <img
-                          src={personaData.avatarUrl}
-                          alt={personaData.name}
-                          className='w-20 h-20 rounded-lg object-cover'
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextElementSibling.style.display = 'flex';
-                          }}
-                        />
-                        <div
-                          className='w-20 h-20 rounded-lg bg-gradient-to-r from-[#c026d3] to-[#d946ef] flex items-center justify-center text-3xl'
-                          style={{ display: 'none' }}>
-                          {personaData.avatar}
-                        </div>
-
-                        {/* Online badge */}
-                        <div
-                          className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 ${
-                            darkMode ? 'border-[#2b2d30]' : 'border-white'
-                          } ${mentorsOnline ? 'bg-green-500' : 'bg-gray-400'}`}
-                        />
-                      </div>
-
-                      <div className='flex-1 min-w-0'>
-                        <div className='flex items-start justify-between mb-2'>
-                          <h3
-                            className={`font-bold text-2xl ${
-                              darkMode ? 'text-white' : 'text-[#27282c]'
-                            }`}>
-                            {personaData.name}
-                          </h3>
-                          <svg
-                            className='w-5 h-5 flex-shrink-0'
-                            fill='currentColor'
-                            viewBox='0 0 20 20'>
-                            <path
-                              fillRule='evenodd'
-                              d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
-                              clipRule='evenodd'
-                            />
-                          </svg>
-                        </div>
-
-                        <p
-                          className={`text-base mb-4 ${
-                            darkMode ? 'text-[#aaadb3]' : 'text-[#6c6e73]'
-                          }`}>
-                          {personaData.title}
-                        </p>
-
-                        <div className='flex flex-wrap gap-2 mb-4'>
-                          {personaData.expertise
-                            .slice(0, 3)
-                            .map((skill, skillIndex) => (
-                              <span
-                                key={skillIndex}
-                                className={`text-xs px-3 py-1 rounded-full ${
-                                  darkMode
-                                    ? 'bg-[#1e1f23] text-[#aaadb3]'
-                                    : 'bg-[#f5f5f5] text-[#6c6e73]'
-                                }`}>
-                                {skill}
-                              </span>
-                            ))}
-                          {personaData.expertise.length > 3 && (
-                            <span
-                              className={`text-xs px-3 py-1 rounded-full ${
-                                darkMode
-                                  ? 'bg-[#1e1f23] text-[#aaadb3]'
-                                  : 'bg-[#f5f5f5] text-[#6c6e73]'
-                              }`}>
-                              +{personaData.expertise.length - 3} more
-                            </span>
-                          )}
-                        </div>
-
-                        <div className='flex items-center space-x-4'>
-                          {personaData.websiteUrl && (
-                            <a
-                              href={personaData.websiteUrl}
-                              target='_blank'
-                              rel='noopener noreferrer'
-                              onClick={(e) => e.stopPropagation()}
-                              className={`text-sm hover:underline ${
-                                darkMode ? 'text-[#c026d3]' : 'text-[#c026d3]'
-                              }`}>
-                              Website
-                            </a>
-                          )}
-                          {personaData.youtubeUrl && (
-                            <a
-                              href={personaData.youtubeUrl}
-                              target='_blank'
-                              rel='noopener noreferrer'
-                              onClick={(e) => e.stopPropagation()}
-                              className={`text-sm hover:underline ${
-                                darkMode ? 'text-[#c026d3]' : 'text-[#c026d3]'
-                              }`}>
-                              YouTube
-                            </a>
-                          )}
-                        </div>
-                      </div>
+            {/* Avatar stack */}
+            <div className='flex justify-center items-center mb-8'>
+              <div className='flex -space-x-4'>
+                {Object.entries(personas).slice(0, 5).map(([id, p], index) => (
+                  <motion.div
+                    key={id}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.5 + index * 0.1, duration: 0.3 }}
+                    className='relative'>
+                    <img
+                      src={p.avatarUrl}
+                      alt={p.name}
+                      className='w-14 h-14 rounded-full border-4 border-background object-cover shadow-md hover:scale-110 transition-transform cursor-pointer'
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div
+                      className='w-14 h-14 rounded-full border-4 border-background bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center text-xl shadow-md'
+                      style={{ display: 'none' }}>
+                      {p.avatar}
                     </div>
-                  </div>
-                ),
-              )}
+                  </motion.div>
+                ))}
+                {Object.keys(personas).length > 5 && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1.0, duration: 0.3 }}
+                    className='w-14 h-14 rounded-full border-4 border-background bg-accent flex items-center justify-center text-sm font-semibold text-muted-foreground shadow-md'>
+                    +{Object.keys(personas).length - 5}
+                  </motion.div>
+                )}
+              </div>
             </div>
-          </div>
+
+            {/* Categories */}
+            <div className='flex flex-wrap justify-center gap-2 max-w-lg mx-auto'>
+              {['Programming', 'Nutrition', 'Finance', 'Productivity', 'Wellness'].map((category, index) => (
+                <motion.span
+                  key={category}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.7 + index * 0.05, duration: 0.3 }}
+                  className='px-3 py-1.5 text-xs font-medium rounded-full bg-accent/60 text-foreground/70 border border-border/30'>
+                  {category}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Call to Action */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.9, duration: 0.5 }}
+            className='flex flex-col items-center gap-4'>
+            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${
+              mentorsOnline
+                ? 'bg-green-500/10 border border-green-500/20'
+                : 'bg-yellow-500/10 border border-yellow-500/20'
+            }`}>
+              <div className={`w-2 h-2 rounded-full ${
+                mentorsOnline ? 'bg-green-500' : 'bg-yellow-500'
+              } animate-pulse`} />
+              <span className={`text-sm font-medium ${
+                mentorsOnline ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'
+              }`}>
+                {mentorsOnline ? 'All mentors online' : 'Connecting to mentors...'}
+              </span>
+            </div>
+
+            <p className='text-xs text-muted-foreground/60 max-w-md'>
+              Click on any mentor card in the left sidebar to begin. Each mentor has unique expertise and communication style tailored to help you learn effectively.
+            </p>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -705,6 +392,65 @@ const WelcomeScreen = ({ onQuickStart }) => {
             )}
           </div>
         </div>
+
+        {/* Social Links */}
+        {(persona.socialLinks?.youtube || persona.socialLinks?.instagram || persona.socialLinks?.twitter || persona.websiteUrl) && (
+          <div className='mb-6'>
+            <p className='text-sm font-medium text-muted-foreground/70 px-1 mb-2'>
+              Connect
+            </p>
+            <div className='flex flex-wrap gap-2'>
+              {persona.socialLinks?.youtube && (
+                <a
+                  href={persona.socialLinks.youtube}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors'>
+                  <svg className='w-3.5 h-3.5' fill='currentColor' viewBox='0 0 24 24'>
+                    <path d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'/>
+                  </svg>
+                  YouTube
+                </a>
+              )}
+              {persona.socialLinks?.instagram && (
+                <a
+                  href={persona.socialLinks.instagram}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20 hover:bg-pink-500/20 transition-colors'>
+                  <svg className='w-3.5 h-3.5' fill='currentColor' viewBox='0 0 24 24'>
+                    <path d='M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z'/>
+                  </svg>
+                  Instagram
+                </a>
+              )}
+              {persona.socialLinks?.twitter && (
+                <a
+                  href={persona.socialLinks.twitter}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-colors'>
+                  <svg className='w-3.5 h-3.5' fill='currentColor' viewBox='0 0 24 24'>
+                    <path d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'/>
+                  </svg>
+                  Twitter
+                </a>
+              )}
+              {persona.websiteUrl && (
+                <a
+                  href={persona.websiteUrl}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-accent/60 text-foreground/70 border border-border/30 hover:bg-accent transition-colors'>
+                  <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9'/>
+                  </svg>
+                  Website
+                </a>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Footer Note */}
         <div className='text-center'>

@@ -1,6 +1,6 @@
 // src/components/chat/chat-header.jsx (Compact Version)
 import { Button } from '@/components/ui/button';
-import { personas } from '@/constants/personas-dataset';
+import { personas } from '@/constants/personas';
 import { useChatStore } from '@/store/chat-store';
 import { motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
@@ -59,52 +59,17 @@ const ChatHeader = ({ selectedPersona }) => {
               }`}>
               {persona.name}
             </h2>
-            <span
+            {/* <span
               className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                 darkMode
                   ? 'bg-green-900/30 text-green-400'
                   : 'bg-green-100 text-green-600'
               }`}>
               Online
-            </span>
+            </span> */}
           </div>
-
-          {/* Compact expertise tags */}
-          {/* <div className='flex items-center space-x-1 mt-1'>
-            {persona.expertise.slice(0, 2).map((skill, index) => (
-              <span
-                key={index}
-                className={`text-xs px-1.5 py-0.5 rounded ${
-                  darkMode
-                    ? 'bg-gray-700/60 text-gray-300'
-                    : 'bg-gray-100 text-gray-600'
-                }`}>
-                {skill}
-              </span>
-            ))}
-            {persona.expertise.length > 2 && (
-              <span
-                className={`text-xs ${
-                  darkMode ? 'text-gray-400' : 'text-gray-500'
-                }`}>
-                +{persona.expertise.length - 2}
-              </span>
-            )}
-          </div> */}
         </div>
       </div>
-
-      {/* Optional: Single action button for settings/info */}
-      {/* <Button
-        variant='ghost'
-        size='sm'
-        className={`flex-shrink-0 text-xs ${
-          darkMode
-            ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/50'
-            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'
-        }`}>
-        Info
-      </Button> */}
     </motion.header>
   );
 };

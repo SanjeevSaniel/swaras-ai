@@ -1,20 +1,20 @@
 // src/components/swaras-ai.jsx
 'use client';
 
-import { personas } from '@/constants/personas-dataset';
+import { personas } from '@/constants/personas';
 import { AIService } from '@/services/ai-service';
 import { useChatStore } from '@/store/chat-store';
+import { logger } from '@/utils/logger';
+import { useChat } from '@ai-sdk/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { useChat } from '@ai-sdk/react';
 import ChatHeader from './chat/chat-header';
 import ChatInput from './chat/chat-input';
 import ChatMessages from './chat/chat-messages';
 import EmptyPersonaState from './empty-persona-state';
 import AppSidebar from './sidebar/app-sidebar';
 import WelcomeScreen from './welcome/welcome-screen';
-import { logger } from '@/utils/logger';
 
 const SwarasAI = () => {
   const [responseMetadata, setResponseMetadata] = useState(null);
@@ -40,7 +40,9 @@ const SwarasAI = () => {
   } = useChatStore();
 
   // Get conversations as array for sidebar
-  const conversations = getConversations ? getConversations() : Object.values(personaConversations || {});
+  const conversations = getConversations
+    ? getConversations()
+    : Object.values(personaConversations || {});
 
   // Initialize AI SDK's useChat hook
   const chatApi = useChat({
@@ -113,7 +115,11 @@ const SwarasAI = () => {
     }
 
     if (!messageText || !messageText.trim() || !selectedPersona || isTyping) {
-      logger.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isTyping });
+      logger.log('⚠️ Invalid input or state:', {
+        messageText,
+        selectedPersona,
+        isTyping,
+      });
       return;
     }
 
@@ -175,12 +181,20 @@ const SwarasAI = () => {
         }
 
         const chunk = decoder.decode(value, { stream: true });
-        logger.log('📦 Received chunk:', { length: chunk.length, preview: chunk.substring(0, 100) });
+        logger.log('📦 Received chunk:', {
+          length: chunk.length,
+          preview: chunk.substring(0, 100),
+        });
 
         // toTextStreamResponse() returns plain text chunks, not formatted lines
         // Just accumulate the text directly
         assistantContent += chunk;
-        logger.log('💬 Current content length:', assistantContent.length, 'Preview:', assistantContent.substring(0, 50));
+        logger.log(
+          '💬 Current content length:',
+          assistantContent.length,
+          'Preview:',
+          assistantContent.substring(0, 50),
+        );
 
         // Hide thinking indicator as soon as first chunk arrives
         if (isFirstChunk && assistantContent.length > 0) {
@@ -192,7 +206,9 @@ const SwarasAI = () => {
         // Update with streaming content - use functional update to avoid stale closure
         setMessages((prevMessages) => {
           // Remove any existing assistant message with this ID and add updated one
-          const withoutCurrent = prevMessages.filter(m => m.id !== assistantId);
+          const withoutCurrent = prevMessages.filter(
+            (m) => m.id !== assistantId,
+          );
           return [
             ...withoutCurrent,
             {
@@ -247,7 +263,8 @@ const SwarasAI = () => {
       // Convert conversation messages to AI SDK format
       const aiSdkMessages = currentConversation.messages.map((msg) => ({
         id: msg.id || `${msg.timestamp}`,
-        role: msg.role === 'ai' || msg.role === 'assistant' ? 'assistant' : 'user',
+        role:
+          msg.role === 'ai' || msg.role === 'assistant' ? 'assistant' : 'user',
         content: msg.content,
       }));
       setMessages(aiSdkMessages);
@@ -286,13 +303,15 @@ const SwarasAI = () => {
         // Create greeting message from persona
         const greetings = {
           hitesh: `Namaste! 🙏 I'm Hitesh from Chai aur Code. Let's make coding simple and fun together! What would you like to learn today?`,
-          piyush: `Hey! 👋 I'm Piyush. Ready to build some real production-grade apps? Let's get started!`
+          piyush: `Hey! 👋 I'm Piyush. Ready to build some real production-grade apps? Let's get started!`,
         };
 
         const greetingMessage = {
           id: `greeting-${Date.now()}`,
           role: 'assistant',
-          content: greetings[selectedPersona] || `Hi! I'm ${persona?.name}. How can I help you today?`,
+          content:
+            greetings[selectedPersona] ||
+            `Hi! I'm ${persona?.name}. How can I help you today?`,
           createdAt: new Date(),
           timestamp: Date.now(),
         };
@@ -305,12 +324,22 @@ const SwarasAI = () => {
         setCurrentConversation(conversation);
         setMessages([{ ...greetingMessage, role: 'assistant' }]);
 
-        toast.success(`Connected with ${persona?.name}! 🎉`, { duration: 2000 });
+        toast.success(`Connected with ${persona?.name}! 🎉`, {
+          duration: 2000,
+        });
       } catch (error) {
         logger.error('Failed to create conversation:', error);
       }
     }
-  }, [selectedPersona, mentorsOnline, mentorsLoading, personaConversations, addConversation, setCurrentConversation, setMessages]);
+  }, [
+    selectedPersona,
+    mentorsOnline,
+    mentorsLoading,
+    personaConversations,
+    addConversation,
+    setCurrentConversation,
+    setMessages,
+  ]);
 
   // Create conversation before first message if needed
   const ensureConversation = () => {
@@ -399,7 +428,9 @@ const SwarasAI = () => {
 
     // Just fill the input - don't send the message
     // The event will be dispatched to the input component
-    window.dispatchEvent(new CustomEvent('setInputValue', { detail: question }));
+    window.dispatchEvent(
+      new CustomEvent('setInputValue', { detail: question }),
+    );
   };
 
   // Enhanced auto-send with better error handling and user feedback
@@ -474,7 +505,9 @@ const SwarasAI = () => {
     if (!selectedPersona) {
       return (
         <motion.div
-          className={`h-full overflow-hidden ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+          className={`h-full overflow-hidden ${
+            darkMode ? 'bg-[#0a0f1e]' : 'bg-white'
+          }`}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -505,12 +538,16 @@ const SwarasAI = () => {
 
       return (
         <motion.div
-          className={`relative flex flex-col h-full overflow-hidden chat-container ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+          className={`relative flex flex-col h-full overflow-hidden chat-container ${
+            darkMode ? 'bg-[#0a0f1e]' : 'bg-white'
+          }`}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.1 }}
-          key={`conversation-${validConversation?.id || 'new'}-${selectedPersona}`}>
+          key={`conversation-${
+            validConversation?.id || 'new'
+          }-${selectedPersona}`}>
           <ChatHeader selectedPersona={selectedPersona} />
           <div className='flex-1 overflow-hidden chat-messages-area pb-32'>
             {hasMessages ? (
@@ -536,7 +573,9 @@ const SwarasAI = () => {
     // No persona selected - show empty state
     return (
       <motion.div
-        className={`h-full overflow-hidden ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+        className={`h-full overflow-hidden ${
+          darkMode ? 'bg-[#0a0f1e]' : 'bg-white'
+        }`}
         initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -608,7 +647,6 @@ const SwarasAI = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}>
-
         {/* Main Application Layout */}
         <div className='flex h-full overflow-hidden relative z-10'>
           {/* Sidebar - Modern */}
@@ -626,7 +664,8 @@ const SwarasAI = () => {
                   toast.error('Please select a mentor first', { icon: '⚠️' });
                   return;
                 }
-                const conversation = AIService.createConversation(selectedPersona);
+                const conversation =
+                  AIService.createConversation(selectedPersona);
                 addConversation(conversation);
                 setCurrentConversation(conversation);
                 toast.success('Chat started successfully!', { icon: '✨' });
@@ -690,7 +729,6 @@ const SwarasAI = () => {
               )}
             </div>
           )}
-
       </motion.div>
     </div>
   );

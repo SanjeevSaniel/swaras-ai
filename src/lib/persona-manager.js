@@ -19,6 +19,9 @@ export const PersonaCategories = {
   TECHNOLOGY: 'technology',
   CREATIVE: 'creative',
   PROFESSIONAL: 'professional',
+  FITNESS: 'fitness',
+  FINANCE: 'finance',
+  PRODUCTIVITY: 'productivity',
 };
 
 /**
