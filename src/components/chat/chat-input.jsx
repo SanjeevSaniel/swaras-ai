@@ -3,91 +3,94 @@ import { logger } from '@/utils/logger';
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Send, Sparkles } from 'lucide-react';
+import { Mic, MicOff, Send, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
   const [message, setMessage] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
   const textareaRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   // Persona-specific quick suggestions
   const getPersonaSuggestions = (personaId) => {
     const suggestions = {
       hitesh: [
-        { text: 'Explain async/await...', category: '☕' },
-        { text: 'React best practices...', category: '⚛️' },
-        { text: 'Help debug this...', category: '🐛' },
-        { text: 'Career roadmap...', category: '🎯' },
+        { display: 'Explain async/await...', full: 'Explain async/await in JavaScript with a chai analogy', category: '☕' },
+        { display: 'React best practices...', full: 'What are the best practices for React development?', category: '⚛️' },
+        { display: 'Help debug this...', full: 'Help me debug this code issue', category: '🐛' },
+        { display: 'Career roadmap...', full: 'What is the best career roadmap for full-stack development?', category: '🎯' },
       ],
       piyush: [
-        { text: 'System design for...', category: '🏗️' },
-        { text: 'Scale this feature...', category: '📈' },
-        { text: 'Interview prep...', category: '💼' },
-        { text: 'Architecture review...', category: '🎯' },
+        { display: 'System design for...', full: 'How would you design a scalable URL shortener system?', category: '🏗️' },
+        { display: 'Scale this feature...', full: 'How do I scale this feature to handle millions of users?', category: '📈' },
+        { display: 'Interview prep...', full: 'How should I prepare for system design interviews at FAANG?', category: '💼' },
+        { display: 'Architecture review...', full: 'Can you review my architecture and suggest improvements?', category: '🎯' },
       ],
       foodpharmer: [
-        { text: 'Is this healthy?...', category: '🥗' },
-        { text: 'Decode label...', category: '🔍' },
-        { text: 'Best protein source...', category: '💪' },
-        { text: 'Diet myth check...', category: '🔬' },
+        { display: 'Is this healthy?...', full: 'Is brown sugar actually healthier than white sugar?', category: '🥗' },
+        { display: 'Decode label...', full: 'Help me decode this product label for hidden ingredients', category: '🔍' },
+        { display: 'Best protein source...', full: 'What are the best natural protein sources vs supplements?', category: '💪' },
+        { display: 'Diet myth check...', full: 'Can you fact-check this diet myth with scientific evidence?', category: '🔬' },
       ],
       johnnyharris: [
-        { text: 'Why did this happen?...', category: '🗺️' },
-        { text: 'History behind...', category: '📜' },
-        { text: 'Geopolitics of...', category: '🌍' },
-        { text: 'Explain the conflict...', category: '⚔️' },
+        { display: 'Why did this happen?...', full: 'Why is the South China Sea so heavily contested?', category: '🗺️' },
+        { display: 'History behind...', full: 'What is the history behind the Israel-Palestine conflict?', category: '📜' },
+        { display: 'Geopolitics of...', full: 'Explain the geopolitics of the Ukraine-Russia situation', category: '🌍' },
+        { display: 'Explain the conflict...', full: 'Can you explain what really caused this conflict?', category: '⚔️' },
       ],
       lla: [
-        { text: 'My rights for...', category: '⚖️' },
-        { text: 'Legal action for...', category: '📋' },
-        { text: 'PF/ESI query...', category: '💼' },
-        { text: 'Termination issue...', category: '🚨' },
+        { display: 'My rights for...', full: 'What are my rights if my employer fires me without notice period?', category: '⚖️' },
+        { display: 'Legal action for...', full: 'What legal action can I take for workplace harassment?', category: '📋' },
+        { display: 'PF/ESI query...', full: 'How do I claim my PF if the company refuses to release it?', category: '💼' },
+        { display: 'Termination issue...', full: 'My employer terminated me unfairly, what should I do?', category: '🚨' },
       ],
       zero1: [
-        { text: 'Start investing...', category: '💰' },
-        { text: 'Mutual funds vs stocks...', category: '📊' },
-        { text: 'SIP strategy...', category: '📈' },
-        { text: 'Emergency fund...', category: '🎯' },
+        { display: 'Start investing...', full: 'How should I start investing with ₹10,000 as a complete beginner?', category: '💰' },
+        { display: 'Mutual funds vs stocks...', full: 'Should I invest in mutual funds or direct stocks as a beginner?', category: '📊' },
+        { display: 'SIP strategy...', full: 'What is SIP and how do I create a good SIP investment strategy?', category: '📈' },
+        { display: 'Emergency fund...', full: 'How much should I save in an emergency fund and where should I keep it?', category: '🎯' },
       ],
       aliabdaal: [
-        { text: 'Productivity tips...', category: '⚡' },
-        { text: 'Study technique...', category: '📚' },
-        { text: 'Build habits...', category: '🎯' },
-        { text: 'Time management...', category: '⏰' },
+        { display: 'Productivity tips...', full: 'What are evidence-based productivity tips that actually work?', category: '⚡' },
+        { display: 'Study technique...', full: 'What study techniques does research show are most effective?', category: '📚' },
+        { display: 'Build habits...', full: 'How do I build sustainable habits that stick long-term?', category: '🎯' },
+        { display: 'Time management...', full: 'What are the best time management strategies for students and professionals?', category: '⏰' },
       ],
       kunalshah: [
-        { text: 'Delta 4 for...', category: '🧠' },
-        { text: 'First principles...', category: '💡' },
-        { text: 'Market inefficiency...', category: '🎯' },
-        { text: 'Startup strategy...', category: '🚀' },
+        { display: 'Delta 4 for...', full: 'Explain Delta 4 theory with real startup examples', category: '🧠' },
+        { display: 'First principles...', full: 'How do I apply first principles thinking to solve business problems?', category: '💡' },
+        { display: 'Market inefficiency...', full: 'How can I spot inefficiencies in existing markets to build a startup?', category: '🎯' },
+        { display: 'Startup strategy...', full: 'What makes a product truly irreversible for users?', category: '🚀' },
       ],
       markmanson: [
-        { text: 'Life advice on...', category: '💭' },
-        { text: 'Stop caring about...', category: '🎯' },
-        { text: 'Find meaning in...', category: '🌟' },
-        { text: 'Harsh truth about...', category: '💥' },
+        { display: 'Life advice on...', full: 'How do I stop caring about what other people think of me?', category: '💭' },
+        { display: 'Stop caring about...', full: 'How do I choose what problems are worth caring about in life?', category: '🎯' },
+        { display: 'Find meaning in...', full: 'How do I find meaning when everything feels pointless?', category: '🌟' },
+        { display: 'Harsh truth about...', full: 'Give me the harsh truth about why positive thinking can be harmful', category: '💥' },
       ],
       ankurwarikoo: [
-        { text: 'Money advice...', category: '💰' },
-        { text: 'Career switch...', category: '💼' },
-        { text: 'Investment tips...', category: '📈' },
-        { text: 'Life lesson on...', category: '🎯' },
+        { display: 'Money advice...', full: 'Should I invest in mutual funds or stocks first as a beginner?', category: '💰' },
+        { display: 'Career switch...', full: 'How do I negotiate salary in a job interview without seeming greedy?', category: '💼' },
+        { display: 'Investment tips...', full: 'What are the best money habits to build in your 20s?', category: '📈' },
+        { display: 'Life lesson on...', full: 'What life lessons should everyone know about money and career?', category: '🎯' },
       ],
       flyingbeast: [
-        { text: 'Workout routine...', category: '💪' },
-        { text: 'Stay disciplined...', category: '⚡' },
-        { text: 'Diet plan...', category: '🥗' },
-        { text: 'Balance life...', category: '✈️' },
+        { display: 'Workout routine...', full: 'What is the best beginner gym routine for natural muscle gain?', category: '💪' },
+        { display: 'Stay disciplined...', full: 'How do I stay disciplined with early morning workouts consistently?', category: '⚡' },
+        { display: 'Diet plan...', full: 'What should my diet plan look like for muscle gain and fat loss?', category: '🥗' },
+        { display: 'Balance life...', full: 'How do you balance career, fitness, and family life effectively?', category: '✈️' },
       ],
     };
 
     return (
       suggestions[personaId] || [
-        { text: 'Explain this concept...', category: '💡' },
-        { text: 'Help me with...', category: '🚀' },
-        { text: 'Advice on...', category: '🎯' },
-        { text: 'Tell me about...', category: '✨' },
+        { display: 'Explain this concept...', full: 'Can you explain this concept in detail?', category: '💡' },
+        { display: 'Help me with...', full: 'I need help with understanding this topic', category: '🚀' },
+        { display: 'Advice on...', full: 'What advice do you have about this situation?', category: '🎯' },
+        { display: 'Tell me about...', full: 'Tell me more about your expertise and experience', category: '✨' },
       ]
     );
   };
@@ -118,6 +121,53 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
     window.addEventListener('setInputValue', handleSetInputEvent);
     return () => {
       window.removeEventListener('setInputValue', handleSetInputEvent);
+    };
+  }, []);
+
+  // Initialize Speech Recognition
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (SpeechRecognition) {
+        setSpeechSupported(true);
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+          setIsListening(true);
+          logger.log('🎤 Speech recognition started');
+        };
+
+        recognition.onresult = (event) => {
+          const transcript = Array.from(event.results)
+            .map(result => result[0].transcript)
+            .join('');
+
+          setMessage(transcript);
+          logger.log('🗣️ Transcript:', transcript);
+        };
+
+        recognition.onerror = (event) => {
+          logger.error('❌ Speech recognition error:', event.error);
+          setIsListening(false);
+        };
+
+        recognition.onend = () => {
+          setIsListening(false);
+          logger.log('🎤 Speech recognition ended');
+        };
+
+        recognitionRef.current = recognition;
+      }
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
     };
   }, []);
 
@@ -153,8 +203,22 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
   };
 
   const handleSuggestionClick = (suggestion) => {
-    setMessage(suggestion.text);
+    setMessage(suggestion.full || suggestion.text);
     textareaRef.current?.focus();
+  };
+
+  const toggleVoiceRecording = () => {
+    if (!recognitionRef.current || disabled) return;
+
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      try {
+        recognitionRef.current.start();
+      } catch (error) {
+        logger.error('Error starting speech recognition:', error);
+      }
+    }
   };
 
   const showSuggestions = !message.trim() && !disabled;
@@ -176,7 +240,7 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
                   className='group px-3 py-2 rounded-xl bg-background/95 backdrop-blur-sm border border-border/60 hover:border-[#FA8072]/40 hover:bg-accent/80 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md'>
                   <span className='mr-1.5'>{suggestion.category}</span>
                   <span className='text-foreground/80 group-hover:text-foreground'>
-                    {suggestion.text}
+                    {suggestion.display || suggestion.text}
                   </span>
                 </motion.button>
               ))}
@@ -203,6 +267,8 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
               placeholder={
                 disabled
                   ? 'Select a mentor to start chatting...'
+                  : isListening
+                  ? 'Listening...'
                   : 'Type your message...'
               }
               disabled={disabled}
@@ -212,6 +278,29 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
                 height: 'auto',
               }}
             />
+
+            {/* Voice Input Button */}
+            {speechSupported && (
+              <motion.button
+                type='button'
+                onClick={toggleVoiceRecording}
+                disabled={disabled}
+                whileTap={{ scale: 0.95 }}
+                className={`h-9 w-9 rounded-lg flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
+                  disabled
+                    ? 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed'
+                    : isListening
+                    ? 'bg-red-500 text-white shadow-lg animate-pulse'
+                    : 'bg-muted/60 text-muted-foreground hover:bg-accent hover:text-foreground hover:shadow-md'
+                }`}
+                title={isListening ? 'Stop recording' : 'Start voice input'}>
+                {isListening ? (
+                  <MicOff className='w-4 h-4' />
+                ) : (
+                  <Mic className='w-4 h-4' />
+                )}
+              </motion.button>
+            )}
 
             {/* Compact Send Button */}
             <Button
