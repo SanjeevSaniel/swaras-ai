@@ -297,15 +297,18 @@ swaras-ai/
 
 ### Desktop View
 - Clean sidebar with all 11 mentors
-- Smooth animations and transitions
-- Real-time chat with streaming responses
+![Alt Text](public\snapshots\NEW\Homescreen.png)
+
+- Chat with Persona
+![Alt Text](public\snapshots\NEW\Chat.png)
+
 - Dark/light theme support
+![Alt Text](public\snapshots\NEW\Chat-dark.png)
 
 ### Mobile View
-- Hamburger menu for navigation
-- Touch-optimized interface
-- Voice input button
-- Responsive chat bubbles
+
+- Mobile optimized design
+![Mobile View](public\snapshots\NEW\Mobile.png)
 
 ---
 
