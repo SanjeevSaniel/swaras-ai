@@ -256,7 +256,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
 
                   {/* Message Content */}
                   <div
-                    className={`max-w-[60%] ${
+                    className={`max-w-[90%] sm:max-w-[60%] ${
                       isUser ? 'flex flex-col items-end' : ''
                     }`}>
                     {/* Persona name for assistant messages */}
@@ -594,7 +594,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                 )}
               </div>
             </div>
-            <div className='max-w-[60%]'>
+            <div className='max-w-[90%] sm:max-w-[60%]'>
               {persona && (
                 <div className='text-xs font-semibold text-[#FA8072] mb-1.5 px-1'>
                   {persona.name}

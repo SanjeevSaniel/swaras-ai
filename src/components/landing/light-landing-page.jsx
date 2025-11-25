@@ -393,8 +393,8 @@ const LightLandingPage = () => {
                   description: 'Updated with the latest knowledge',
                 },
                 {
-                  title: 'Completely private',
-                  description: 'Your conversations stay yours',
+                  title: 'Voice enabled',
+                  description: 'Speak naturally or type your questions',
                 },
               ].map((card, index) => (
                 <motion.div
@@ -517,9 +517,9 @@ const LightLandingPage = () => {
                     '24/7 access to expert guidance. Get help whenever inspiration strikes or questions arise.',
                 },
                 {
-                  title: 'Secure & Private',
+                  title: 'Mobile Optimized',
                   description:
-                    'Your conversations are encrypted and protected. We never share your data with third parties.',
+                    'Seamless experience across all devices with touch-friendly interface and voice input support.',
                 },
               ].map((feature, index) => (
                 <motion.div
@@ -712,7 +712,7 @@ const LightLandingPage = () => {
               </svg> */}
               <span>© 2025 Swaras AI</span>
             </div>
-            <div className='flex items-center gap-6'>
+            {/* <div className='flex items-center gap-6'>
               <a
                 href='#'
                 className='hover:text-gray-900 transition-colors'>
@@ -728,7 +728,7 @@ const LightLandingPage = () => {
                 className='hover:text-gray-900 transition-colors'>
                 Terms
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
       </footer>

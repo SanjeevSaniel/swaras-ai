@@ -15,46 +15,38 @@ const ChatHeader = ({ selectedPersona }) => {
     <motion.header
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`flex items-center justify-between px-4 py-3 border-b ${
+      className={`flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b ${
         darkMode
           ? 'bg-gray-800/90 border-gray-700/60 backdrop-blur-sm'
           : 'bg-white/90 border-gray-200/60 backdrop-blur-sm'
       }`}>
-      {/* Mobile menu button */}
-      <Button
-        variant='ghost'
-        size='icon'
-        className='lg:hidden flex-shrink-0'>
-        <Menu className='h-5 w-5' />
-      </Button>
-
       {/* Persona info - compact layout */}
-      <div className='flex items-center space-x-3 flex-1 min-w-0'>
+      <div className='flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0 ml-14 lg:ml-0'>
         {/* Avatar with online indicator */}
         <div className='relative flex-shrink-0'>
           <img
             src={persona.avatarUrl}
             alt={`${persona.name} avatar`}
-            className='w-10 h-10 rounded-full object-cover border-2 border-green-400/50'
+            className='w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-green-400/50'
             onError={(e) => {
               e.target.style.display = 'none';
               e.target.nextElementSibling.style.display = 'flex';
             }}
           />
           <div
-            className='w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xl'
+            className='w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-lg sm:text-xl'
             style={{ display: 'none' }}>
             {persona.avatar}
           </div>
           {/* Compact online indicator */}
-          <div className='absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white'></div>
+          <div className='absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-400 rounded-full border-2 border-white'></div>
         </div>
 
         {/* Name and status - single line layout */}
         <div className='flex-1 min-w-0'>
-          <div className='flex items-center space-x-2'>
+          <div className='flex items-center space-x-1.5 sm:space-x-2'>
             <h2
-              className={`font-semibold text-base truncate ${
+              className={`font-semibold text-sm sm:text-base truncate ${
                 darkMode ? 'text-gray-100' : 'text-gray-900'
               }`}>
               {persona.name}

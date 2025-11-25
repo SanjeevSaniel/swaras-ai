@@ -3,10 +3,18 @@
 import { Button } from '@/components/ui/button';
 import { personaManager } from '@/constants/config';
 import { useChatStore } from '@/store/chat-store';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser, useClerk } from '@clerk/nextjs';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageSquarePlus, Moon, Sun, Trash2 } from 'lucide-react';
+import { LogOut, MessageSquarePlus, Moon, Sun, Trash2, User } from 'lucide-react';
 import { useState } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const AppSidebar = ({
   conversations,
@@ -19,6 +27,10 @@ const AppSidebar = ({
 }) => {
   const { darkMode, toggleDarkMode, personaConversations } = useChatStore();
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Clerk authentication hooks for mobile dropdown
+  const { user } = useUser();
+  const { signOut } = useClerk();
 
   const allPersonas = personaManager.getAllPersonas({ enabled: true });
   const currentPersona = selectedPersona
@@ -41,9 +53,9 @@ const AppSidebar = ({
   };
 
   return (
-    <div className='w-80 h-full bg-background border-r border-border/40 flex flex-col'>
+    <div className='w-full sm:w-80 h-full bg-background border-r border-border/40 flex flex-col'>
       {/* Modern Header */}
-      <div className='px-4 py-3.5 border-b border-border/40 bg-background/95 backdrop-blur-sm'>
+      <div className='px-4 py-3.5 pr-14 lg:pr-4 border-b border-border/40 bg-background/95 backdrop-blur-sm'>
         <div className='flex items-center justify-between gap-3'>
           {/* Logo & Title */}
           <div className='flex items-center gap-2.5'>
@@ -113,7 +125,7 @@ const AppSidebar = ({
           </div>
 
           {/* Actions */}
-          <div className='flex items-center gap-1.5 flex-shrink-0'>
+          <div className='flex items-center gap-2 flex-shrink-0'>
             {/* Theme Toggle */}
             <button
               onClick={toggleDarkMode}
@@ -126,8 +138,8 @@ const AppSidebar = ({
               )}
             </button>
 
-            {/* User Profile */}
-            <div className='ml-0.5'>
+            {/* User Profile - Hidden on mobile, shown on desktop */}
+            <div className='ml-0.5 hidden lg:block'>
               <UserButton
                 afterSignOutUrl='/'
                 appearance={{
@@ -136,6 +148,44 @@ const AppSidebar = ({
                   },
                 }}
               />
+            </div>
+
+            {/* Mobile-only Custom Profile Dropdown */}
+            <div className='lg:hidden ml-0.5'>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className='w-8 h-8 rounded-lg bg-accent hover:bg-accent/80 flex items-center justify-center transition-colors'>
+                    {user?.imageUrl ? (
+                      <img
+                        src={user.imageUrl}
+                        alt={user.firstName || 'User'}
+                        className='w-full h-full rounded-lg object-cover'
+                      />
+                    ) : (
+                      <User className='w-4 h-4 text-foreground' />
+                    )}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end' className='w-56'>
+                  <DropdownMenuLabel>
+                    <div className='flex flex-col space-y-1'>
+                      <p className='text-sm font-medium leading-none'>
+                        {user?.firstName || user?.username || 'User'}
+                      </p>
+                      <p className='text-xs leading-none text-muted-foreground'>
+                        {user?.emailAddresses?.[0]?.emailAddress}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => signOut()}
+                    className='text-red-600 dark:text-red-400 cursor-pointer'>
+                    <LogOut className='mr-2 h-4 w-4' />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
