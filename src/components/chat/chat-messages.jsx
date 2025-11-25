@@ -178,15 +178,15 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                   {/* Avatar */}
                   <div className='flex-shrink-0'>
                     {isUser ? (
-                      <div className='w-7 h-7 rounded-lg bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center shadow-sm'>
-                        <User className='w-3.5 h-3.5 text-white' />
+                      <div className='w-8 h-8 rounded-full bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center shadow-md ring-2 ring-slate-200 dark:ring-slate-700'>
+                        <User className='w-4 h-4 text-white' />
                       </div>
                     ) : isAssistant ? (
-                      <div className='w-7 h-7 rounded-lg bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center shadow-sm'>
+                      <div className='w-8 h-8 rounded-full bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center shadow-md ring-2 ring-[#FA8072]/20'>
                         {persona?.avatar ? (
-                          <span className='text-sm'>{persona.avatar}</span>
+                          <span className='text-base'>{persona.avatar}</span>
                         ) : (
-                          <Bot className='w-3.5 h-3.5 text-white' />
+                          <Bot className='w-4 h-4 text-white' />
                         )}
                       </div>
                     ) : null}
@@ -196,24 +196,32 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                   <div className={`flex-1 max-w-[70%] ${isAssistant ? 'flex flex-col items-end' : ''}`}>
                     {/* Persona name for assistant messages */}
                     {isAssistant && persona && (
-                      <div className='text-xs font-medium text-muted-foreground/70 mb-1 px-1'>
+                      <div className='text-xs font-semibold text-[#FA8072] mb-1.5 px-1'>
                         {persona.name}
                       </div>
                     )}
 
+                    {/* User name label */}
+                    {isUser && (
+                      <div className='text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 px-1'>
+                        You
+                      </div>
+                    )}
+
                     <div
-                      className={`group relative rounded-xl px-3.5 py-2.5 shadow-sm ${
+                      className={`group relative rounded-2xl px-4 py-3 shadow-md transition-all ${
                         isAssistant
-                          ? 'text-white'
-                          : 'bg-card border border-border/50'
+                          ? 'text-white rounded-br-sm'
+                          : 'bg-card border-2 border-border/60 rounded-bl-sm hover:border-border/80'
                       }`}
                       style={isAssistant ? {
-                        background: 'linear-gradient(to right, #FA8072, #FF8E8E)',
+                        background: 'linear-gradient(135deg, #FA8072, #FF8E8E)',
+                        boxShadow: '0 4px 12px rgba(250, 128, 114, 0.25)',
                       } : {}}
                     >
                       <div
                         className={`text-sm leading-relaxed ${
-                          isAssistant ? 'text-white' : 'text-foreground'
+                          isAssistant ? 'text-white font-medium' : 'text-foreground'
                         }`}
                       >
                         {message.content}
@@ -223,25 +231,24 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                       {isAssistant && (
                         <button
                           onClick={() => handleCopy(message.content, index)}
-                          className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/20 rounded-md'
+                          className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-white/20 rounded-lg'
                           title='Copy message'
                         >
                           {copiedIndex === index ? (
-                            <Check className='w-3 h-3 text-white' />
+                            <Check className='w-3.5 h-3.5 text-white' />
                           ) : (
-                            <Copy className='w-3 h-3 text-white/80' />
+                            <Copy className='w-3.5 h-3.5 text-white/80' />
                           )}
                         </button>
                       )}
                     </div>
 
-                    {/* Timestamp & "You" label */}
+                    {/* Timestamp */}
                     <div
-                      className={`text-[10px] text-muted-foreground/70 mt-1 px-1 flex items-center gap-1 ${
-                        isAssistant ? 'flex-row-reverse' : ''
+                      className={`text-[10px] text-muted-foreground/60 mt-1.5 px-1 ${
+                        isAssistant ? 'text-right' : 'text-left'
                       }`}
                     >
-                      {isAssistant && <span className='font-medium'>{persona?.name}</span>}
                       <span>
                         {new Date(message.timestamp || message.createdAt || Date.now()).toLocaleTimeString('en-US', {
                           hour: 'numeric',
@@ -265,21 +272,27 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
             exit={{ opacity: 0, y: -8 }}
             className='flex gap-2.5 flex-row-reverse'
           >
-            <div className='w-7 h-7 rounded-lg bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center shadow-sm'>
+            <div className='w-8 h-8 rounded-full bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center shadow-md ring-2 ring-[#FA8072]/20'>
               {persona?.avatar ? (
-                <span className='text-sm'>{persona.avatar}</span>
+                <span className='text-base'>{persona.avatar}</span>
               ) : (
-                <Bot className='w-3.5 h-3.5 text-white' />
+                <Bot className='w-4 h-4 text-white' />
               )}
             </div>
             <div className='flex-1 max-w-[70%] flex flex-col items-end'>
               {persona && (
-                <div className='text-xs font-medium text-muted-foreground/70 mb-1 px-1'>
+                <div className='text-xs font-semibold text-[#FA8072] mb-1.5 px-1'>
                   {persona.name}
                 </div>
               )}
-              <div className='rounded-xl px-4 py-3 shadow-sm text-white' style={{ background: 'linear-gradient(to right, #FA8072, #FF8E8E)' }}>
-                <div className='flex items-center gap-2'>
+              <div
+                className='rounded-2xl rounded-br-sm px-4 py-3 shadow-md text-white'
+                style={{
+                  background: 'linear-gradient(135deg, #FA8072, #FF8E8E)',
+                  boxShadow: '0 4px 12px rgba(250, 128, 114, 0.25)',
+                }}
+              >
+                <div className='flex items-center gap-2.5'>
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
@@ -288,22 +301,22 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                   </motion.div>
                   <div className='flex gap-1'>
                     <motion.div
-                      className='w-1.5 h-1.5 rounded-full bg-white/90'
+                      className='w-2 h-2 rounded-full bg-white/90'
                       animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1, repeat: Infinity, delay: 0 }}
                     />
                     <motion.div
-                      className='w-1.5 h-1.5 rounded-full bg-white/90'
+                      className='w-2 h-2 rounded-full bg-white/90'
                       animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
                     />
                     <motion.div
-                      className='w-1.5 h-1.5 rounded-full bg-white/90'
+                      className='w-2 h-2 rounded-full bg-white/90'
                       animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
                     />
                   </div>
-                  <span className='text-xs text-white/90 font-medium'>Thinking</span>
+                  <span className='text-sm text-white font-medium'>Thinking...</span>
                 </div>
               </div>
             </div>
