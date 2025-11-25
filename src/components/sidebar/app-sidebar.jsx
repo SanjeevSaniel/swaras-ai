@@ -106,9 +106,9 @@ const AppSidebar = ({
               <h1 className='text-sm font-bold text-foreground leading-none'>
                 Swaras AI
               </h1>
-              <p className='text-[10px] text-muted-foreground/60 leading-none mt-1'>
+              <span className='text-[10px] text-muted-foreground/60 leading-none'>
                 AI Mentorship
-              </p>
+              </span>
             </div>
           </div>
 
@@ -145,7 +145,7 @@ const AppSidebar = ({
       <div className='px-4 pt-4 pb-2'>
         <div className='flex items-center justify-between'>
           <h2 className='text-sm font-semibold text-muted-foreground/70 uppercase tracking-wide'>
-            Your Mentors
+            Personas
           </h2>
           <div className='flex items-center gap-1'>
             <div className='w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse'></div>
@@ -248,17 +248,17 @@ const AppSidebar = ({
                       )}
                     </div>
 
-                    {/* Delete Button - Subtle */}
+                    {/* Delete Button - Bottom Right */}
                     {personaConversation && (
                       <Button
                         variant='ghost'
                         size='sm'
-                        className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 h-7 w-7 p-0 rounded-lg hover:bg-background/80 transition-all'
+                        className='absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 h-7 w-7 p-0 rounded-lg hover:bg-destructive/10 transition-all'
                         onClick={(e) => {
                           e.stopPropagation();
                           onDeleteConversation(persona.id);
                         }}>
-                        <Trash2 className='h-3 w-3 text-muted-foreground/60 hover:text-red-500' />
+                        <Trash2 className='h-3.5 w-3.5 text-muted-foreground/60 hover:text-red-500 transition-colors' />
                       </Button>
                     )}
                   </div>
