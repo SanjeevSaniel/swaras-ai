@@ -313,7 +313,7 @@ swaras-ai/
 
 - **Response Time**: 2-3 seconds average
 - **Streaming**: Real-time token streaming
-- **Mobile Score**: 95+ on Lighthouse
+<!-- - **Mobile Score**: 95+ on Lighthouse -->
 - **Accessibility**: WCAG 2.1 AA compliant
 - **Bundle Size**: Optimized with Next.js 15
 
@@ -353,7 +353,7 @@ Contributions are welcome! Please follow these steps:
 
 ## 📝 **Changelog**
 
-### **v1.0.0** (2025-01-26)
+### **v1.0.0** (2025-11-26)
 - ✅ Initial release with 11 expert mentors
 - ✅ Speech-to-text input functionality
 - ✅ Full mobile responsiveness
@@ -374,16 +374,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 **Acknowledgments**
 
 **Mentors Who Inspired This Project:**
-- **Hitesh Choudhary** - Chai aur Code
-- **Piyush Garg** - PiyushGarg.dev
-- **Revant Himatsingka** - FoodPharmer
+- **Hitesh Choudhary** - [Hitesh Choudhary](https://hitesh.ai)
+- **Piyush Garg** - [Piyush Garg](https://piyushgarg.dev)
+<!-- - **Revant Himatsingka** - FoodPharmer
 - **Gaurav Taneja** - Flying Beast
 - **Zerodha** - Zero1 by Zerodha
 - **Ali Abdaal** - Feel-Good Productivity
 - **Kunal Shah** - CRED Founder
 - **Johnny Harris** - Independent Journalist
 - **Mark Manson** - Best-Selling Author
-- **Ankur Warikoo** - Entrepreneur & Content Creator
+- **Ankur Warikoo** - Entrepreneur & Content Creator -->
 
 **Technologies:**
 - **OpenAI** - GPT-4o API
@@ -394,14 +394,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🔗 **Links**
+<!-- ## 🔗 **Links** -->
 
-- **Demo**: [Coming Soon]
-- **Documentation**: [Coming Soon]
-- **Issues**: [GitHub Issues](https://github.com/yourusername/swaras-ai/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/swaras-ai/discussions)
+<!-- - **Demo**: [Coming Soon]
+- **Documentation**: [Coming Soon] -->
+<!-- - **Issues**: [GitHub Issues](https://github.com/yourusername/swaras-ai/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/swaras-ai/discussions) -->
 
----
+<!-- --- -->
 
 ## 📧 **Contact**
 
@@ -412,6 +412,6 @@ For questions, suggestions, or collaboration:
 
 ---
 
-**Built with ❤️ by the Developer Community | Version 1.0.0 | January 2025**
+**Built with ❤️ by the Developer Community | Version 1.0.0 | November 2025**
 
 *Empowering learners with AI-powered mentorship from 11 expert personas*
