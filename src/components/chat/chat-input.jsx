@@ -1,4 +1,5 @@
 'use client';
+import { logger } from '@/utils/logger';
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -50,15 +51,15 @@ const ChatInput = ({
 
   const onSubmit = (e) => {
     e?.preventDefault();
-    console.log('📤 Form submit:', { message, disabled });
+    logger.log('📤 Form submit:', { message, disabled });
 
     if (!message.trim() || disabled || isLoading) {
-      console.log('⚠️ Submit blocked');
+      logger.log('⚠️ Submit blocked');
       return;
     }
 
     if (onSendMessage) {
-      console.log('✅ Calling onSendMessage with:', message);
+      logger.log('✅ Calling onSendMessage with:', message);
       onSendMessage(message.trim());
       setMessage('');
 

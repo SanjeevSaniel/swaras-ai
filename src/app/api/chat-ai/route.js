@@ -5,6 +5,12 @@ import {
 import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
 
+const isDev = process.env.NODE_ENV === 'development';
+const logger = {
+  log: (...args) => isDev && console.log(...args),
+  error: (...args) => isDev && console.error(...args),
+};
+
 // Initialize processor (singleton pattern)
 const processor = createHybridProcessor();
 
@@ -21,8 +27,8 @@ export async function POST(req) {
     // Get persona name
     const personaName = getPersonaName(persona);
 
-    console.log(`🚀 Processing chat for ${personaName}`);
-    console.log(`📝 User message: "${lastMessage.content}"`);
+    logger.log(`🚀 Processing chat for ${personaName}`);
+    logger.log(`📝 User message: "${lastMessage.content}"`);
 
     // Get conversation history (excluding the last message)
     const history = messages.slice(0, -1);
@@ -47,7 +53,7 @@ export async function POST(req) {
 
     return stream.toTextStreamResponse();
   } catch (error) {
-    console.error('💥 Chat AI API error:', error);
+    logger.error('💥 Chat AI API error:', error);
     return new Response(
       JSON.stringify({
         error: 'Failed to process chat',

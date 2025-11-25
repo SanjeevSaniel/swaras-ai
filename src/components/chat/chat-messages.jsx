@@ -1,4 +1,5 @@
 'use client';
+import { logger } from '@/utils/logger';
 
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,7 +22,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
   };
 
   useEffect(() => {
-    console.log('💬 ChatMessages received:', {
+    logger.log('💬 ChatMessages received:', {
       messagesCount: messages?.length || 0,
       isTyping,
       selectedPersona,
@@ -160,7 +161,7 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
               const isUser = message.role === 'user';
               const isAssistant = message.role === 'ai' || message.role === 'assistant';
 
-              console.log('💬 Rendering message:', {
+              logger.log('💬 Rendering message:', {
                 index,
                 role: message.role,
                 isUser,

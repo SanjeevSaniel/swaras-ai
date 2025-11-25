@@ -14,6 +14,7 @@ import ChatMessages from './chat/chat-messages';
 import EmptyPersonaState from './empty-persona-state';
 import AppSidebar from './sidebar/app-sidebar';
 import WelcomeScreen from './welcome/welcome-screen';
+import { logger } from '@/utils/logger';
 
 const SwarasAI = () => {
   const [responseMetadata, setResponseMetadata] = useState(null);
@@ -48,11 +49,11 @@ const SwarasAI = () => {
       persona: selectedPersona,
     },
     onResponse: (response) => {
-      console.log('✅ AI response started streaming', response);
+      logger.log('✅ AI response started streaming', response);
     },
     onFinish: (message) => {
-      console.log('✅ AI response completed:', message);
-      console.log('📊 Current messages count:', chatApi.messages.length);
+      logger.log('✅ AI response completed:', message);
+      logger.log('📊 Current messages count:', chatApi.messages.length);
       // Update conversation with the new message
       if (currentConversation) {
         const updatedConversation = {
@@ -62,11 +63,11 @@ const SwarasAI = () => {
           messageCount: chatApi.messages.length,
         };
         updateConversation(currentConversation.id, updatedConversation);
-        console.log('💾 Conversation updated in store');
+        logger.log('💾 Conversation updated in store');
       }
     },
     onError: (error) => {
-      console.error('❌ Streaming error:', error);
+      logger.error('❌ Streaming error:', error);
       toast.error('Failed to get response from mentor', {
         icon: '❌',
         duration: 4000,
@@ -86,7 +87,7 @@ const SwarasAI = () => {
   // Add custom typing state for manual streaming
   const [isTyping, setIsTyping] = useState(false);
 
-  console.log('🎯 useChat values:', {
+  logger.log('🎯 useChat values:', {
     input,
     hasHandleInputChange: !!handleInputChange,
     hasHandleSubmit: !!originalHandleSubmit,
@@ -96,11 +97,11 @@ const SwarasAI = () => {
 
   // Custom message sending with manual streaming
   const handleSendMessage = async (messageText) => {
-    console.log('🔄 handleSendMessage called with:', messageText);
+    logger.log('🔄 handleSendMessage called with:', messageText);
 
     // Prevent message sending if mentors are offline
     if (!mentorsOnline || mentorsLoading) {
-      console.log('⚠️ Mentors offline or loading');
+      logger.log('⚠️ Mentors offline or loading');
       toast.error(
         'AI mentors are currently offline. Please wait for connection.',
         {
@@ -112,18 +113,18 @@ const SwarasAI = () => {
     }
 
     if (!messageText || !messageText.trim() || !selectedPersona || isTyping) {
-      console.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isTyping });
+      logger.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isTyping });
       return;
     }
 
     // Ensure conversation exists before sending
     const conversation = ensureConversation();
     if (!conversation) {
-      console.log('❌ Failed to create/get conversation');
+      logger.log('❌ Failed to create/get conversation');
       return;
     }
 
-    console.log('✅ Conversation ready:', conversation.id);
+    logger.log('✅ Conversation ready:', conversation.id);
 
     const personaName = personas[selectedPersona]?.name;
 
@@ -163,27 +164,27 @@ const SwarasAI = () => {
       let assistantContent = '';
       const assistantId = `assistant-${Date.now()}`;
 
-      console.log('📥 Starting stream read...');
+      logger.log('📥 Starting stream read...');
       let isFirstChunk = true;
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
-          console.log('✅ Stream complete');
+          logger.log('✅ Stream complete');
           break;
         }
 
         const chunk = decoder.decode(value, { stream: true });
-        console.log('📦 Received chunk:', { length: chunk.length, preview: chunk.substring(0, 100) });
+        logger.log('📦 Received chunk:', { length: chunk.length, preview: chunk.substring(0, 100) });
 
         // toTextStreamResponse() returns plain text chunks, not formatted lines
         // Just accumulate the text directly
         assistantContent += chunk;
-        console.log('💬 Current content length:', assistantContent.length, 'Preview:', assistantContent.substring(0, 50));
+        logger.log('💬 Current content length:', assistantContent.length, 'Preview:', assistantContent.substring(0, 50));
 
         // Hide thinking indicator as soon as first chunk arrives
         if (isFirstChunk && assistantContent.length > 0) {
-          console.log('🎯 First chunk received - hiding thinking indicator');
+          logger.log('🎯 First chunk received - hiding thinking indicator');
           setIsTyping(false);
           isFirstChunk = false;
         }
@@ -205,7 +206,7 @@ const SwarasAI = () => {
         });
       }
 
-      console.log('✅ Final content length:', assistantContent.length);
+      logger.log('✅ Final content length:', assistantContent.length);
 
       // Ensure typing indicator is off (should already be off from first chunk)
       setIsTyping(false);
@@ -229,7 +230,7 @@ const SwarasAI = () => {
         icon: personas[selectedPersona]?.avatar,
       });
     } catch (error) {
-      console.error('❌ Error:', error);
+      logger.error('❌ Error:', error);
       setIsTyping(false);
       toast.error('Failed to send message. Please try again.');
     }
@@ -250,10 +251,10 @@ const SwarasAI = () => {
         content: msg.content,
       }));
       setMessages(aiSdkMessages);
-      console.log('📋 Synced messages to AI SDK:', aiSdkMessages.length);
+      logger.log('📋 Synced messages to AI SDK:', aiSdkMessages.length);
     } else {
       setMessages([]);
-      console.log('📋 Cleared messages (no conversation)');
+      logger.log('📋 Cleared messages (no conversation)');
     }
   }, [currentConversation?.id, setMessages]);
 
@@ -306,7 +307,7 @@ const SwarasAI = () => {
 
         toast.success(`Connected with ${persona?.name}! 🎉`, { duration: 2000 });
       } catch (error) {
-        console.error('Failed to create conversation:', error);
+        logger.error('Failed to create conversation:', error);
       }
     }
   }, [selectedPersona, mentorsOnline, mentorsLoading, personaConversations, addConversation, setCurrentConversation, setMessages]);
@@ -341,7 +342,7 @@ const SwarasAI = () => {
         addConversation(conversation);
         setCurrentConversation(conversation);
       } catch (error) {
-        console.error('Failed to create conversation:', error);
+        logger.error('Failed to create conversation:', error);
         toast.error('Failed to start conversation. Please try again.');
         return null;
       }
@@ -390,7 +391,7 @@ const SwarasAI = () => {
         addConversation(conversationWithGreeting);
         setCurrentConversation(conversationWithGreeting);
       } catch (error) {
-        console.error('Failed to create conversation:', error);
+        logger.error('Failed to create conversation:', error);
         toast.error('Failed to start conversation. Please try again.');
         return;
       }
@@ -409,13 +410,13 @@ const SwarasAI = () => {
         try {
           await handleSendMessage(question);
         } catch (error) {
-          console.error('Auto-send failed:', error);
+          logger.error('Auto-send failed:', error);
           toast.error('Failed to send auto-generated message', {
             icon: '🤖',
           });
         }
       } else {
-        console.warn('Auto-send conditions not met:', {
+        logger.warn('Auto-send conditions not met:', {
           hasQuestion: !!question,
           hasPersona: !!selectedPersona,
           mentorsOnline,
@@ -445,7 +446,7 @@ const SwarasAI = () => {
           duration: 3000,
         });
       } catch (error) {
-        console.error('Failed to start conversation:', error);
+        logger.error('Failed to start conversation:', error);
         toast.error('Failed to start new conversation');
       }
     };
@@ -495,7 +496,7 @@ const SwarasAI = () => {
       const displayMessages = messages || [];
       const hasMessages = displayMessages.length > 0;
 
-      console.log('🎨 Rendering chat view:', {
+      logger.log('🎨 Rendering chat view:', {
         selectedPersona,
         messagesCount: displayMessages.length,
         hasMessages,
