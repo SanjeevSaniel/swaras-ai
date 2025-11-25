@@ -1,25 +1,8 @@
 'use client';
 
-import { SignInButton, SignUpButton } from '@clerk/nextjs';
+import { SignInButton } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
-import {
-  ArrowRight,
-  Brain,
-  Check,
-  Code2,
-  GraduationCap,
-  Lightbulb,
-  MessageCircle,
-  Rocket,
-  Sparkles,
-  Star,
-  TrendingUp,
-  Users,
-  Zap,
-  BookOpen,
-  Target,
-  Award,
-} from 'lucide-react';
+import { Sparkles, MessageSquare, Users, Zap, ArrowRight, Brain, Target, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const LandingPage = () => {
@@ -27,317 +10,209 @@ const LandingPage = () => {
     {
       icon: Brain,
       title: 'AI-Powered Mentorship',
-      description:
-        'Get personalized guidance from AI mentors trained on expertise from industry leaders.',
+      description: 'Learn from AI personas trained on real industry experts',
+      color: 'from-blue-500 to-cyan-500',
     },
     {
-      icon: Code2,
-      title: 'Interactive Learning',
-      description:
-        'Learn by doing with real-time code assistance and project-based learning.',
+      icon: Target,
+      title: 'Personalized Learning',
+      description: 'Get tailored guidance based on your goals and skill level',
+      color: 'from-purple-500 to-pink-500',
     },
     {
-      icon: Users,
-      title: 'Expert Mentors',
-      description:
-        'Learn from personas modeled after renowned educators and developers.',
-    },
-    {
-      icon: Lightbulb,
-      title: 'Instant Answers',
-      description:
-        'Get instant help with coding questions, debugging, and best practices.',
-    },
-    {
-      icon: Rocket,
-      title: 'Career Growth',
-      description:
-        'Accelerate your development career with industry-relevant skills.',
-    },
-    {
-      icon: MessageCircle,
-      title: '24/7 Availability',
-      description:
-        'Access your AI mentors anytime, anywhere. No scheduling required.',
+      icon: Code,
+      title: 'Real-World Skills',
+      description: 'Focus on practical, production-ready development skills',
+      color: 'from-orange-500 to-red-500',
     },
   ];
 
   const mentors = [
     {
       name: 'Hitesh Choudhary',
-      role: 'Full Stack Expert',
-      icon: GraduationCap,
-      specialty: 'JavaScript, React, Node.js, Full-Stack Development',
+      title: 'Founder, Chai aur Code',
+      avatar: '☕',
+      specialty: 'Full-Stack Development',
     },
     {
       name: 'Piyush Garg',
-      role: 'DevOps & Backend Specialist',
-      icon: Code2,
-      specialty: 'System Design, DevOps, Cloud Architecture, Scalability',
+      title: 'Software Engineer',
+      avatar: '💻',
+      specialty: 'Production Systems',
     },
   ];
 
-  const stats = [
-    { label: 'AI Mentors', value: '2', icon: Users },
-    { label: 'Available', value: '24/7', icon: Zap },
-    { label: 'Response Time', value: 'Instant', icon: Target },
-    { label: 'Languages', value: 'Multiple', icon: MessageCircle },
-  ];
-
-
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950'>
-      {/* Navigation */}
-      <nav className='fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl'>
-        <div className='container mx-auto px-6 py-4'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center space-x-3'>
-              <div className='relative w-10 h-10 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30'>
-                <Sparkles className='w-5 h-5 text-white' />
-                <div className='absolute inset-0 bg-white/20 rounded-2xl blur-xl'></div>
-              </div>
-              <span className='text-xl font-bold bg-gradient-to-r from-emerald-300 via-teal-300 to-cyan-300 bg-clip-text text-transparent'>
-                Swaras AI
-              </span>
+    <div className='min-h-screen bg-gradient-to-br from-background via-background to-accent/20'>
+      {/* Header */}
+      <header className='border-b border-border/40 backdrop-blur-sm bg-background/80 sticky top-0 z-50'>
+        <div className='max-w-7xl mx-auto px-6 py-4 flex items-center justify-between'>
+          <div className='flex items-center gap-3'>
+            {/* Logo */}
+            <div className='relative w-10 h-10 rounded-xl overflow-hidden shadow-md' style={{ background: 'linear-gradient(135deg, #FA8072, #FF8E8E)' }}>
+              <svg className='w-10 h-10 p-2' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                <path d='M12 3C10 3 8 4 7 5.5C6 5 5 5.5 5 7C4 7.5 3.5 8.5 3.5 9.5C3.5 11 4.5 12 6 12C6 14 7 15.5 8.5 16.5'
+                      stroke='white' strokeWidth='1.8' strokeLinecap='round' opacity='0.95'/>
+                <path d='M12 3C14 3 16 4 17 5.5C18 5 19 5.5 19 7C20 7.5 20.5 8.5 20.5 9.5C20.5 11 19.5 12 18 12C18 14 17 15.5 15.5 16.5'
+                      stroke='white' strokeWidth='1.8' strokeLinecap='round' opacity='0.95'/>
+                <path d='M8 13H16C17.1 13 18 13.9 18 15V18C18 19.1 17.1 20 16 20H13L11 22L9 20H8C6.9 20 6 19.1 6 18V15C6 13.9 6.9 13 8 13Z'
+                      stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round' opacity='0.95'/>
+                <circle cx='10' cy='16.5' r='1' fill='white' opacity='0.95'/>
+                <circle cx='12' cy='16.5' r='1' fill='white' opacity='0.95'/>
+                <circle cx='14' cy='16.5' r='1' fill='white' opacity='0.95'/>
+              </svg>
             </div>
-
-            <div className='flex items-center gap-3'>
-              <SignInButton mode='modal'>
-                <Button
-                  variant='ghost'
-                  className='text-slate-300 hover:text-white hover:bg-white/5 transition-colors'>
-                  Sign In
-                </Button>
-              </SignInButton>
-              <SignUpButton mode='modal'>
-                <Button className='bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/30 transition-all hover:shadow-emerald-500/50'>
-                  Get Started
-                  <ArrowRight className='w-4 h-4 ml-2' />
-                </Button>
-              </SignUpButton>
+            <div>
+              <h1 className='text-xl font-bold text-foreground'>Swaras AI</h1>
             </div>
           </div>
+
+          <SignInButton mode='modal'>
+            <Button className='bg-gradient-to-r from-[#FA8072] to-[#FF8E8E] text-white hover:from-[#FF9189] hover:to-[#FFA3A3] shadow-md'>
+              Sign In
+            </Button>
+          </SignInButton>
         </div>
-      </nav>
+      </header>
 
       {/* Hero Section */}
-      <section className='pt-32 pb-20 px-6 relative overflow-hidden'>
-        {/* Animated background elements */}
-        <div className='absolute inset-0 overflow-hidden pointer-events-none'>
-          <div className='absolute top-20 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse'></div>
-          <div className='absolute bottom-20 right-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl animate-pulse delay-1000'></div>
+      <section className='max-w-7xl mx-auto px-6 py-20 text-center'>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/50 border border-border/50 mb-8'>
+            <Sparkles className='w-4 h-4 text-[#FA8072]' />
+            <span className='text-sm font-medium text-muted-foreground'>AI-Powered Learning Platform</span>
+          </div>
+
+          <h1 className='text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight'>
+            Learn to Code with
+            <br />
+            <span className='bg-gradient-to-r from-[#FA8072] via-[#FF8E8E] to-[#FA8072] bg-clip-text text-transparent'>
+              AI Mentors
+            </span>
+          </h1>
+
+          <p className='text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed'>
+            Get personalized guidance from AI personas trained on real industry experts.
+            Learn practical skills that matter in production environments.
+          </p>
+
+          <div className='flex items-center justify-center gap-4'>
+            <SignInButton mode='modal'>
+              <Button size='lg' className='bg-gradient-to-r from-[#FA8072] to-[#FF8E8E] text-white hover:from-[#FF9189] hover:to-[#FFA3A3] shadow-lg text-base px-8 py-6 h-auto'>
+                Get Started Free
+                <ArrowRight className='ml-2 w-5 h-5' />
+              </Button>
+            </SignInButton>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Features */}
+      <section className='max-w-7xl mx-auto px-6 py-16'>
+        <div className='text-center mb-12'>
+          <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-4'>
+            Why Choose Swaras AI?
+          </h2>
+          <p className='text-lg text-muted-foreground'>
+            Everything you need to accelerate your learning journey
+          </p>
         </div>
 
-        <div className='container mx-auto max-w-6xl relative'>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className='text-center'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+          {features.map((feature, index) => (
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className='inline-flex items-center gap-2 px-4 py-2 mb-6 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-full backdrop-blur-sm'>
-              <Zap className='w-4 h-4 text-emerald-400' />
-              <span className='text-sm font-medium text-emerald-300'>
-                AI-Powered Learning Platform
-              </span>
-            </motion.div>
-
-            <h1 className='text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white'>
-              Learn to Code with{' '}
-              <span className='bg-gradient-to-r from-emerald-300 via-teal-300 to-cyan-300 bg-clip-text text-transparent'>
-                AI Mentors
-              </span>
-            </h1>
-
-            <p className='text-xl text-slate-400 mb-8 max-w-3xl mx-auto leading-relaxed'>
-              Master programming with personalized AI mentorship from industry
-              experts. Get instant help, build real projects, and accelerate
-              your development career.
-            </p>
-
-            <div className='flex flex-col sm:flex-row items-center justify-center gap-4 mb-12'>
-              <SignUpButton mode='modal'>
-                <Button
-                  size='lg'
-                  className='bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-xl shadow-emerald-500/30 px-8 py-6 text-lg transition-all hover:shadow-emerald-500/50 hover:scale-105'>
-                  Start Learning Free
-                  <ArrowRight className='w-5 h-5 ml-2' />
-                </Button>
-              </SignUpButton>
-            </div>
-
-          
-          </motion.div>
-
-          {/* Stats Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className='mt-20 grid grid-cols-2 md:grid-cols-4 gap-6'>
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className='p-6 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl border border-white/10 text-center hover:border-emerald-500/30 transition-all duration-300 hover:scale-105'>
-                <stat.icon className='w-8 h-8 text-emerald-400 mx-auto mb-3' />
-                <div className='text-3xl font-bold bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent mb-1'>
-                  {stat.value}
-                </div>
-                <div className='text-sm text-slate-400'>{stat.label}</div>
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className='p-6 rounded-2xl bg-card border border-border/50 hover:border-border transition-all hover:shadow-lg'
+            >
+              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 shadow-md`}>
+                <feature.icon className='w-7 h-7 text-white' />
               </div>
-            ))}
-          </motion.div>
+              <h3 className='text-xl font-bold text-foreground mb-2'>{feature.title}</h3>
+              <p className='text-muted-foreground'>{feature.description}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className='py-20 px-6 relative'>
-        <div className='container mx-auto max-w-6xl'>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className='text-center mb-16'>
-            <h2 className='text-4xl md:text-5xl font-bold mb-4 text-white'>
-              Everything You Need to{' '}
-              <span className='bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent'>
-                Excel
-              </span>
-            </h2>
-            <p className='text-xl text-slate-400 max-w-2xl mx-auto'>
-              Comprehensive features designed to accelerate your learning
-              journey
-            </p>
-          </motion.div>
+      {/* Mentors Preview */}
+      <section className='max-w-7xl mx-auto px-6 py-16'>
+        <div className='text-center mb-12'>
+          <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-4'>
+            Meet Your AI Mentors
+          </h2>
+          <p className='text-lg text-muted-foreground'>
+            Learn from personas trained on real industry experts
+          </p>
+        </div>
 
-          <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className='group p-8 bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border border-white/10 hover:border-emerald-500/30 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10'>
-                <div className='w-14 h-14 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300'>
-                  <feature.icon className='w-7 h-7 text-emerald-400' />
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto'>
+          {mentors.map((mentor, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className='p-6 rounded-2xl bg-card border border-border/50 hover:border-[#FA8072]/40 transition-all hover:shadow-lg'
+            >
+              <div className='flex items-start gap-4'>
+                <div className='w-16 h-16 rounded-xl bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center text-3xl shadow-md'>
+                  {mentor.avatar}
                 </div>
-                <h3 className='text-xl font-semibold mb-3 text-white'>
-                  {feature.title}
-                </h3>
-                <p className='text-slate-400 leading-relaxed'>{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mentors Section */}
-      <section className='py-20 px-6 bg-gradient-to-b from-transparent via-slate-900/50 to-transparent'>
-        <div className='container mx-auto max-w-6xl'>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className='text-center mb-16'>
-            <h2 className='text-4xl md:text-5xl font-bold mb-4 text-white'>
-              Learn from{' '}
-              <span className='bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent'>
-                Industry Experts
-              </span>
-            </h2>
-            <p className='text-xl text-slate-400 max-w-2xl mx-auto'>
-              AI mentors trained on the teaching styles of renowned educators
-            </p>
-          </motion.div>
-
-          <div className='grid md:grid-cols-2 gap-6 max-w-4xl mx-auto'>
-            {mentors.map((mentor, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                whileHover={{ scale: 1.03 }}
-                className='group p-8 bg-gradient-to-br from-slate-800/70 to-slate-900/70 rounded-2xl border border-white/10 hover:border-emerald-500/30 backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/10'>
-                <div className='flex items-center gap-4 mb-6'>
-                  <div className='relative w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:shadow-emerald-500/50 transition-shadow duration-300'>
-                    <mentor.icon className='w-8 h-8 text-white' />
-                    <div className='absolute inset-0 bg-white/10 rounded-2xl blur-xl'></div>
-                  </div>
-                  <div>
-                    <h3 className='text-2xl font-bold text-white'>
-                      {mentor.name}
-                    </h3>
-                    <p className='text-slate-400'>{mentor.role}</p>
+                <div className='flex-1'>
+                  <h3 className='text-xl font-bold text-foreground mb-1'>{mentor.name}</h3>
+                  <p className='text-sm text-muted-foreground mb-2'>{mentor.title}</p>
+                  <div className='inline-flex items-center px-3 py-1 rounded-lg bg-accent border border-border/50 text-xs font-medium'>
+                    {mentor.specialty}
                   </div>
                 </div>
-                <div className='px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg'>
-                  <p className='text-sm text-emerald-300 font-medium'>{mentor.specialty}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </section>
-
 
       {/* CTA Section */}
-      <section className='py-20 px-6'>
-        <div className='container mx-auto max-w-4xl'>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className='relative bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 rounded-3xl p-12 text-center text-white shadow-2xl shadow-emerald-500/30 overflow-hidden'>
-            <div className='absolute inset-0'>
-              <div className='absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl'></div>
-              <div className='absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl'></div>
-            </div>
-            <div className='relative z-10'>
-              <h2 className='text-4xl md:text-5xl font-bold mb-6'>
-                Ready to Start Your Journey?
-              </h2>
-              <p className='text-xl mb-8 opacity-90'>
-                Join thousands of developers learning with AI mentors
-              </p>
-              <SignUpButton mode='modal'>
-                <Button
-                  size='lg'
-                  className='bg-white text-emerald-700 hover:bg-slate-100 px-8 py-6 text-lg font-semibold shadow-xl hover:scale-105 transition-all'>
-                  Get Started for Free
-                  <ArrowRight className='w-5 h-5 ml-2' />
-                </Button>
-              </SignUpButton>
-            </div>
-          </motion.div>
-        </div>
+      <section className='max-w-7xl mx-auto px-6 py-20'>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className='relative p-12 rounded-3xl bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] text-white text-center overflow-hidden shadow-2xl'
+        >
+          <div className='relative z-10'>
+            <h2 className='text-4xl md:text-5xl font-bold mb-4'>
+              Ready to Start Learning?
+            </h2>
+            <p className='text-xl mb-8 text-white/90'>
+              Join thousands of developers learning with AI mentors
+            </p>
+            <SignInButton mode='modal'>
+              <Button size='lg' className='bg-white text-[#FA8072] hover:bg-white/90 shadow-lg text-base px-8 py-6 h-auto font-semibold'>
+                Get Started Now
+                <ArrowRight className='ml-2 w-5 h-5' />
+              </Button>
+            </SignInButton>
+          </div>
+
+          {/* Decorative elements */}
+          <div className='absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl' />
+          <div className='absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl' />
+        </motion.div>
       </section>
 
       {/* Footer */}
-      <footer className='py-12 px-6 border-t border-white/10'>
-        <div className='container mx-auto max-w-6xl'>
-          <div className='flex flex-col md:flex-row items-center justify-between gap-4'>
-            <div className='flex items-center gap-3'>
-              <div className='relative w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30'>
-                <Sparkles className='w-4 h-4 text-white' />
-              </div>
-              <span className='font-bold bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent'>
-                Swaras AI
-              </span>
-            </div>
-            <div className='text-sm text-slate-500'>
-              © 2025 Swaras AI. All rights reserved.
-            </div>
-          </div>
+      <footer className='border-t border-border/40 mt-20'>
+        <div className='max-w-7xl mx-auto px-6 py-8 text-center text-muted-foreground'>
+          <p className='text-sm'>
+            © 2025 Swaras AI. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>

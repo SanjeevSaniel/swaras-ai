@@ -7,22 +7,23 @@ import { useChatStore } from '@/store/chat-store';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import { useChat } from '@ai-sdk/react';
 import ChatHeader from './chat/chat-header';
-import RefinedChatInput from './chat/refined-chat-input';
-import RefinedChatMessages from './chat/refined-chat-messages';
+import ChatInput from './chat/chat-input';
+import ChatMessages from './chat/chat-messages';
 import EmptyPersonaState from './empty-persona-state';
-import RefinedSidebar from './sidebar/refined-sidebar';
+import AppSidebar from './sidebar/app-sidebar';
 import WelcomeScreen from './welcome/welcome-screen';
+import { logger } from '@/utils/logger';
 
 const SwarasAI = () => {
-  const [isTyping, setIsTyping] = useState(false);
   const [responseMetadata, setResponseMetadata] = useState(null);
   const [debugMode, setDebugMode] = useState(
     process.env.NODE_ENV === 'development',
   );
 
   const {
-    conversations,
+    personaConversations,
     currentConversation,
     selectedPersona,
     darkMode,
@@ -35,12 +36,227 @@ const SwarasAI = () => {
     deleteConversation,
     initializeTheme,
     initializeMentorStatus,
+    getConversations,
   } = useChatStore();
+
+  // Get conversations as array for sidebar
+  const conversations = getConversations ? getConversations() : Object.values(personaConversations || {});
+
+  // Initialize AI SDK's useChat hook
+  const chatApi = useChat({
+    api: '/api/chat-ai',
+    body: {
+      persona: selectedPersona,
+    },
+    onResponse: (response) => {
+      logger.log('✅ AI response started streaming', response);
+    },
+    onFinish: (message) => {
+      logger.log('✅ AI response completed:', message);
+      logger.log('📊 Current messages count:', chatApi.messages.length);
+      // Update conversation with the new message
+      if (currentConversation) {
+        const updatedConversation = {
+          ...currentConversation,
+          messages: chatApi.messages,
+          lastMessageAt: Date.now(),
+          messageCount: chatApi.messages.length,
+        };
+        updateConversation(currentConversation.id, updatedConversation);
+        logger.log('💾 Conversation updated in store');
+      }
+    },
+    onError: (error) => {
+      logger.error('❌ Streaming error:', error);
+      toast.error('Failed to get response from mentor', {
+        icon: '❌',
+        duration: 4000,
+      });
+    },
+  });
+
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit: originalHandleSubmit,
+    isLoading,
+    setMessages,
+  } = chatApi;
+
+  // Add custom typing state for manual streaming
+  const [isTyping, setIsTyping] = useState(false);
+
+  logger.log('🎯 useChat values:', {
+    input,
+    hasHandleInputChange: !!handleInputChange,
+    hasHandleSubmit: !!originalHandleSubmit,
+    messagesCount: messages.length,
+    isTyping,
+  });
+
+  // Custom message sending with manual streaming
+  const handleSendMessage = async (messageText) => {
+    logger.log('🔄 handleSendMessage called with:', messageText);
+
+    // Prevent message sending if mentors are offline
+    if (!mentorsOnline || mentorsLoading) {
+      logger.log('⚠️ Mentors offline or loading');
+      toast.error(
+        'AI mentors are currently offline. Please wait for connection.',
+        {
+          duration: 4000,
+          icon: '⚠️',
+        },
+      );
+      return;
+    }
+
+    if (!messageText || !messageText.trim() || !selectedPersona || isTyping) {
+      logger.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isTyping });
+      return;
+    }
+
+    // Ensure conversation exists before sending
+    const conversation = ensureConversation();
+    if (!conversation) {
+      logger.log('❌ Failed to create/get conversation');
+      return;
+    }
+
+    logger.log('✅ Conversation ready:', conversation.id);
+
+    const personaName = personas[selectedPersona]?.name;
+
+    // Create user message
+    const userMessage = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: messageText.trim(),
+      createdAt: new Date(),
+    };
+
+    // Add user message immediately
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+
+    // Start typing indicator
+    setIsTyping(true);
+
+    try {
+      // Call streaming API
+      const response = await fetch('/api/chat-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: updatedMessages,
+          persona: selectedPersona,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      // Read streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+      const assistantId = `assistant-${Date.now()}`;
+
+      logger.log('📥 Starting stream read...');
+      let isFirstChunk = true;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          logger.log('✅ Stream complete');
+          break;
+        }
+
+        const chunk = decoder.decode(value, { stream: true });
+        logger.log('📦 Received chunk:', { length: chunk.length, preview: chunk.substring(0, 100) });
+
+        // toTextStreamResponse() returns plain text chunks, not formatted lines
+        // Just accumulate the text directly
+        assistantContent += chunk;
+        logger.log('💬 Current content length:', assistantContent.length, 'Preview:', assistantContent.substring(0, 50));
+
+        // Hide thinking indicator as soon as first chunk arrives
+        if (isFirstChunk && assistantContent.length > 0) {
+          logger.log('🎯 First chunk received - hiding thinking indicator');
+          setIsTyping(false);
+          isFirstChunk = false;
+        }
+
+        // Update with streaming content - use functional update to avoid stale closure
+        setMessages((prevMessages) => {
+          // Remove any existing assistant message with this ID and add updated one
+          const withoutCurrent = prevMessages.filter(m => m.id !== assistantId);
+          return [
+            ...withoutCurrent,
+            {
+              id: assistantId,
+              role: 'assistant',
+              content: assistantContent,
+              createdAt: new Date(),
+              timestamp: Date.now(),
+            },
+          ];
+        });
+      }
+
+      logger.log('✅ Final content length:', assistantContent.length);
+
+      // Ensure typing indicator is off (should already be off from first chunk)
+      setIsTyping(false);
+
+      // Final message state is already set by the last streaming update
+      // Just need to update conversation store
+      if (currentConversation) {
+        setMessages((prevMessages) => {
+          updateConversation(currentConversation.id, {
+            ...currentConversation,
+            messages: prevMessages,
+            lastMessageAt: Date.now(),
+            messageCount: prevMessages.length,
+          });
+          return prevMessages;
+        });
+      }
+
+      toast.success(`${personaName} replied! ✨`, {
+        duration: 1500,
+        icon: personas[selectedPersona]?.avatar,
+      });
+    } catch (error) {
+      logger.error('❌ Error:', error);
+      setIsTyping(false);
+      toast.error('Failed to send message. Please try again.');
+    }
+  };
 
   useEffect(() => {
     initializeTheme();
     initializeMentorStatus();
   }, [initializeTheme, initializeMentorStatus]);
+
+  // Sync messages from current conversation to useChat
+  useEffect(() => {
+    if (currentConversation && currentConversation.messages) {
+      // Convert conversation messages to AI SDK format
+      const aiSdkMessages = currentConversation.messages.map((msg) => ({
+        id: msg.id || `${msg.timestamp}`,
+        role: msg.role === 'ai' || msg.role === 'assistant' ? 'assistant' : 'user',
+        content: msg.content,
+      }));
+      setMessages(aiSdkMessages);
+      logger.log('📋 Synced messages to AI SDK:', aiSdkMessages.length);
+    } else {
+      setMessages([]);
+      logger.log('📋 Cleared messages (no conversation)');
+    }
+  }, [currentConversation?.id, setMessages]);
 
   // Clear conversation if persona changes
   useEffect(() => {
@@ -50,27 +266,55 @@ const SwarasAI = () => {
       currentConversation.personaId !== selectedPersona
     ) {
       setCurrentConversation(null);
+      setMessages([]);
     }
   }, [selectedPersona, currentConversation, setCurrentConversation]);
 
-  // Enhanced message sending with comprehensive analysis and error handling
-  const handleSendMessage = async (messageText) => {
-    // Prevent message sending if mentors are offline
-    if (!mentorsOnline || mentorsLoading) {
-      toast.error(
-        'AI mentors are currently offline. Please wait for connection.',
-        {
-          duration: 4000,
-          icon: '⚠️',
-          style: {
-            borderLeft: '4px solid #f59e0b',
-          },
-        },
-      );
-      return;
-    }
+  // Send greeting when persona is first selected
+  useEffect(() => {
+    if (!selectedPersona || !mentorsOnline || mentorsLoading) return;
 
-    if (!messageText.trim() || !selectedPersona || isTyping) return;
+    // Check if there's already a conversation for this persona
+    const existingConversation = personaConversations[selectedPersona];
+
+    if (!existingConversation) {
+      // Create new conversation with greeting
+      try {
+        const conversation = AIService.createConversation(selectedPersona);
+        const persona = personas[selectedPersona];
+
+        // Create greeting message from persona
+        const greetings = {
+          hitesh: `Namaste! 🙏 I'm Hitesh from Chai aur Code. Let's make coding simple and fun together! What would you like to learn today?`,
+          piyush: `Hey! 👋 I'm Piyush. Ready to build some real production-grade apps? Let's get started!`
+        };
+
+        const greetingMessage = {
+          id: `greeting-${Date.now()}`,
+          role: 'assistant',
+          content: greetings[selectedPersona] || `Hi! I'm ${persona?.name}. How can I help you today?`,
+          createdAt: new Date(),
+          timestamp: Date.now(),
+        };
+
+        conversation.messages = [greetingMessage];
+        conversation.messageCount = 1;
+        conversation.lastMessageAt = Date.now();
+
+        addConversation(conversation);
+        setCurrentConversation(conversation);
+        setMessages([{ ...greetingMessage, role: 'assistant' }]);
+
+        toast.success(`Connected with ${persona?.name}! 🎉`, { duration: 2000 });
+      } catch (error) {
+        logger.error('Failed to create conversation:', error);
+      }
+    }
+  }, [selectedPersona, mentorsOnline, mentorsLoading, personaConversations, addConversation, setCurrentConversation, setMessages]);
+
+  // Create conversation before first message if needed
+  const ensureConversation = () => {
+    if (!selectedPersona || !mentorsOnline || mentorsLoading) return null;
 
     let conversation = currentConversation;
 
@@ -79,173 +323,32 @@ const SwarasAI = () => {
       conversation = null;
     }
 
-    // Create new conversation if none exists using Enhanced AI Service
+    // Create new conversation if none exists
     if (!conversation) {
       try {
         conversation = AIService.createConversation(selectedPersona);
+
+        // Add initial greeting message
+        const greetingMessage = AIService.createMessage(
+          AIService.getPersonaGreeting(selectedPersona),
+          'assistant',
+          { isGreeting: true },
+        );
+
+        conversation.messages = [greetingMessage];
+        conversation.messageCount = 1;
+        conversation.lastMessageAt = Date.now();
+
         addConversation(conversation);
         setCurrentConversation(conversation);
       } catch (error) {
-        console.error('Failed to create conversation:', error);
+        logger.error('Failed to create conversation:', error);
         toast.error('Failed to start conversation. Please try again.');
-        return;
+        return null;
       }
     }
 
-    const userMessage = AIService.createMessage(messageText, 'user', {
-      timestamp: Date.now(),
-      personaContext: selectedPersona,
-    });
-
-    const updatedMessages = [...conversation.messages, userMessage];
-    const updatedConversation = {
-      ...conversation,
-      messages: updatedMessages,
-      title:
-        conversation.title === 'New Chat'
-          ? messageText.slice(0, 30) + (messageText.length > 30 ? '...' : '')
-          : conversation.title,
-      lastMessageAt: Date.now(),
-      messageCount: updatedMessages.length,
-    };
-
-    updateConversation(conversation.id, updatedConversation);
-    setIsTyping(true);
-
-    try {
-      // Show immediate feedback with persona context
-      const personaName = personas[selectedPersona]?.name;
-      const personaAvatar = personas[selectedPersona]?.avatar;
-
-      toast.success(`Message sent to ${personaName}! 🚀`, {
-        duration: 2000,
-        icon: personaAvatar,
-        style: {
-          borderLeft: '4px solid #10b981',
-        },
-      });
-
-      // Get enhanced AI response with full context analysis
-      console.log('🤖 Requesting enhanced AI response...');
-      const startTime = Date.now();
-
-      console.log('🚀 Sending message to AI Service:', {
-        message: messageText,
-        persona: selectedPersona,
-        conversationLength: conversation.messages.length,
-      });
-
-      const aiResponse = await AIService.getPersonaResponse(
-        messageText,
-        selectedPersona,
-        conversation.messages,
-      );
-
-      console.log(
-        '📦 Received AI response:',
-        aiResponse.substring(0, 100) + '...',
-      );
-
-      const responseTime = Date.now() - startTime;
-
-      // Create AI message with enhanced metadata
-      const aiMessage = AIService.createMessage(aiResponse, 'ai', {
-        generatedAt: Date.now(),
-        responseTime: responseTime,
-        responseLength: aiResponse.length,
-        personaUsed: selectedPersona,
-        conversationLength: conversation.messages.length,
-      });
-
-      const finalConversation = {
-        ...updatedConversation,
-        messages: [...updatedMessages, aiMessage],
-        lastMessageAt: Date.now(),
-        messageCount: updatedMessages.length + 1,
-        totalResponseTime: (conversation.totalResponseTime || 0) + responseTime,
-      };
-
-      updateConversation(conversation.id, finalConversation);
-
-      // Set metadata for debug mode
-      if (debugMode) {
-        setResponseMetadata({
-          persona: selectedPersona,
-          responseTime: responseTime,
-          messageLength: aiResponse.length,
-          conversationLength: finalConversation.messages.length,
-        });
-      }
-
-      // Show success feedback with response time
-      toast.success(
-        `${personaName} responded! ${responseTime < 3000 ? '⚡' : '💬'}`,
-        {
-          duration: 2000,
-          icon: '✨',
-          style: {
-            borderLeft: '4px solid #8b5cf6',
-          },
-        },
-      );
-
-      console.log(`✅ Response generated in ${responseTime}ms`);
-    } catch (error) {
-      console.error('Failed to get AI response:', error);
-
-      // Enhanced error handling with specific error types and solutions
-      let errorMessage =
-        'Failed to get response from mentor. Please try again.';
-      let errorIcon = '❌';
-      let errorSuggestion = '';
-
-      if (
-        error.message.includes('network') ||
-        error.message.includes('fetch')
-      ) {
-        errorMessage = 'Network connection issue detected.';
-        errorIcon = '🌐';
-        errorSuggestion = 'Please check your internet connection.';
-      } else if (
-        error.message.includes('rate limit') ||
-        error.message.includes('429')
-      ) {
-        errorMessage = 'Too many requests sent.';
-        errorIcon = '⏳';
-        errorSuggestion = 'Please wait a moment before trying again.';
-      } else if (
-        error.message.includes('persona') ||
-        error.message.includes('prompt')
-      ) {
-        errorMessage = 'Mentor configuration error.';
-        errorIcon = '⚙️';
-        errorSuggestion = 'Try selecting the mentor again.';
-      } else if (error.message.includes('timeout')) {
-        errorMessage = 'Response took too long.';
-        errorIcon = '⏰';
-        errorSuggestion = 'The AI is thinking hard! Please try again.';
-      }
-
-      toast.error(
-        errorSuggestion ? `${errorMessage} ${errorSuggestion}` : errorMessage,
-        {
-          duration: 6000,
-          icon: errorIcon,
-          style: {
-            borderLeft: '4px solid #ef4444',
-          },
-        },
-      );
-
-      // Remove user message on error to maintain conversation state
-      updateConversation(conversation.id, {
-        ...conversation,
-        messages: conversation.messages,
-        errorCount: (conversation.errorCount || 0) + 1,
-      });
-    } finally {
-      setIsTyping(false);
-    }
+    return conversation;
   };
 
   const handleQuickStart = async (question) => {
@@ -257,13 +360,46 @@ const SwarasAI = () => {
       return;
     }
 
-    // Add loading state for quick start
-    toast.loading('Preparing your question...', {
-      duration: 1000,
-      icon: '🎯',
-    });
+    // Create a new conversation if none exists
+    let conversation = currentConversation;
 
-    await handleSendMessage(question);
+    // Ensure conversation matches selected persona
+    if (conversation && conversation.personaId !== selectedPersona) {
+      conversation = null;
+    }
+
+    // Create new conversation if none exists
+    if (!conversation) {
+      try {
+        conversation = AIService.createConversation(selectedPersona);
+
+        // Add initial greeting message from the mentor
+        const greetingMessage = AIService.createMessage(
+          AIService.getPersonaGreeting(selectedPersona),
+          'assistant',
+          { isGreeting: true },
+        );
+
+        // Update conversation with greeting
+        const conversationWithGreeting = {
+          ...conversation,
+          messages: [greetingMessage],
+          messageCount: 1,
+          lastMessageAt: Date.now(),
+        };
+
+        addConversation(conversationWithGreeting);
+        setCurrentConversation(conversationWithGreeting);
+      } catch (error) {
+        logger.error('Failed to create conversation:', error);
+        toast.error('Failed to start conversation. Please try again.');
+        return;
+      }
+    }
+
+    // Just fill the input - don't send the message
+    // The event will be dispatched to the input component
+    window.dispatchEvent(new CustomEvent('setInputValue', { detail: question }));
   };
 
   // Enhanced auto-send with better error handling and user feedback
@@ -274,13 +410,13 @@ const SwarasAI = () => {
         try {
           await handleSendMessage(question);
         } catch (error) {
-          console.error('Auto-send failed:', error);
+          logger.error('Auto-send failed:', error);
           toast.error('Failed to send auto-generated message', {
             icon: '🤖',
           });
         }
       } else {
-        console.warn('Auto-send conditions not met:', {
+        logger.warn('Auto-send conditions not met:', {
           hasQuestion: !!question,
           hasPersona: !!selectedPersona,
           mentorsOnline,
@@ -310,7 +446,7 @@ const SwarasAI = () => {
           duration: 3000,
         });
       } catch (error) {
-        console.error('Failed to start conversation:', error);
+        logger.error('Failed to start conversation:', error);
         toast.error('Failed to start new conversation');
       }
     };
@@ -354,32 +490,50 @@ const SwarasAI = () => {
         ? currentConversation
         : null;
 
-    if (validConversation && validConversation.messages.length > 0) {
+    // Always show chat interface when persona is selected
+    if (selectedPersona) {
+      // Use AI SDK messages directly - they are the source of truth
+      const displayMessages = messages || [];
+      const hasMessages = displayMessages.length > 0;
+
+      logger.log('🎨 Rendering chat view:', {
+        selectedPersona,
+        messagesCount: displayMessages.length,
+        hasMessages,
+        isTyping,
+      });
+
       return (
         <motion.div
-          className={`flex flex-col h-full overflow-hidden chat-container ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
+          className={`relative flex flex-col h-full overflow-hidden chat-container ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.1 }}
-          key={`conversation-${validConversation.id}-${selectedPersona}`}>
+          key={`conversation-${validConversation?.id || 'new'}-${selectedPersona}`}>
           <ChatHeader selectedPersona={selectedPersona} />
-          <div className='flex-1 overflow-hidden chat-messages-area'>
-            <RefinedChatMessages
-              messages={validConversation.messages}
-              isTyping={isTyping}
-              selectedPersona={selectedPersona}
-            />
+          <div className='flex-1 overflow-hidden chat-messages-area pb-32'>
+            {hasMessages ? (
+              <ChatMessages
+                messages={displayMessages}
+                isTyping={isTyping}
+                selectedPersona={selectedPersona}
+              />
+            ) : (
+              <WelcomeScreen onQuickStart={handleQuickStart} />
+            )}
           </div>
-          <RefinedChatInput
+          <ChatInput
             onSendMessage={handleSendMessage}
             selectedPersona={selectedPersona}
             disabled={!mentorsOnline || mentorsLoading || isTyping}
+            isLoading={isTyping}
           />
         </motion.div>
       );
     }
 
+    // No persona selected - show empty state
     return (
       <motion.div
         className={`h-full overflow-hidden ${darkMode ? 'bg-[#0a0f1e]' : 'bg-white'}`}
@@ -387,8 +541,8 @@ const SwarasAI = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.1 }}
-        key={`welcome-${selectedPersona}`}>
-        <WelcomeScreen onQuickStart={handleQuickStart} />
+        key='no-persona'>
+        <EmptyPersonaState />
       </motion.div>
     );
   };
@@ -463,7 +617,7 @@ const SwarasAI = () => {
             initial={{ x: -340, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}>
-            <RefinedSidebar
+            <AppSidebar
               conversations={conversations}
               currentConversation={currentConversation}
               onSelectConversation={setCurrentConversation}
