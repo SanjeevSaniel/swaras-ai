@@ -83,11 +83,15 @@ const SwarasAI = () => {
     setMessages,
   } = chatApi;
 
+  // Add custom typing state for manual streaming
+  const [isTyping, setIsTyping] = useState(false);
+
   console.log('🎯 useChat values:', {
     input,
     hasHandleInputChange: !!handleInputChange,
     hasHandleSubmit: !!originalHandleSubmit,
     messagesCount: messages.length,
+    isTyping,
   });
 
   // Custom message sending with manual streaming
@@ -107,8 +111,8 @@ const SwarasAI = () => {
       return;
     }
 
-    if (!messageText || !messageText.trim() || !selectedPersona || isLoading) {
-      console.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isLoading });
+    if (!messageText || !messageText.trim() || !selectedPersona || isTyping) {
+      console.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isTyping });
       return;
     }
 
@@ -135,6 +139,9 @@ const SwarasAI = () => {
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
+    // Start typing indicator
+    setIsTyping(true);
+
     try {
       // Call streaming API
       const response = await fetch('/api/chat-ai', {
@@ -156,49 +163,64 @@ const SwarasAI = () => {
       let assistantContent = '';
       const assistantId = `assistant-${Date.now()}`;
 
+      console.log('📥 Starting stream read...');
+      let isFirstChunk = true;
+
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break;
+        if (done) {
+          console.log('✅ Stream complete');
+          break;
+        }
 
         const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
+        console.log('📦 Received chunk:', { length: chunk.length, preview: chunk.substring(0, 100) });
 
-        for (const line of lines) {
-          if (line.startsWith('0:')) {
-            const text = line.slice(2).replace(/^"(.*)"$/, '$1');
-            assistantContent += text;
+        // toTextStreamResponse() returns plain text chunks, not formatted lines
+        // Just accumulate the text directly
+        assistantContent += chunk;
+        console.log('💬 Current content length:', assistantContent.length, 'Preview:', assistantContent.substring(0, 50));
 
-            // Update with streaming content
-            setMessages([
-              ...updatedMessages,
-              {
-                id: assistantId,
-                role: 'assistant',
-                content: assistantContent,
-                createdAt: new Date(),
-              },
-            ]);
-          }
+        // Hide thinking indicator as soon as first chunk arrives
+        if (isFirstChunk && assistantContent.length > 0) {
+          console.log('🎯 First chunk received - hiding thinking indicator');
+          setIsTyping(false);
+          isFirstChunk = false;
         }
+
+        // Update with streaming content - use functional update to avoid stale closure
+        setMessages((prevMessages) => {
+          // Remove any existing assistant message with this ID and add updated one
+          const withoutCurrent = prevMessages.filter(m => m.id !== assistantId);
+          return [
+            ...withoutCurrent,
+            {
+              id: assistantId,
+              role: 'assistant',
+              content: assistantContent,
+              createdAt: new Date(),
+              timestamp: Date.now(),
+            },
+          ];
+        });
       }
 
-      // Save final state
-      const finalMessages = [
-        ...updatedMessages,
-        {
-          id: assistantId,
-          role: 'assistant',
-          content: assistantContent,
-          createdAt: new Date(),
-        },
-      ];
+      console.log('✅ Final content length:', assistantContent.length);
 
+      // Ensure typing indicator is off (should already be off from first chunk)
+      setIsTyping(false);
+
+      // Final message state is already set by the last streaming update
+      // Just need to update conversation store
       if (currentConversation) {
-        updateConversation(currentConversation.id, {
-          ...currentConversation,
-          messages: finalMessages,
-          lastMessageAt: Date.now(),
-          messageCount: finalMessages.length,
+        setMessages((prevMessages) => {
+          updateConversation(currentConversation.id, {
+            ...currentConversation,
+            messages: prevMessages,
+            lastMessageAt: Date.now(),
+            messageCount: prevMessages.length,
+          });
+          return prevMessages;
         });
       }
 
@@ -208,6 +230,7 @@ const SwarasAI = () => {
       });
     } catch (error) {
       console.error('❌ Error:', error);
+      setIsTyping(false);
       toast.error('Failed to send message. Please try again.');
     }
   };
@@ -476,7 +499,7 @@ const SwarasAI = () => {
         selectedPersona,
         messagesCount: displayMessages.length,
         hasMessages,
-        isLoading,
+        isTyping,
       });
 
       return (
@@ -492,7 +515,7 @@ const SwarasAI = () => {
             {hasMessages ? (
               <ChatMessages
                 messages={displayMessages}
-                isTyping={isLoading}
+                isTyping={isTyping}
                 selectedPersona={selectedPersona}
               />
             ) : (
@@ -502,8 +525,8 @@ const SwarasAI = () => {
           <ChatInput
             onSendMessage={handleSendMessage}
             selectedPersona={selectedPersona}
-            disabled={!mentorsOnline || mentorsLoading || isLoading}
-            isLoading={isLoading}
+            disabled={!mentorsOnline || mentorsLoading || isTyping}
+            isLoading={isTyping}
           />
         </motion.div>
       );

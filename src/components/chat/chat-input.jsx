@@ -26,7 +26,9 @@ const ChatInput = ({
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = Math.min(scrollHeight, 100) + 'px';
+      // Max height for 5 rows: line-height (1.5 * 14px) * 5 rows ≈ 105px
+      const maxHeight = 105;
+      textareaRef.current.style.height = Math.min(scrollHeight, maxHeight) + 'px';
     }
   }, [message]);
 
@@ -111,7 +113,7 @@ const ChatInput = ({
         {/* Compact Floating Input Box */}
         <form onSubmit={onSubmit}>
           <div
-            className={`relative flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border backdrop-blur-xl transition-all duration-200 ${
+            className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-xl transition-all duration-200 ${
               isFocused
                 ? 'border-[#FA8072]/50 bg-background/98 shadow-2xl ring-2 ring-[#FA8072]/10'
                 : 'border-border/60 bg-background/95 shadow-lg hover:shadow-xl'
@@ -132,8 +134,10 @@ const ChatInput = ({
               }
               disabled={disabled}
               rows={1}
-              className='flex-1 resize-none bg-transparent border-none outline-none text-sm leading-snug text-foreground placeholder:text-muted-foreground/50 disabled:opacity-50 min-h-[24px] max-h-[100px]'
-              style={{ height: 'auto' }}
+              className='flex-1 resize-none bg-transparent border-none outline-none text-sm leading-[1.5] text-foreground placeholder:text-muted-foreground/50 disabled:opacity-50 min-h-[21px] max-h-[105px] overflow-y-auto custom-scrollbar'
+              style={{
+                height: 'auto'
+              }}
             />
 
             {/* Compact Send Button */}
@@ -141,13 +145,13 @@ const ChatInput = ({
               type='submit'
               size='sm'
               disabled={!message.trim() || disabled}
-              className={`h-8 w-8 p-0 rounded-lg flex-shrink-0 transition-all duration-200 ${
+              className={`h-9 w-9 p-0 rounded-lg flex-shrink-0 transition-all duration-200 ${
                 !message.trim() || disabled
                   ? 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed'
                   : 'bg-gradient-to-r from-[#FA8072] to-[#FF8E8E] text-white hover:from-[#FF9189] hover:to-[#FFA3A3] shadow-md hover:shadow-lg hover:scale-105 active:scale-95'
               }`}
             >
-              <Send className='w-3.5 h-3.5' />
+              <Send className='w-4 h-4' />
             </Button>
           </div>
 
