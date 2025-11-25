@@ -259,6 +259,48 @@ const SwarasAI = () => {
     }
   }, [selectedPersona, currentConversation, setCurrentConversation]);
 
+  // Send greeting when persona is first selected
+  useEffect(() => {
+    if (!selectedPersona || !mentorsOnline || mentorsLoading) return;
+
+    // Check if there's already a conversation for this persona
+    const existingConversation = personaConversations[selectedPersona];
+
+    if (!existingConversation) {
+      // Create new conversation with greeting
+      try {
+        const conversation = AIService.createConversation(selectedPersona);
+        const persona = personas[selectedPersona];
+
+        // Create greeting message from persona
+        const greetings = {
+          hitesh: `Namaste! 🙏 I'm Hitesh from Chai aur Code. Let's make coding simple and fun together! What would you like to learn today?`,
+          piyush: `Hey! 👋 I'm Piyush. Ready to build some real production-grade apps? Let's get started!`
+        };
+
+        const greetingMessage = {
+          id: `greeting-${Date.now()}`,
+          role: 'assistant',
+          content: greetings[selectedPersona] || `Hi! I'm ${persona?.name}. How can I help you today?`,
+          createdAt: new Date(),
+          timestamp: Date.now(),
+        };
+
+        conversation.messages = [greetingMessage];
+        conversation.messageCount = 1;
+        conversation.lastMessageAt = Date.now();
+
+        addConversation(conversation);
+        setCurrentConversation(conversation);
+        setMessages([{ ...greetingMessage, role: 'assistant' }]);
+
+        toast.success(`Connected with ${persona?.name}! 🎉`, { duration: 2000 });
+      } catch (error) {
+        console.error('Failed to create conversation:', error);
+      }
+    }
+  }, [selectedPersona, mentorsOnline, mentorsLoading, personaConversations, addConversation, setCurrentConversation, setMessages]);
+
   // Create conversation before first message if needed
   const ensureConversation = () => {
     if (!selectedPersona || !mentorsOnline || mentorsLoading) return null;
