@@ -1,6 +1,9 @@
+import {
+  createHybridProcessor,
+  getPersonaName,
+} from '@/services/hybrid-processor';
 import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
-import { createHybridProcessor, getPersonaName } from '@/services/hybrid-processor';
 
 // Initialize processor (singleton pattern)
 const processor = createHybridProcessor();
@@ -28,7 +31,7 @@ export async function POST(req) {
     const systemPrompt = getPersonaSystemPrompt(persona, personaName);
 
     // Stream the response using Vercel AI SDK
-    const result = streamText({
+    const result = await streamText({
       model: openai('gpt-4o'),
       system: systemPrompt,
       messages: [
@@ -53,7 +56,7 @@ export async function POST(req) {
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
   }
 }
