@@ -6,8 +6,9 @@ import { AIService } from '@/services/ai-service';
 import { useChatStore } from '@/store/chat-store';
 import { logger } from '@/utils/logger';
 import { useChat } from '@ai-sdk/react';
+import { useClerk, useUser } from '@clerk/nextjs';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { LogOut, Menu, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import ChatHeader from './chat/chat-header';
@@ -15,6 +16,15 @@ import ChatInput from './chat/chat-input';
 import ChatMessages from './chat/chat-messages';
 import EmptyPersonaState from './empty-persona-state';
 import AppSidebar from './sidebar/app-sidebar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { Sheet, SheetContent } from './ui/sheet';
 import WelcomeScreen from './welcome/welcome-screen';
 
 const SwarasAI = () => {
@@ -23,6 +33,10 @@ const SwarasAI = () => {
     process.env.NODE_ENV === 'development',
   );
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Clerk authentication hooks
+  const { user } = useUser();
+  const { signOut } = useClerk();
 
   const {
     personaConversations,
@@ -658,37 +672,71 @@ const SwarasAI = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}>
-        {/* Mobile Hamburger Menu Button */}
-        <motion.button
-          onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-          className={`fixed top-4 left-4 z-50 lg:hidden p-2.5 rounded-lg transition-all duration-200 ${
-            darkMode
-              ? 'bg-slate-800 border border-slate-700 text-white hover:bg-slate-700'
-              : 'bg-white border border-slate-200 text-slate-900 hover:bg-slate-50'
-          } shadow-lg`}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}>
-          {isMobileSidebarOpen ? (
-            <X className='w-5 h-5' />
-          ) : (
+        {/* Mobile Top Bar - Hamburger Menu & Profile */}
+        <div className='fixed top-4 left-4 right-4 z-50 lg:hidden flex items-center justify-between'>
+          {/* Hamburger Menu Button */}
+          <motion.button
+            onClick={() => setIsMobileSidebarOpen(true)}
+            className={`p-2.5 rounded-lg transition-all duration-200 ${
+              darkMode
+                ? 'bg-slate-800 border border-slate-700 text-white hover:bg-slate-700'
+                : 'bg-white border border-slate-200 text-slate-900 hover:bg-slate-50'
+            } shadow-lg`}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}>
             <Menu className='w-5 h-5' />
-          )}
-        </motion.button>
+          </motion.button>
 
-        {/* Mobile Sidebar Overlay */}
-        <AnimatePresence>
-          {isMobileSidebarOpen && (
-            <motion.div
-              className='fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden'
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileSidebarOpen(false)}
-            />
-          )}
-        </AnimatePresence>
+          {/* Mobile Profile Dropdown */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={`p-2.5 rounded-lg transition-all duration-200 ${
+                    darkMode
+                      ? 'bg-slate-800 border border-slate-700 text-white hover:bg-slate-700'
+                      : 'bg-white border border-slate-200 text-slate-900 hover:bg-slate-50'
+                  } shadow-lg`}>
+                  {user?.imageUrl ? (
+                    <img
+                      src={user.imageUrl}
+                      alt={user.firstName || 'User'}
+                      className='w-5 h-5 rounded-full object-cover'
+                    />
+                  ) : (
+                    <User className='w-5 h-5' />
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align='end'
+                className='w-56'>
+                <DropdownMenuLabel>
+                  <div className='flex flex-col space-y-1'>
+                    <p className='text-sm font-medium leading-none'>
+                      {user?.firstName || user?.username || 'User'}
+                    </p>
+                    <p className='text-xs leading-none text-muted-foreground'>
+                      {user?.emailAddresses?.[0]?.emailAddress}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => signOut()}
+                  className='text-red-600 dark:text-red-400 cursor-pointer'>
+                  <LogOut className='mr-2 h-4 w-4' />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </motion.div>
+        </div>
 
         {/* Main Application Layout */}
         <div className='flex h-full overflow-hidden relative z-10'>
@@ -715,44 +763,41 @@ const SwarasAI = () => {
             />
           </div>
 
-          {/* Sidebar - Mobile Overlay (Only When Open) */}
-          <AnimatePresence>
-            {isMobileSidebarOpen && (
-              <motion.div
-                className='fixed inset-y-0 left-0 z-50 lg:hidden flex-shrink-0 overflow-hidden'
-                initial={{ x: -340 }}
-                animate={{ x: 0 }}
-                exit={{ x: -340 }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}>
-                <AppSidebar
-                  conversations={conversations}
-                  currentConversation={currentConversation}
-                  onSelectConversation={(conv) => {
-                    setCurrentConversation(conv);
-                    setIsMobileSidebarOpen(false);
-                  }}
-                  onNewConversation={() => {
-                    if (!selectedPersona || !mentorsOnline || mentorsLoading) {
-                      toast.error('Please select a mentor first', { icon: '⚠️' });
-                      return;
-                    }
-                    const conversation =
-                      AIService.createConversation(selectedPersona);
-                    addConversation(conversation);
-                    setCurrentConversation(conversation);
-                    toast.success('Chat started successfully!', { icon: '✨' });
-                    setIsMobileSidebarOpen(false);
-                  }}
-                  onDeleteConversation={deleteConversation}
-                  selectedPersona={selectedPersona}
-                  onSelectPersona={(personaId) => {
-                    setSelectedPersona(personaId);
-                    setIsMobileSidebarOpen(false);
-                  }}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Sidebar - Mobile Sheet (Only When Open) */}
+          <Sheet
+            open={isMobileSidebarOpen}
+            onOpenChange={setIsMobileSidebarOpen}>
+            <SheetContent
+              side='left'
+              className='p-0 w-full sm:w-80 lg:hidden'>
+              <AppSidebar
+                conversations={conversations}
+                currentConversation={currentConversation}
+                onSelectConversation={(conv) => {
+                  setCurrentConversation(conv);
+                  setIsMobileSidebarOpen(false);
+                }}
+                onNewConversation={() => {
+                  if (!selectedPersona || !mentorsOnline || mentorsLoading) {
+                    toast.error('Please select a mentor first', { icon: '⚠️' });
+                    return;
+                  }
+                  const conversation =
+                    AIService.createConversation(selectedPersona);
+                  addConversation(conversation);
+                  setCurrentConversation(conversation);
+                  toast.success('Chat started successfully!', { icon: '✨' });
+                  setIsMobileSidebarOpen(false);
+                }}
+                onDeleteConversation={deleteConversation}
+                selectedPersona={selectedPersona}
+                onSelectPersona={(personaId) => {
+                  setSelectedPersona(personaId);
+                  setIsMobileSidebarOpen(false);
+                }}
+              />
+            </SheetContent>
+          </Sheet>
 
           {/* Main Content Area */}
           <motion.div
@@ -766,11 +811,11 @@ const SwarasAI = () => {
           </motion.div>
         </div>
 
-        {/* Status Indicators - Minimal and static */}
+        {/* Status Indicators - Minimal and static - Hidden on mobile to avoid overlap */}
         {currentConversation &&
           currentConversation.messages &&
           currentConversation.messages.length > 0 && (
-            <div className='absolute top-4 right-4 flex space-x-2 z-50'>
+            <div className='absolute top-4 right-4 flex space-x-2 z-50 hidden lg:flex'>
               {mentorsLoading ? (
                 <div
                   className={`flex items-center space-x-2 border rounded-lg px-3 py-1.5 ${
