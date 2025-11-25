@@ -31,7 +31,7 @@ export async function POST(req) {
     const systemPrompt = getPersonaSystemPrompt(persona, personaName);
 
     // Stream the response using Vercel AI SDK
-    const result = await streamText({
+    const stream = streamText({
       model: openai('gpt-4o'),
       system: systemPrompt,
       messages: [
@@ -45,7 +45,7 @@ export async function POST(req) {
       maxTokens: 1000,
     });
 
-    return result.toDataStreamResponse();
+    return stream.toTextStreamResponse();
   } catch (error) {
     console.error('💥 Chat AI API error:', error);
     return new Response(
