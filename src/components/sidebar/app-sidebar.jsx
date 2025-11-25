@@ -41,7 +41,7 @@ const AppSidebar = ({
   };
 
   return (
-    <div className='w-80 h-full bg-background border-r border-border/40 flex flex-col'>
+    <div className='w-full sm:w-80 h-full bg-background border-r border-border/40 flex flex-col'>
       {/* Modern Header */}
       <div className='px-4 py-3.5 border-b border-border/40 bg-background/95 backdrop-blur-sm'>
         <div className='flex items-center justify-between gap-3'>

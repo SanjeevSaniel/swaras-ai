@@ -7,6 +7,7 @@ import { useChatStore } from '@/store/chat-store';
 import { logger } from '@/utils/logger';
 import { useChat } from '@ai-sdk/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import ChatHeader from './chat/chat-header';
@@ -21,6 +22,7 @@ const SwarasAI = () => {
   const [debugMode, setDebugMode] = useState(
     process.env.NODE_ENV === 'development',
   );
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const {
     personaConversations,
@@ -656,14 +658,42 @@ const SwarasAI = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}>
+        {/* Mobile Hamburger Menu Button */}
+        <motion.button
+          onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          className={`fixed top-4 left-4 z-50 lg:hidden p-2.5 rounded-lg transition-all duration-200 ${
+            darkMode
+              ? 'bg-slate-800 border border-slate-700 text-white hover:bg-slate-700'
+              : 'bg-white border border-slate-200 text-slate-900 hover:bg-slate-50'
+          } shadow-lg`}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}>
+          {isMobileSidebarOpen ? (
+            <X className='w-5 h-5' />
+          ) : (
+            <Menu className='w-5 h-5' />
+          )}
+        </motion.button>
+
+        {/* Mobile Sidebar Overlay */}
+        <AnimatePresence>
+          {isMobileSidebarOpen && (
+            <motion.div
+              className='fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden'
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileSidebarOpen(false)}
+            />
+          )}
+        </AnimatePresence>
+
         {/* Main Application Layout */}
         <div className='flex h-full overflow-hidden relative z-10'>
-          {/* Sidebar - Modern */}
-          <motion.div
-            className='flex-shrink-0 overflow-hidden'
-            initial={{ x: -340, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3 }}>
+          {/* Sidebar - Desktop Always Visible */}
+          <div className='hidden lg:block flex-shrink-0 overflow-hidden'>
             <AppSidebar
               conversations={conversations}
               currentConversation={currentConversation}
@@ -683,7 +713,46 @@ const SwarasAI = () => {
               selectedPersona={selectedPersona}
               onSelectPersona={setSelectedPersona}
             />
-          </motion.div>
+          </div>
+
+          {/* Sidebar - Mobile Overlay (Only When Open) */}
+          <AnimatePresence>
+            {isMobileSidebarOpen && (
+              <motion.div
+                className='fixed inset-y-0 left-0 z-50 lg:hidden flex-shrink-0 overflow-hidden'
+                initial={{ x: -340 }}
+                animate={{ x: 0 }}
+                exit={{ x: -340 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}>
+                <AppSidebar
+                  conversations={conversations}
+                  currentConversation={currentConversation}
+                  onSelectConversation={(conv) => {
+                    setCurrentConversation(conv);
+                    setIsMobileSidebarOpen(false);
+                  }}
+                  onNewConversation={() => {
+                    if (!selectedPersona || !mentorsOnline || mentorsLoading) {
+                      toast.error('Please select a mentor first', { icon: '⚠️' });
+                      return;
+                    }
+                    const conversation =
+                      AIService.createConversation(selectedPersona);
+                    addConversation(conversation);
+                    setCurrentConversation(conversation);
+                    toast.success('Chat started successfully!', { icon: '✨' });
+                    setIsMobileSidebarOpen(false);
+                  }}
+                  onDeleteConversation={deleteConversation}
+                  selectedPersona={selectedPersona}
+                  onSelectPersona={(personaId) => {
+                    setSelectedPersona(personaId);
+                    setIsMobileSidebarOpen(false);
+                  }}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Main Content Area */}
           <motion.div

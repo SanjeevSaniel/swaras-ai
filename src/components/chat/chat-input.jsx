@@ -224,12 +224,12 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
   const showSuggestions = !message.trim() && !disabled;
 
   return (
-    <div className='absolute bottom-0 left-0 right-0 p-4 pointer-events-none'>
+    <div className='absolute bottom-0 left-0 right-0 p-2 sm:p-4 pointer-events-none'>
       <div className='max-w-4xl mx-auto pointer-events-auto'>
-        {/* Quick Suggestions */}
+        {/* Quick Suggestions - Mobile Optimized */}
         {showSuggestions && (
-          <div className='mb-3'>
-            <div className='flex items-center gap-2 flex-wrap'>
+          <div className='mb-2 sm:mb-3'>
+            <div className='flex items-center gap-1.5 sm:gap-2 flex-wrap'>
               {suggestions.map((suggestion, index) => (
                 <motion.button
                   key={index}
@@ -237,8 +237,8 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05, duration: 0.2 }}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className='group px-3 py-2 rounded-xl bg-background/95 backdrop-blur-sm border border-border/60 hover:border-[#FA8072]/40 hover:bg-accent/80 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md'>
-                  <span className='mr-1.5'>{suggestion.category}</span>
+                  className='group px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-background/95 backdrop-blur-sm border border-border/60 hover:border-[#FA8072]/40 hover:bg-accent/80 transition-all duration-200 text-xs sm:text-sm font-medium shadow-sm hover:shadow-md'>
+                  <span className='mr-1 sm:mr-1.5'>{suggestion.category}</span>
                   <span className='text-foreground/80 group-hover:text-foreground'>
                     {suggestion.display || suggestion.text}
                   </span>
@@ -248,10 +248,10 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
           </div>
         )}
 
-        {/* Compact Floating Input Box */}
+        {/* Compact Floating Input Box - Mobile Optimized */}
         <form onSubmit={onSubmit}>
           <div
-            className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-xl transition-all duration-200 ${
+            className={`relative flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border backdrop-blur-xl transition-all duration-200 ${
               isFocused
                 ? 'border-[#FA8072]/50 bg-background/98 shadow-2xl ring-2 ring-[#FA8072]/10'
                 : 'border-border/60 bg-background/95 shadow-lg hover:shadow-xl'
@@ -279,14 +279,14 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
               }}
             />
 
-            {/* Voice Input Button */}
+            {/* Voice Input Button - Mobile Optimized */}
             {speechSupported && (
               <motion.button
                 type='button'
                 onClick={toggleVoiceRecording}
                 disabled={disabled}
                 whileTap={{ scale: 0.95 }}
-                className={`h-9 w-9 rounded-lg flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
+                className={`h-8 w-8 sm:h-9 sm:w-9 rounded-lg flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
                   disabled
                     ? 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed'
                     : isListening
@@ -295,34 +295,35 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
                 }`}
                 title={isListening ? 'Stop recording' : 'Start voice input'}>
                 {isListening ? (
-                  <MicOff className='w-4 h-4' />
+                  <MicOff className='w-3.5 h-3.5 sm:w-4 sm:h-4' />
                 ) : (
-                  <Mic className='w-4 h-4' />
+                  <Mic className='w-3.5 h-3.5 sm:w-4 sm:h-4' />
                 )}
               </motion.button>
             )}
 
-            {/* Compact Send Button */}
+            {/* Compact Send Button - Mobile Optimized */}
             <Button
               type='submit'
               size='sm'
               disabled={!message.trim() || disabled}
-              className={`h-9 w-9 p-0 rounded-lg flex-shrink-0 transition-all duration-200 ${
+              className={`h-8 w-8 sm:h-9 sm:w-9 p-0 rounded-lg flex-shrink-0 transition-all duration-200 ${
                 !message.trim() || disabled
                   ? 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed'
                   : 'bg-gradient-to-r from-[#FA8072] to-[#FF8E8E] text-white hover:from-[#FF9189] hover:to-[#FFA3A3] shadow-md hover:shadow-lg hover:scale-105 active:scale-95'
               }`}>
-              <Send className='w-4 h-4' />
+              <Send className='w-3.5 h-3.5 sm:w-4 sm:h-4' />
             </Button>
           </div>
 
-          {/* Footer Info */}
-          <div className='flex items-center justify-between mt-2.5 px-2'>
-            <div className='flex items-center gap-2 text-xs text-muted-foreground/70'>
-              <Sparkles className='w-3.5 h-3.5 text-[#FA8072]' />
-              <span className='font-medium'>Powered by AI</span>
+          {/* Footer Info - Mobile Optimized */}
+          <div className='flex items-center justify-between mt-1.5 sm:mt-2.5 px-1 sm:px-2'>
+            <div className='flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground/70'>
+              <Sparkles className='w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FA8072]' />
+              <span className='font-medium hidden sm:inline'>Powered by AI</span>
+              <span className='font-medium sm:hidden'>AI</span>
             </div>
-            <div className='flex items-center gap-2 text-xs text-muted-foreground/70'>
+            <div className='hidden sm:flex items-center gap-2 text-xs text-muted-foreground/70'>
               <kbd className='px-2 py-1 rounded-md bg-muted/60 border border-border/50 text-xs font-semibold shadow-sm'>
                 Enter
               </kbd>

@@ -11,10 +11,10 @@ const EmptyPersonaState = () => {
     .filter(p => p.enabled);
 
   return (
-    <div className={`w-full h-full flex items-center justify-center p-8 ${
+    <div className={`w-full h-full flex items-center justify-center p-4 sm:p-6 md:p-8 ${
       darkMode ? 'bg-[#0a0f1e]' : 'bg-white'
     }`}>
-      <div className='max-w-lg w-full text-center'>
+      <div className='max-w-lg w-full text-center px-4 sm:px-0'>
         {/* Animated Logo - Using Sidebar Design */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -45,12 +45,12 @@ const EmptyPersonaState = () => {
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className='relative w-20 h-20 rounded-xl overflow-hidden shadow-xl'
+            className='relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shadow-xl'
             style={{
               background: 'linear-gradient(135deg, #FA8072, #FF8E8E)',
             }}>
             <svg
-              className='w-20 h-20 p-4'
+              className='w-16 h-16 sm:w-20 sm:h-20 p-3 sm:p-4'
               viewBox='0 0 24 24'
               fill='none'
               xmlns='http://www.w3.org/2000/svg'>
@@ -101,31 +101,31 @@ const EmptyPersonaState = () => {
           </motion.div>
         </motion.div>
 
-        {/* Title */}
+        {/* Title - Mobile Optimized */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className='mb-6'>
-          <h1 className={`text-4xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+          className='mb-4 sm:mb-6'>
+          <h1 className={`text-3xl sm:text-4xl font-bold mb-1.5 sm:mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
             Swaras AI
           </h1>
-          <p className={`text-base ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+          <p className={`text-sm sm:text-base ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
             Your AI Mentorship Platform
           </p>
         </motion.div>
 
-        {/* Instruction Card - Compact */}
+        {/* Instruction Card - Mobile Optimized */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className={`max-w-sm mx-auto p-5 rounded-xl border backdrop-blur-sm ${
+          className={`max-w-sm mx-auto p-4 sm:p-5 rounded-lg sm:rounded-xl border backdrop-blur-sm ${
             darkMode
               ? 'bg-slate-800/50 border-slate-700/50'
               : 'bg-white/50 border-slate-200'
           }`}>
-          <div className='flex items-center gap-3'>
+          <div className='flex items-center gap-2.5 sm:gap-3'>
             <motion.div
               animate={{
                 x: [-3, 0, -3],
@@ -135,18 +135,18 @@ const EmptyPersonaState = () => {
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className={`p-2.5 rounded-lg ${
+              className={`p-2 sm:p-2.5 rounded-lg ${
                 darkMode ? 'bg-[#FA8072]/10' : 'bg-[#FA8072]/10'
               }`}>
-              <ArrowLeft className='w-5 h-5 text-[#FA8072]' />
+              <ArrowLeft className='w-4 h-4 sm:w-5 sm:h-5 text-[#FA8072]' />
             </motion.div>
             <div className='text-left flex-1'>
-              <h3 className={`text-sm font-semibold mb-0.5 ${
+              <h3 className={`text-xs sm:text-sm font-semibold mb-0.5 ${
                 darkMode ? 'text-white' : 'text-slate-900'
               }`}>
                 Select a Mentor to Begin
               </h3>
-              <p className={`text-xs ${
+              <p className={`text-[10px] sm:text-xs ${
                 darkMode ? 'text-slate-400' : 'text-slate-600'
               }`}>
                 {availablePersonas.length} expert AI mentors available
@@ -155,12 +155,12 @@ const EmptyPersonaState = () => {
           </div>
         </motion.div>
 
-        {/* Decorative Elements */}
+        {/* Decorative Elements - Mobile Optimized */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className='mt-8 flex items-center justify-center gap-6'>
+          className='mt-6 sm:mt-8 flex items-center justify-center gap-4 sm:gap-6'>
           {/* Floating Orbs */}
           {[0, 1, 2].map((i) => (
             <motion.div
@@ -175,19 +175,19 @@ const EmptyPersonaState = () => {
                 ease: "easeInOut",
                 delay: i * 0.4,
               }}
-              className={`w-2 h-2 rounded-full ${
+              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
                 i === 0 ? 'bg-[#FA8072]' : i === 1 ? 'bg-[#FF8E8E]' : 'bg-[#FA8072]/70'
               }`}
             />
           ))}
         </motion.div>
 
-        {/* Status Indicator */}
+        {/* Status Indicator - Mobile Optimized */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className='mt-6 flex items-center justify-center gap-2'>
+          className='mt-4 sm:mt-6 flex items-center justify-center gap-1.5 sm:gap-2'>
           <motion.div
             animate={{
               scale: [1, 1.2, 1],
@@ -199,7 +199,7 @@ const EmptyPersonaState = () => {
             }}
             className='w-1.5 h-1.5 bg-green-500 rounded-full'
           />
-          <span className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+          <span className={`text-[10px] sm:text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
             All mentors online and ready
           </span>
         </motion.div>
