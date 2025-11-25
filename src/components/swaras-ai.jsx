@@ -90,6 +90,9 @@ const SwarasAI = () => {
     messagesCount: messages.length,
   });
 
+  // Add custom loading state for better control
+  const [isThinking, setIsThinking] = useState(false);
+
   // Custom message sending handler
   const handleSendMessage = async (messageText) => {
     console.log('🔄 handleSendMessage called with:', messageText);
@@ -107,8 +110,8 @@ const SwarasAI = () => {
       return;
     }
 
-    if (!messageText || !messageText.trim() || !selectedPersona || isLoading) {
-      console.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isLoading });
+    if (!messageText || !messageText.trim() || !selectedPersona || isThinking) {
+      console.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isThinking });
       return;
     }
 
@@ -122,10 +125,6 @@ const SwarasAI = () => {
     console.log('✅ Conversation ready:', conversation.id);
 
     const personaName = personas[selectedPersona]?.name;
-    toast.success(`Message sent to ${personaName}! 🚀`, {
-      duration: 2000,
-      icon: personas[selectedPersona]?.avatar,
-    });
 
     // Manually create user message
     const userMessage = {
@@ -139,6 +138,9 @@ const SwarasAI = () => {
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
     console.log('📝 Added user message, total:', updatedMessages.length);
+
+    // Show thinking indicator
+    setIsThinking(true);
 
     // Call AI API directly
     try {
@@ -158,6 +160,7 @@ const SwarasAI = () => {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('❌ API Error:', response.status, errorData);
+        setIsThinking(false);
         throw new Error(`API request failed: ${response.status} - ${errorData.message || 'Unknown error'}`);
       }
 
@@ -168,6 +171,7 @@ const SwarasAI = () => {
       const decoder = new TextDecoder();
       let assistantMessage = '';
       let assistantMessageId = `assistant-${Date.now()}`;
+      let hasStartedStreaming = false;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -178,6 +182,12 @@ const SwarasAI = () => {
 
         for (const line of lines) {
           if (line.startsWith('0:')) {
+            // Hide thinking indicator once we start receiving content
+            if (!hasStartedStreaming) {
+              setIsThinking(false);
+              hasStartedStreaming = true;
+            }
+
             // Text chunk
             const text = line.substring(3, line.length - 1);
             assistantMessage += text;
@@ -197,6 +207,9 @@ const SwarasAI = () => {
       }
 
       console.log('✅ Streaming complete, final message length:', assistantMessage.length);
+
+      // Make sure thinking indicator is hidden
+      setIsThinking(false);
 
       // Update conversation in store
       const finalMessages = [
@@ -219,8 +232,14 @@ const SwarasAI = () => {
         updateConversation(currentConversation.id, updatedConversation);
         console.log('💾 Conversation updated in store');
       }
+
+      toast.success(`${personaName} replied! ✨`, {
+        duration: 2000,
+        icon: personas[selectedPersona]?.avatar,
+      });
     } catch (error) {
       console.error('❌ Error in handleSendMessage:', error);
+      setIsThinking(false);
       toast.error('Failed to send message. Please try again.');
     }
   };
@@ -505,7 +524,7 @@ const SwarasAI = () => {
             {hasMessages ? (
               <ChatMessages
                 messages={displayMessages}
-                isTyping={isLoading}
+                isTyping={isThinking}
                 selectedPersona={selectedPersona}
               />
             ) : (
@@ -515,8 +534,8 @@ const SwarasAI = () => {
           <ChatInput
             onSendMessage={handleSendMessage}
             selectedPersona={selectedPersona}
-            disabled={!mentorsOnline || mentorsLoading || isLoading}
-            isLoading={isLoading}
+            disabled={!mentorsOnline || mentorsLoading || isThinking}
+            isLoading={isThinking}
           />
         </motion.div>
       );
