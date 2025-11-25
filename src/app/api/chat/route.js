@@ -1,8 +1,11 @@
 // src/app/api/chat/route.js - Refactored chat API endpoint
-import { NextResponse } from 'next/server';
-import { createHybridProcessor, getPersonaName } from '@/services/hybrid-processor';
+import { ERROR_MESSAGES, ERROR_TYPES } from '@/constants/config';
+import {
+  createHybridProcessor,
+  getPersonaName,
+} from '@/services/hybrid-processor';
 import { validateChatRequest, ValidationError } from '@/utils/validation';
-import { ERROR_TYPES, ERROR_MESSAGES } from '@/constants/config';
+import { NextResponse } from 'next/server';
 
 // Initialize processor (singleton pattern)
 const processor = createHybridProcessor();

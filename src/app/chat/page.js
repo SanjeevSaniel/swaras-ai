@@ -1,10 +1,10 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import SwarasAI from '@/components/swaras-ai';
+import { useUser } from '@clerk/nextjs';
 import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function ChatPage() {
   const { isSignedIn, isLoaded } = useUser();

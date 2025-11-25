@@ -1,20 +1,11 @@
 // src/components/welcome/welcome-screen.jsx
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { personas } from '@/constants/personas-dataset';
-import { useChatStore } from '@/store/chat-store';
 import { AIService } from '@/services/ai-service';
+import { useChatStore } from '@/store/chat-store';
 import { motion } from 'framer-motion';
-import {
-  Globe,
-  MessageCircle,
-  Play,
-  Star,
-  Users,
-  Zap,
-} from 'lucide-react';
+import { MessageCircle, Users, Zap } from 'lucide-react';
 import { useState } from 'react';
 
 // Floating particles (minimal animations)

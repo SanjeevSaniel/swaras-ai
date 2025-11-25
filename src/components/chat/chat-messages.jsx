@@ -234,11 +234,18 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                       } : {}}
                     >
                       <div
-                        className={`text-sm leading-relaxed ${
+                        className={`text-sm leading-relaxed whitespace-pre-wrap ${
                           isUser ? 'text-white font-medium' : 'text-foreground'
                         }`}
                       >
-                        {message.content}
+                        {/* Handle both string content and AI SDK parts format */}
+                        {typeof message.content === 'string'
+                          ? message.content
+                          : message.content?.map((part, i) => (
+                              <span key={i}>{part.text || part.content || ''}</span>
+                            ))
+                        }
+                        {!message.content && message.text && message.text}
                       </div>
 
                       {/* Copy Button for assistant messages */}

@@ -1,7 +1,7 @@
 // src/app/layout.js
-import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/providers/theme-provider';
-import { Zain, Inter } from 'next/font/google';
+import { ClerkProvider } from '@clerk/nextjs';
+import { Inter, Zain } from 'next/font/google';
 import './globals.css';
 
 // Zain font for modern, elegant typography
@@ -47,7 +47,8 @@ const RootLayout = ({ children }) => {
             type='image/svg+xml'
           />
         </head>
-        <body className={`${zain.variable} ${inter.variable} font-sans antialiased`}>
+        <body
+          className={`${zain.variable} ${inter.variable} font-sans antialiased`}>
           <ThemeProvider
             attribute='class'
             defaultTheme='system'

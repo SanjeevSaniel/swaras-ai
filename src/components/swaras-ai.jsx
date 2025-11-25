@@ -81,6 +81,7 @@ const SwarasAI = () => {
     handleSubmit: originalHandleSubmit,
     isLoading,
     setMessages,
+    append,
   } = chatApi;
 
   console.log('🎯 useChat values:', {
@@ -90,10 +91,7 @@ const SwarasAI = () => {
     messagesCount: messages.length,
   });
 
-  // Add custom loading state for better control
-  const [isThinking, setIsThinking] = useState(false);
-
-  // Custom message sending handler
+  // Use AI SDK's append method for sending messages with streaming
   const handleSendMessage = async (messageText) => {
     console.log('🔄 handleSendMessage called with:', messageText);
 
@@ -110,8 +108,8 @@ const SwarasAI = () => {
       return;
     }
 
-    if (!messageText || !messageText.trim() || !selectedPersona || isThinking) {
-      console.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isThinking });
+    if (!messageText || !messageText.trim() || !selectedPersona || isLoading) {
+      console.log('⚠️ Invalid input or state:', { messageText, selectedPersona, isLoading });
       return;
     }
 
@@ -126,120 +124,20 @@ const SwarasAI = () => {
 
     const personaName = personas[selectedPersona]?.name;
 
-    // Manually create user message
-    const userMessage = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: messageText.trim(),
-      createdAt: new Date(),
-    };
-
-    // Add user message to messages array
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
-    console.log('📝 Added user message, total:', updatedMessages.length);
-
-    // Show thinking indicator
-    setIsThinking(true);
-
-    // Call AI API directly
     try {
-      console.log('📤 Calling AI API...');
-
-      const response = await fetch('/api/chat-ai', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: updatedMessages,
-          persona: selectedPersona,
-        }),
+      // Use AI SDK's append method for proper streaming
+      await append({
+        role: 'user',
+        content: messageText.trim(),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('❌ API Error:', response.status, errorData);
-        setIsThinking(false);
-        throw new Error(`API request failed: ${response.status} - ${errorData.message || 'Unknown error'}`);
-      }
-
-      console.log('✅ Got response, reading stream...');
-
-      // Read the streaming response
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let assistantMessage = '';
-      let assistantMessageId = `assistant-${Date.now()}`;
-      let hasStartedStreaming = false;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-
-        for (const line of lines) {
-          if (line.startsWith('0:')) {
-            // Hide thinking indicator once we start receiving content
-            if (!hasStartedStreaming) {
-              setIsThinking(false);
-              hasStartedStreaming = true;
-            }
-
-            // Text chunk
-            const text = line.substring(3, line.length - 1);
-            assistantMessage += text;
-
-            // Update messages with partial response
-            setMessages([
-              ...updatedMessages,
-              {
-                id: assistantMessageId,
-                role: 'assistant',
-                content: assistantMessage,
-                createdAt: new Date(),
-              },
-            ]);
-          }
-        }
-      }
-
-      console.log('✅ Streaming complete, final message length:', assistantMessage.length);
-
-      // Make sure thinking indicator is hidden
-      setIsThinking(false);
-
-      // Update conversation in store
-      const finalMessages = [
-        ...updatedMessages,
-        {
-          id: assistantMessageId,
-          role: 'assistant',
-          content: assistantMessage,
-          createdAt: new Date(),
-        },
-      ];
-
-      if (currentConversation) {
-        const updatedConversation = {
-          ...currentConversation,
-          messages: finalMessages,
-          lastMessageAt: Date.now(),
-          messageCount: finalMessages.length,
-        };
-        updateConversation(currentConversation.id, updatedConversation);
-        console.log('💾 Conversation updated in store');
-      }
-
-      toast.success(`${personaName} replied! ✨`, {
-        duration: 2000,
+      console.log('✅ Message sent via AI SDK');
+      toast.success(`Message sent to ${personaName}! 🚀`, {
+        duration: 1500,
         icon: personas[selectedPersona]?.avatar,
       });
     } catch (error) {
       console.error('❌ Error in handleSendMessage:', error);
-      setIsThinking(false);
       toast.error('Failed to send message. Please try again.');
     }
   };
@@ -524,7 +422,7 @@ const SwarasAI = () => {
             {hasMessages ? (
               <ChatMessages
                 messages={displayMessages}
-                isTyping={isThinking}
+                isTyping={isLoading}
                 selectedPersona={selectedPersona}
               />
             ) : (
@@ -534,8 +432,8 @@ const SwarasAI = () => {
           <ChatInput
             onSendMessage={handleSendMessage}
             selectedPersona={selectedPersona}
-            disabled={!mentorsOnline || mentorsLoading || isThinking}
-            isLoading={isThinking}
+            disabled={!mentorsOnline || mentorsLoading || isLoading}
+            isLoading={isLoading}
           />
         </motion.div>
       );

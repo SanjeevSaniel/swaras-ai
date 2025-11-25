@@ -20,7 +20,14 @@
       "Bash(timeout /t 5)",
       "Bash(cat:*)",
       "WebFetch(domain:ai-sdk.dev)",
-      "WebFetch(domain:antigravity.google)"
+      "WebFetch(domain:antigravity.google)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(del srccomponentschatai-chat-container.jsx srccomponentschatchat-input.jsx srccomponentschatchat-messages.jsx srccomponentschatmessages-list.jsx srccomponentschatmodern-chat-input.jsx srccomponentschatmodern-chat-messages.jsx srccomponentschatnixtio-chat-header.jsx srccomponentschatnixtio-chat-input.jsx srccomponentschatnixtio-chat-messages.jsx srccomponentschattyping-indicator.jsx)",
+      "Bash(del nul 2)",
+      "Bash(.gitignore)",
+      "Bash(git rm:*)",
+      "Bash(src/components/landing/light-landing-page.jsx)"
     ],
     "deny": [],
     "ask": []
