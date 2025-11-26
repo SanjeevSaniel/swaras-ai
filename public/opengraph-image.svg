@@ -1,0 +1,58 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FA8072;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8E8E;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+
+  <!-- Logo - centered and large -->
+  <g transform="translate(450, 150)">
+    <!-- Background circle for logo -->
+    <circle cx="150" cy="150" r="140" fill="white" opacity="0.2"/>
+
+    <!-- Brain/AI shape (left) -->
+    <path
+      d="M150 50C130 50 110 60 100 75C90 70 80 75 80 90C70 95 65 105 65 115C65 130 75 140 90 140C90 160 100 175 115 185"
+      stroke="white"
+      strokeWidth="8"
+      strokeLinecap="round"
+      opacity="0.95"
+    />
+
+    <!-- Brain/AI shape (right) -->
+    <path
+      d="M150 50C170 50 190 60 200 75C210 70 220 75 220 90C230 95 235 105 235 115C235 130 225 140 210 140C210 160 200 175 185 185"
+      stroke="white"
+      strokeWidth="8"
+      strokeLinecap="round"
+      opacity="0.95"
+    />
+
+    <!-- Chat bubble -->
+    <path
+      d="M110 195H190C200 195 210 205 210 215V245C210 255 200 265 190 265H170L150 285L130 265H110C100 265 90 255 90 245V215C90 205 100 195 110 195Z"
+      stroke="white"
+      strokeWidth="8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      opacity="0.95"
+    />
+
+    <!-- Three dots -->
+    <circle cx="130" cy="230" r="6" fill="white" opacity="0.95"/>
+    <circle cx="150" cy="230" r="6" fill="white" opacity="0.95"/>
+    <circle cx="170" cy="230" r="6" fill="white" opacity="0.95"/>
+  </g>
+
+  <!-- Text -->
+  <text x="600" y="480" text-anchor="middle" fill="white" font-size="72" font-weight="700" font-family="system-ui, -apple-system, sans-serif">
+    Swaras AI
+  </text>
+  <text x="600" y="540" text-anchor="middle" fill="white" font-size="32" font-weight="300" font-family="system-ui, -apple-system, sans-serif" opacity="0.9">
+    Learn with AI Mentors
+  </text>
+</svg>

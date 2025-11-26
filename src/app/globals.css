@@ -196,7 +196,12 @@
   button, input, textarea, select {
     font-family: inherit;
   }
-  
+
+  /* Add pointer cursor to all interactive elements */
+  button, a, [role="button"], [type="button"], [type="submit"], [type="reset"] {
+    cursor: pointer;
+  }
+
   html {
     scroll-behavior: smooth;
   }
