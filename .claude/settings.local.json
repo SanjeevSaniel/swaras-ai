@@ -27,7 +27,10 @@
       "Bash(del nul 2)",
       "Bash(.gitignore)",
       "Bash(git rm:*)",
-      "Bash(src/components/landing/light-landing-page.jsx)"
+      "Bash(src/components/landing/light-landing-page.jsx)",
+      "WebFetch(domain:www.instagram.com)",
+      "Bash(git tag:*)",
+      "Bash(npx shadcn@latest add:*)"
     ],
     "deny": [],
     "ask": []

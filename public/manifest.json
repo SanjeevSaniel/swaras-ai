@@ -1,0 +1,45 @@
+{
+  "name": "Swaras AI - Chat with 16 Expert AI Mentors",
+  "short_name": "Swaras AI",
+  "description": "Learn from AI versions of Hitesh Choudhary, MKBHD, Samantha Ruth Prabhu, and 13 more expert personas. Each mentor speaks in their authentic voice with personalized guidance.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FA8072",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/snapshots/NEW/Homescreen.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/snapshots/NEW/Mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+}
