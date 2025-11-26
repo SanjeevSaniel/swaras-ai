@@ -4,8 +4,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-zain), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: var(--font-zain), var(--font-inter), sans-serif;
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -22,69 +22,186 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
 }
 
 :root {
-  --radius: 0.75rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --radius: 1rem;
+
+  /* Modern Light Theme - Clean & Professional */
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #fafafa;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+
+  /* Primary - Sophisticated Blue */
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+
+  /* Secondary - Soft Neutral */
+  --secondary: #f5f5f5;
+  --secondary-foreground: #525252;
+
+  /* Muted - Ultra Subtle */
+  --muted: #fafafa;
+  --muted-foreground: #737373;
+
+  /* Accent - Refined Teal */
+  --accent: #f0fdfa;
+  --accent-foreground: #0d9488;
+
+  /* Destructive - Calm Red */
+  --destructive: #dc2626;
+
+  /* Borders - Whisper Gray */
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #2563eb;
+
+  /* Custom - Success */
+  --success: #059669;
+  --success-foreground: #ffffff;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* Modern Dark Theme - Sophisticated & Minimal */
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #141414;
+  --card-foreground: #fafafa;
+  --popover: #141414;
+  --popover-foreground: #fafafa;
+
+  /* Primary - Vibrant Blue */
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+
+  /* Secondary - Deep Neutral */
+  --secondary: #1a1a1a;
+  --secondary-foreground: #d4d4d4;
+
+  /* Muted - Warm Dark */
+  --muted: #171717;
+  --muted-foreground: #a3a3a3;
+
+  /* Accent - Bright Teal */
+  --accent: #0f1f1e;
+  --accent-foreground: #14b8a6;
+
+  /* Destructive - Soft Red */
+  --destructive: #ef4444;
+
+  /* Borders - Subtle Gray */
+  --border: #262626;
+  --input: #262626;
+  --ring: #3b82f6;
+
+  /* Custom - Success */
+  --success: #10b981;
+  --success-foreground: #ffffff;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50 box-border;
   }
-  
+
+  /* Global minimal scrollbar for all elements */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  *:hover {
+    scrollbar-color: rgba(203, 213, 225, 0.3) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+  }
+
+  *:hover::-webkit-scrollbar-thumb {
+    background: rgba(203, 213, 225, 0.3);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
+  }
+
+  /* Dark mode global scrollbar */
+  .dark * {
+    scrollbar-color: transparent transparent;
+  }
+
+  .dark *:hover {
+    scrollbar-color: rgba(51, 65, 85, 0.4) transparent;
+  }
+
+  .dark *:hover::-webkit-scrollbar-thumb {
+    background: rgba(51, 65, 85, 0.4);
+  }
+
+  .dark *::-webkit-scrollbar-thumb:hover {
+    background: rgba(71, 85, 105, 0.6);
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-family: var(--font-inter), var(--font-manrope), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
+    font-size: 15px;
+    line-height: 1.6;
   }
-  
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-manrope), var(--font-inter), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  h1 { font-size: 2.5rem; font-weight: 700; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.25rem; }
+  h5 { font-size: 1.125rem; }
+  h6 { font-size: 1rem; }
+
+  p {
+    line-height: 1.65;
+    margin-bottom: 1rem;
+  }
+
+  button, input, textarea, select {
+    font-family: inherit;
+  }
+
+  /* Add pointer cursor to all interactive elements */
+  button, a, [role="button"], [type="button"], [type="submit"], [type="reset"] {
+    cursor: pointer;
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -412,5 +529,110 @@
 .scrollbar-hidden {
   scrollbar-width: thin;
   scrollbar-color: #8B5CF6 transparent;
+}
+
+/* =================================================================
+   NIXTIO DESIGN SYSTEM
+   ================================================================= */
+
+/* Purple gradient background for main app */
+.nixtio-bg-gradient {
+  background: linear-gradient(135deg, #f0e7f7 0%, #e9dff5 50%, #f5f0f9 100%);
+}
+
+/* Sidebar purple gradient */
+.nixtio-sidebar-gradient {
+  background: linear-gradient(180deg, #1e1544 0%, #1a1035 50%, #0f0822 100%);
+}
+
+/* Message bubble animations */
+@keyframes messageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-fade-in {
+  animation: messageFadeIn 0.2s ease-out;
+}
+
+/* Hover effects for chat items */
+.chat-item-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.chat-item-hover:hover {
+  transform: translateX(2px);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Status indicator pulse */
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-pulse {
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+/* =================================================================
+   CUSTOM SCROLLBAR - Ultra minimal auto-hide
+   ================================================================= */
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+
+.custom-scrollbar:hover {
+  scrollbar-color: rgba(203, 213, 225, 0.2) transparent;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(203, 213, 225, 0.2);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
+}
+
+/* Dark mode scrollbar */
+.dark .custom-scrollbar:hover {
+  scrollbar-color: rgba(51, 65, 85, 0.3) transparent;
+}
+
+.dark .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.3);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.5);
 }
 

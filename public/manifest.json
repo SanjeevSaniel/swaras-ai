@@ -1,96 +1,45 @@
 {
-    "name": "Swaras AI - Code with Legends",
-    "short_name": "Swaras AI",
-    "description": "AI-powered coding mentorship with legendary Indian developers Hitesh Choudhary and Piyush Garg",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#1f2937",
-    "orientation": "portrait-primary",
-    "scope": "/",
-    "lang": "en-US",
-    "dir": "ltr",
-    "categories": [
-        "education",
-        "productivity",
-        "developer"
-    ],
-    "screenshots": [
-        {
-            "src": "/images/screenshot-wide.png",
-            "sizes": "1280x720",
-            "type": "image/png",
-            "form_factor": "wide",
-            "label": "Chat with AI coding mentors"
-        },
-        {
-            "src": "/images/screenshot-narrow.png",
-            "sizes": "640x1136",
-            "type": "image/png",
-            "form_factor": "narrow",
-            "label": "Mobile coding mentorship"
-        }
-    ],
-    "icons": [
-        {
-            "src": "/favicon.ico",
-            "sizes": "48x48",
-            "type": "image/x-icon"
-        },
-        {
-            "src": "/icon-16x16.png",
-            "sizes": "16x16",
-            "type": "image/png"
-        },
-        {
-            "src": "/icon-32x32.png",
-            "sizes": "32x32",
-            "type": "image/png"
-        },
-        {
-            "src": "/icon-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "/icon-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
-        }
-    ],
-    "shortcuts": [
-        {
-            "name": "Chat with Hitesh",
-            "short_name": "Hitesh",
-            "description": "Start coding session with Hitesh Choudhary",
-            "url": "/?mentor=hitesh",
-            "icons": [
-                {
-                    "src": "/images/hitesh-shortcut.png",
-                    "sizes": "96x96",
-                    "type": "image/png"
-                }
-            ]
-        },
-        {
-            "name": "Chat with Piyush",
-            "short_name": "Piyush",
-            "description": "Start coding session with Piyush Garg",
-            "url": "/?mentor=piyush",
-            "icons": [
-                {
-                    "src": "/images/piyush-shortcut.png",
-                    "sizes": "96x96",
-                    "type": "image/png"
-                }
-            ]
-        }
-    ],
-    "related_applications": [],
-    "prefer_related_applications": false,
-    "edge_side_panel": {
-        "preferred_width": 400
+  "name": "SwarAI - Chat with 16 Expert AI Mentors",
+  "short_name": "SwarAI",
+  "description": "Learn from AI versions of Hitesh Choudhary, MKBHD, Samantha Ruth Prabhu, and 13 more expert personas. Each mentor speaks in their authentic voice with personalized guidance.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FA8072",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
+  ],
+  "categories": ["education", "productivity", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/snapshots/NEW/Homescreen.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/snapshots/NEW/Mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
 }

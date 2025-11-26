@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(timeout:*)",
+      "Bash(ls:*)",
+      "Bash(npm run db:push:*)",
+      "Bash(echo:*)",
+      "Bash(npx drizzle-kit push:*)",
+      "Bash(dir:*)",
+      "Bash(npm run migrate:users:*)",
+      "Bash(npm run test:rate-limit:*)",
+      "Bash(npm run test:rate-limit-exceeded:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run test:ist-reset:*)",
+      "Bash(cut:*)",
+      "WebSearch",
+      "WebFetch(domain:sdk.vercel.ai)",
+      "WebFetch(domain:ai-sdk.dev)",
+      "Bash(npm run build:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run clean:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git rm:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

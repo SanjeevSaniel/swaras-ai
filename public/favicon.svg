@@ -1,19 +1,28 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="32" height="32" rx="6" fill="url(#favicon-gradient)"/>
-  
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="favicon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea"/>
-      <stop offset="100%" style="stop-color:#764ba2"/>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FA8072;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8E8E;stop-opacity:1" />
     </linearGradient>
   </defs>
-  
-  <!-- Simplified S -->
-  <path d="M12 11 C10 11, 8 12, 8 14 C8 16, 10 17, 12 17 L18 17 C19 17, 20 18, 20 19 C20 20, 19 21, 18 21 L10 21" 
-        stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
-  
-  <!-- Small indicators -->
-  <circle cx="24" cy="8" r="1.5" fill="white" opacity="0.8"/>
-  <circle cx="8" cy="24" r="1.5" fill="white" opacity="0.8"/>
+
+  <!-- Background with rounded corners -->
+  <rect width="24" height="24" rx="5" fill="url(#bgGrad)"/>
+
+  <!-- Brain/AI shape (top left) -->
+  <path d="M12 3C10 3 8 4 7 5.5C6 5 5 5.5 5 7C4 7.5 3.5 8.5 3.5 9.5C3.5 11 4.5 12 6 12C6 14 7 15.5 8.5 16.5"
+        stroke="white" stroke-width="1.8" stroke-linecap="round" opacity="0.95"/>
+
+  <!-- Brain/AI shape (top right) -->
+  <path d="M12 3C14 3 16 4 17 5.5C18 5 19 5.5 19 7C20 7.5 20.5 8.5 20.5 9.5C20.5 11 19.5 12 18 12C18 14 17 15.5 15.5 16.5"
+        stroke="white" stroke-width="1.8" stroke-linecap="round" opacity="0.95"/>
+
+  <!-- Chat bubble -->
+  <path d="M8 13H16C17.1 13 18 13.9 18 15V18C18 19.1 17.1 20 16 20H13L11 22L9 20H8C6.9 20 6 19.1 6 18V15C6 13.9 6.9 13 8 13Z"
+        stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+
+  <!-- Three dots in chat bubble -->
+  <circle cx="10" cy="16.5" r="1" fill="white" opacity="0.95"/>
+  <circle cx="12" cy="16.5" r="1" fill="white" opacity="0.95"/>
+  <circle cx="14" cy="16.5" r="1" fill="white" opacity="0.95"/>
 </svg>
