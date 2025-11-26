@@ -1,8 +1,16 @@
 // src/app/layout.js
 import { ThemeProvider } from '@/providers/theme-provider';
 import { ClerkProvider } from '@clerk/nextjs';
-import { Inter, Zain } from 'next/font/google';
+import { Inter, Zain, Raleway } from 'next/font/google';
 import './globals.css';
+
+// Raleway font for logo branding
+const raleway = Raleway({
+  subsets: ['latin'],
+  weight: ['400', '700', '800', '900'],
+  variable: '--font-raleway',
+  display: 'swap',
+});
 
 // Zain font for modern, elegant typography
 const zain = Zain({
@@ -25,8 +33,8 @@ export const metadata = {
     process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   ),
   title: {
-    default: 'Swaras AI - Intelligent AI Persona Chat',
-    template: '%s | Swaras AI',
+    default: 'SwarAI - Intelligent AI Persona Chat',
+    template: '%s | SwarAI',
   },
   description:
     'Your personal AI companion for meaningful conversations. Chat, learn, and get expert guidance from AI personas designed to help you grow.',
@@ -48,9 +56,9 @@ export const metadata = {
     'wellness AI',
     'storytelling AI',
   ],
-  authors: [{ name: 'Swaras AI Team' }],
-  creator: 'Swaras AI',
-  publisher: 'Swaras AI',
+  authors: [{ name: 'SwarAI Team' }],
+  creator: 'SwarAI',
+  publisher: 'SwarAI',
   formatDetection: {
     email: false,
     address: false,
@@ -71,16 +79,16 @@ export const metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    siteName: 'Swaras AI',
+    siteName: 'SwarAI',
     title: 'Intelligent AI Persona Chat',
     description:
       'Your personal AI companion for meaningful conversations. Chat, learn, and get expert guidance from AI personas designed to help you grow.',
     images: [
       {
-        url: '/og-image.png',
+        url: '/opengraph-image.svg',
         width: 1200,
         height: 630,
-        alt: 'Swaras AI - Learn from AI versions of real experts',
+        alt: 'SwarAI - Intelligent AI Persona Chat',
       },
     ],
   },
@@ -89,7 +97,7 @@ export const metadata = {
     title: 'Intelligent AI Persona Chat',
     description:
       'Your personal AI companion for meaningful conversations. Chat, learn, and get expert guidance from AI personas designed to help you grow.',
-    images: ['/og-image.png'],
+    images: ['/opengraph-image.svg'],
     creator: '@swarasai',
   },
   robots: {
@@ -128,7 +136,7 @@ const RootLayout = ({ children }) => {
           />
         </head>
         <body
-          className={`${zain.variable} ${inter.variable} font-sans antialiased`}>
+          className={`${raleway.variable} ${zain.variable} ${inter.variable} font-sans antialiased`}>
           <ThemeProvider
             attribute='class'
             defaultTheme='system'
