@@ -25,11 +25,11 @@ export const metadata = {
     process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   ),
   title: {
-    default: 'Swaras AI - AI Personas for Real Experts',
+    default: 'Swaras AI - Intelligent AI Persona Chat',
     template: '%s | Swaras AI',
   },
   description:
-    'Learn from AI versions of real experts: Hitesh Choudhary (Chai aur Code), MKBHD (Tech Reviews), Samantha Ruth Prabhu (Wellness), Piyush Garg (Dev), Saptarshi Prakash (UX), Akshat Gupta (Mythology), Puneet Kumar (Storytelling), and 9 more personas. Each mentor speaks in their authentic voice with personalized guidance. Start free with 10 daily messages.',
+    'Your personal AI companion for meaningful conversations. Chat, learn, and get expert guidance from AI personas designed to help you grow.',
   keywords: [
     'AI mentorship',
     'AI personas',
@@ -72,23 +72,23 @@ export const metadata = {
     locale: 'en_US',
     url: '/',
     siteName: 'Swaras AI',
-    title: 'Chat with Hitesh Choudhary, MKBHD, Samantha & 13 More AI Mentors',
+    title: 'Intelligent AI Persona Chat',
     description:
-      'Experience authentic conversations with AI versions of Hitesh Choudhary (Chai aur Code), MKBHD (Tech Reviews), Samantha Ruth Prabhu (Wellness), Piyush Garg, Saptarshi Prakash (UX Design), Akshat Gupta (Mythology), Puneet Kumar (Storytelling), and 9 more expert personas. Each mentor maintains their unique voice and expertise.',
+      'Your personal AI companion for meaningful conversations. Chat, learn, and get expert guidance from AI personas designed to help you grow.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Swaras AI - 16 Expert AI Mentors including Hitesh, MKBHD, Samantha',
+        alt: 'Swaras AI - Learn from AI versions of real experts',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Chat with Hitesh, MKBHD, Samantha & 13 More AI Mentors',
+    title: 'Intelligent AI Persona Chat',
     description:
-      'Learn from AI versions of real experts: Hitesh Choudhary (Coding), MKBHD (Tech), Samantha (Wellness), Piyush Garg (Dev), Saptarshi (UX), Akshat (Mythology), and 10 more. Each speaks in their authentic voice. Start free!',
+      'Your personal AI companion for meaningful conversations. Chat, learn, and get expert guidance from AI personas designed to help you grow.',
     images: ['/og-image.png'],
     creator: '@swarasai',
   },
