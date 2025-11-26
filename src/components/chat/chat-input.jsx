@@ -83,6 +83,36 @@ const ChatInput = ({ onSendMessage, disabled, selectedPersona, isLoading }) => {
         { display: 'Diet plan...', full: 'What should my diet plan look like for muscle gain and fat loss?', category: '🥗' },
         { display: 'Balance life...', full: 'How do you balance career, fitness, and family life effectively?', category: '✈️' },
       ],
+      saptarshiux: [
+        { display: 'UX portfolio tips...', full: 'How should I structure my UX design portfolio to stand out?', category: '🎨' },
+        { display: 'User research...', full: 'What are the best practices for conducting user research and testing?', category: '🔍' },
+        { display: 'Design systems...', full: 'How do I create a scalable design system in Figma?', category: '🎯' },
+        { display: 'Career in UX...', full: 'What skills do I need to break into UX/UI design as a beginner?', category: '💼' },
+      ],
+      puneetkumar: [
+        { display: 'Start storytelling...', full: 'How do I start writing compelling stories as a beginner?', category: '📖' },
+        { display: 'Character depth...', full: 'How do I create characters that feel real and relatable?', category: '✨' },
+        { display: 'Story structure...', full: 'What are the key elements of a well-structured story?', category: '🎯' },
+        { display: 'Writer\'s block...', full: 'How do I overcome writer\'s block and find inspiration?', category: '💡' },
+      ],
+      akshatgupta: [
+        { display: 'Mahabharata lessons...', full: 'What are the key life lessons from the Mahabharata that apply today?', category: '📚' },
+        { display: 'Vedic wisdom...', full: 'Can you explain Vedic principles for modern life in simple terms?', category: '🕉️' },
+        { display: 'Mythology meaning...', full: 'What is the deeper meaning behind this mythological story?', category: '💭' },
+        { display: 'Dharma dilemma...', full: 'How do I apply the concept of dharma to modern ethical dilemmas?', category: '⚖️' },
+      ],
+      samantha: [
+        { display: 'Wellness routine...', full: 'How do I create a sustainable wellness routine that works with chronic illness?', category: '🌸' },
+        { display: 'Mental health...', full: 'What are some effective self-care practices for managing mental health?', category: '💆' },
+        { display: 'Fitness journey...', full: 'How do I start a fitness journey when dealing with health challenges?', category: '💪' },
+        { display: 'Build resilience...', full: 'How can I build emotional resilience during difficult times?', category: '✨' },
+      ],
+      mkbhd: [
+        { display: 'Best smartphone...', full: 'What smartphone should I buy in 2024 for the best value?', category: '📱' },
+        { display: 'Tech comparison...', full: 'How do the latest flagship phones compare in real-world usage?', category: '⚡' },
+        { display: 'Camera quality...', full: 'What makes a smartphone camera truly great beyond megapixels?', category: '📸' },
+        { display: 'EV insights...', full: 'What should I know before buying my first electric vehicle?', category: '🚗' },
+      ],
     };
 
     return (
