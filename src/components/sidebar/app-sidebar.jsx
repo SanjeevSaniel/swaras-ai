@@ -167,7 +167,9 @@ const AppSidebar = ({
                     )}
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align='end' className='w-56'>
+                <DropdownMenuContent
+                  align='end'
+                  className='w-56'>
                   <DropdownMenuLabel>
                     <div className='flex flex-col space-y-1'>
                       <p className='text-sm font-medium leading-none'>
@@ -321,7 +323,7 @@ const AppSidebar = ({
       </div>
 
       {/* Usage Quota - Sticky at bottom */}
-      <div className='border-t border-border/40 bg-background/95 backdrop-blur-sm p-4'>
+      <div className='border-t border-border/40 bg-background/95 backdrop-blur-sm p-2'>
         <UsageQuota />
       </div>
     </div>

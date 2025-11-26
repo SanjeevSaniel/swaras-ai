@@ -10,7 +10,7 @@ import { clerkClient } from '@clerk/nextjs/server';
 export const RATE_LIMIT_TIERS = {
   FREE: {
     name: 'Free',
-    dailyLimit: 30,
+    dailyLimit: 10,
     resetHour: 0, // Resets at midnight UTC
   },
   PRO: {
