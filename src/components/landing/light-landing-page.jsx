@@ -5,79 +5,48 @@ import { SignInButton, SignUpButton } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { getEnabledPersonas } from '@/constants/personas';
 
 const LightLandingPage = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  const personas = [
-    {
-      id: 1,
-      name: 'Hitesh Choudhary',
-      image: 'https://avatars.githubusercontent.com/u/11613311?v=4',
-    },
-    {
-      id: 2,
-      name: 'Piyush Garg',
-      image:
-        'https://www.piyushgarg.dev/_next/image?url=%2Fimages%2Favatar.png&w=1080&q=75',
-    },
-
-    {
-      id: 3,
-      name: 'Revant Himatsingka (FoodPharmer)',
-      image:
-        'https://pbs.twimg.com/profile_images/1648018353330753536/bnQLav2m_400x400.jpg',
-    },
-    {
-      id: 4,
-      name: 'Johnny Harris',
-      image:
-        'https://pbs.twimg.com/profile_images/731848457703555072/lAwjqi6o_400x400.jpg',
-    },
-    {
-      id: 5,
-      name: 'Labour Law Advisor',
-      image:
-        'https://pbs.twimg.com/profile_images/1559534733398544384/ZvIQ9dN0_400x400.jpg',
-    },
-    {
-      id: 6,
-      name: 'Zero1 by Zerodha',
-      image:
-        'https://ugc.production.linktr.ee/1818ca03-2529-4373-9e4e-48f5b06b0755_m0SYHJ0N9BvOzsQ1x-rjJZ93AozarehZou4GcNU8m-D8oV90UoGO0vOXRzPLzeZ-NlTq7mntFw-s800-c-k-c0x00ffffff-no-r.jpeg?io=true&size=avatar-v3_0',
-    },
-    {
-      id: 7,
-      name: 'Ali Abdaal',
-      image:
-        'https://pbs.twimg.com/profile_images/1496857274165436420/yjDjLCDh_400x400.jpg',
-    },
-    {
-      id: 8,
-      name: 'Kunal Shah',
-      image:
-        'https://pbs.twimg.com/profile_images/1190747917998546944/D3U5FNa7_400x400.jpg',
-    },
-    {
-      id: 9,
-      name: 'Mark Manson',
-      image:
-        'https://pbs.twimg.com/profile_images/1920303395300061184/LIw0cFIW_400x400.jpg',
-    },
-    {
-      id: 10,
-      name: 'Ankur Warikoo',
-      image:
-        'https://i0.wp.com/ankurwarikoo.com/wp-content/uploads/2022/06/DSC00977-scaled-1.webp?w=2160',
-    },
-    {
-      id: 11,
-      name: 'Gaurav Taneja (Flying Beast)',
-      image:
-        'https://pbs.twimg.com/profile_images/1555825717765885952/0rk-xtL0_400x400.jpg',
-    },
+  // Curated selection of featured personas for landing page
+  const featuredPersonaIds = [
+    'hitesh',
+    'saptarshiux',
+    'piyush',
+    'puneetkumar',
+    'samantha',
+    'mkbhd',
+    'aliabdaal',
+    'kunalshah',
   ];
+
+  // Get personas dynamically from personas.js - only featured ones
+  const personas = useMemo(() => {
+    const allPersonas = getEnabledPersonas();
+    return featuredPersonaIds
+      .map((id, index) => {
+        const persona = allPersonas[id];
+        if (!persona || !persona.avatarUrl) return null;
+        return {
+          id: index + 1,
+          name: persona.name,
+          image: persona.avatarUrl,
+        };
+      })
+      .filter(Boolean);
+  }, []);
+
+  // Calculate how many more personas are available
+  const remainingCount = useMemo(() => {
+    const allPersonas = getEnabledPersonas();
+    const totalCount = Object.values(allPersonas).filter(
+      (p) => p.enabled,
+    ).length;
+    return totalCount - featuredPersonaIds.length;
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -369,11 +338,48 @@ const LightLandingPage = () => {
 
             {/* Personas */}
             <div className='flex flex-col items-center justify-center mt-10 w-full'>
-              <div className='text-lg text-gray-400 font-semibold mb-4'>
+              {/* <div className='text-lg text-gray-400 font-semibold mb-4'>
                 List of available personas
-              </div>
-              <div className='flex flex-row items-center justify-center w-full'>
-                <AnimatedTooltip items={personas} />
+              </div> */}
+              <div className='flex flex-col items-center justify-center gap-3'>
+                <div className='flex items-center -space-x-3'>
+                  {personas.slice(0, 6).map((persona, index) => (
+                    <motion.div
+                      key={persona.id}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
+                      className='group relative'>
+                      <div className='w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 hover:z-50 transition-transform cursor-pointer'>
+                        <img
+                          src={persona.image}
+                          alt={persona.name}
+                          className='w-full h-full object-cover'
+                        />
+                      </div>
+                      {/* Tooltip */}
+                      <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50'>
+                        {persona.name}
+                        <div className='absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900'></div>
+                      </div>
+                    </motion.div>
+                  ))}
+                  {(personas.length > 6 || remainingCount > 0) && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: 0.4 + 6 * 0.05 }}
+                      className='w-12 h-12 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-xs font-bold text-white border-2 border-white shadow-lg hover:scale-110 transition-transform cursor-pointer'>
+                      +{Math.max(0, personas.length - 6) + remainingCount}
+                    </motion.div>
+                  )}
+                </div>
+                <div className='text-sm text-gray-600 ml-2'>
+                  <span className='font-semibold text-gray-900'>
+                    10+ AI Personas
+                  </span>
+                  <span className='hidden sm:inline'> ready to help you</span>
+                </div>
               </div>
             </div>
 
@@ -436,7 +442,7 @@ const LightLandingPage = () => {
                 number: '01',
                 title: 'Choose your mentor',
                 description:
-                  'Select from 5+ specialized AI mentors across technology, business, health, creativity, and more domains.',
+                  'Select from 10+ specialized AI mentors across technology, business, health, creativity, and more domains.',
               },
               {
                 number: '02',
@@ -494,7 +500,7 @@ const LightLandingPage = () => {
                 {
                   title: 'Multiple AI Mentors',
                   description:
-                    '5+ specialized assistants covering programming, business strategy, health & wellness, creative arts, and more.',
+                    '10+ specialized assistants covering programming, business strategy, health & wellness, creative arts, and more.',
                 },
                 {
                   title: 'Real-Time Knowledge',
@@ -667,7 +673,9 @@ const LightLandingPage = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
               className='flex items-center justify-center gap-8 mt-16 text-sm text-gray-500'>
               <div className='text-center'>
-                <div className='text-2xl font-light text-gray-900 mb-1'>5+</div>
+                <div className='text-2xl font-light text-gray-900 mb-1'>
+                  10+
+                </div>
                 <div className='text-xs uppercase tracking-wide'>Mentors</div>
               </div>
               <div className='w-px h-8 bg-gray-200' />
