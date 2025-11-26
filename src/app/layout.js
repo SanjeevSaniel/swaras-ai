@@ -21,9 +21,11 @@ const inter = Inter({
 });
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  ),
   title: {
-    default: 'Swaras AI - Chat with Hitesh, MKBHD, Samantha & 13 More AI Mentors',
+    default: 'Swaras AI - AI Personas for Real Experts',
     template: '%s | Swaras AI',
   },
   description:
