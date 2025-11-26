@@ -430,7 +430,7 @@ Contributions are welcome! Please follow these steps:
 
 ## 📝 **Changelog**
 
-### **v1.1.0** (2025-01-26)
+### **v1.1.0** (2025-11-26)
 - ✨ **Rate Limiting System**: Fair usage quotas with Clerk metadata storage
 - ✨ **5 New Mentors**: Saptarshi Prakash, Puneet Kumar, Akshat Gupta, Samantha, MKBHD
 - ✨ **Floating Quota Widget**: Collapsible card with real-time updates
@@ -498,6 +498,6 @@ For questions, suggestions, or collaboration:
 
 ---
 
-**Built with ❤️ by the Developer Community | Version 1.1.0 | January 2025**
+**Built with ❤️ by Sanjeev K | Version 1.1.0 | November 2025**
 
-*Empowering learners with AI-powered mentorship from 16 expert personas*
+*Empowering learners with AI-powered mentorship from 15 expert personas*
