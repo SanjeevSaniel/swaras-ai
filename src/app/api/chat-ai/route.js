@@ -4,6 +4,8 @@ import {
 } from '@/services/hybrid-processor';
 import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
+import { auth } from '@clerk/nextjs/server';
+import { checkRateLimit, incrementUsage } from '@/lib/rate-limiter';
 
 const isDev = process.env.NODE_ENV === 'development';
 const logger = {
@@ -19,6 +21,46 @@ export const maxDuration = 30;
 
 export async function POST(req) {
   try {
+    // Check authentication
+    const { userId } = await auth();
+
+    if (!userId) {
+      return new Response(
+        JSON.stringify({
+          error: 'Unauthorized',
+          message: 'You must be signed in to use this feature',
+        }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    }
+
+    // Check rate limit
+    const rateLimitResult = await checkRateLimit(userId);
+
+    if (!rateLimitResult.allowed) {
+      logger.log(`⛔ Rate limit exceeded for user ${userId}`);
+      return new Response(
+        JSON.stringify({
+          error: 'Rate limit exceeded',
+          message: `You've reached your daily limit of ${rateLimitResult.usage.limit} messages. Please try again tomorrow.`,
+          usage: rateLimitResult.usage,
+          tier: rateLimitResult.tier,
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-RateLimit-Limit': String(rateLimitResult.usage.limit),
+            'X-RateLimit-Remaining': String(rateLimitResult.usage.remaining),
+            'X-RateLimit-Reset': rateLimitResult.usage.resetAt,
+          },
+        },
+      );
+    }
+
     const { messages, persona } = await req.json();
 
     // Get the last user message
@@ -51,7 +93,21 @@ export async function POST(req) {
       maxTokens: 1000,
     });
 
-    return stream.toTextStreamResponse();
+    // Increment usage count after successful request
+    // Note: This happens before streaming, so if streaming fails,
+    // the count still increments (acceptable trade-off for simplicity)
+    await incrementUsage(userId);
+    logger.log(
+      `✅ Message processed for user ${userId}. Usage updated.`,
+    );
+
+    // Return stream with rate limit headers
+    const response = stream.toTextStreamResponse();
+    response.headers.set('X-RateLimit-Limit', String(rateLimitResult.usage.limit));
+    response.headers.set('X-RateLimit-Remaining', String(rateLimitResult.usage.remaining - 1));
+    response.headers.set('X-RateLimit-Reset', rateLimitResult.usage.resetAt);
+
+    return response;
   } catch (error) {
     logger.error('💥 Chat AI API error:', error);
     return new Response(
