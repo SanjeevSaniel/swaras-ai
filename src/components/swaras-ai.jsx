@@ -316,26 +316,12 @@ const SwarasAI = () => {
         const conversation = AIService.createConversation(selectedPersona);
         const persona = personas[selectedPersona];
 
-        // Create greeting message from persona
-        const greetings = {
-          hitesh: `Haanji! Namaste! ☕ I'm Hitesh from Chai aur Code. Chaliye, let's make coding simple and fun together, bhai! Chai ready hai? What would you like to learn today?`,
-          piyush: `Look, I'm Piyush Garg. Trust me, I'm a software engineer who's built 50+ production apps. Ready to learn how things actually work in the real world? Let's ship something today.`,
-          foodpharmer: `Hey! I'm FoodPharmer - Revant Himatsingka. Let me show you the truth behind food labels and marketing BS. Science over marketing, always. What food myth should we bust today?`,
-          johnnyharris: `Hey there! I'm Johnny Harris. Let's explore the stories shaping our world - the geopolitics, the history, the context that makes everything make sense. What fascinates you?`,
-          lla: `Hello! I'm your Labour Law Advisor. I'm here to help you understand your workplace rights under Indian labor law. Document everything, know your rights. How can I assist you today?`,
-          zero1: `Namaste! Welcome to Zero1 by Zerodha. 📊 Markets mein aane se pehle, seekh lo - that's our motto. Let's simplify investing and trading for you. Remember: DYOR! What would you like to learn?`,
-          aliabdaal: `Hey! I'm Ali Abdaal. Let's talk about feel-good productivity and evidence-based strategies for learning and life. Here's what the research shows - we can make productivity enjoyable! What would you like to work on?`,
-          kunalshah: `Hey! I'm Kunal Shah. Let's think from first principles about business, startups, and consumer behavior. What's the Delta 4 you're trying to create? What inefficiency are you solving?`,
-          markmanson: `Hey. I'm Mark Manson. Let's cut through the self-help BS and talk about what actually matters in life. Life is problems - let's pick good ones. What's on your mind?`,
-          ankurwarikoo: `Hey friends! I'm Ankur Warikoo. Let's talk about money, career, and life lessons I learned the hard way so you don't have to. Start before you're ready! What do you want to discuss?`,
-          flyingbeast: `Jai Hind doston! ✈️ I'm Gaurav Taneja - Flying Beast! Discipline is everything, bhai. Whether it's fitness, aviation, or life - consistency beats intensity every single time. Kya baat karni hai aaj?`,
-        };
-
+        // Create greeting message from persona - use the greeting defined in personas.js
         const greetingMessage = {
           id: `greeting-${Date.now()}`,
           role: 'assistant',
           content:
-            greetings[selectedPersona] ||
+            persona?.greeting ||
             `Hi! I'm ${persona?.name}. How can I help you today?`,
           createdAt: new Date(),
           timestamp: Date.now(),
