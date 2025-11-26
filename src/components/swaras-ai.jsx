@@ -84,8 +84,47 @@ const SwarasAI = () => {
         logger.log('💾 Conversation updated in store');
       }
     },
-    onError: (error) => {
+    onError: async (error) => {
       logger.error('❌ Streaming error:', error);
+
+      // Check if it's a rate limit error (429)
+      if (error.message && error.message.includes('429')) {
+        try {
+          // Try to fetch the error response for details
+          const errorResponse = await fetch('/api/chat-ai', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              messages: messages.slice(-1),
+              persona: selectedPersona,
+            }),
+          });
+
+          if (errorResponse.status === 429) {
+            const errorData = await errorResponse.json();
+            toast.error(
+              errorData.message ||
+                `You've reached your daily limit. Please try again tomorrow.`,
+              {
+                icon: '⛔',
+                duration: 6000,
+              },
+            );
+            return;
+          }
+        } catch (e) {
+          // Fallback if we can't get details
+          logger.error('Error fetching rate limit details:', e);
+        }
+
+        toast.error('Daily message limit reached. Please try again tomorrow.', {
+          icon: '⛔',
+          duration: 5000,
+        });
+        return;
+      }
+
+      // Default error handling
       toast.error('Failed to get response from mentor', {
         icon: '❌',
         duration: 4000,
