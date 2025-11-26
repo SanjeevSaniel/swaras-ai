@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import UsageQuota from '@/components/usage-quota';
 
 const AppSidebar = ({
   conversations,
@@ -317,6 +318,11 @@ const AppSidebar = ({
             })}
           </AnimatePresence>
         </div>
+      </div>
+
+      {/* Usage Quota - Sticky at bottom */}
+      <div className='border-t border-border/40 bg-background/95 backdrop-blur-sm p-4'>
+        <UsageQuota />
       </div>
     </div>
   );
