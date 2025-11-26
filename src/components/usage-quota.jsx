@@ -77,10 +77,10 @@ const UsageQuota = ({ className = '', onUsageUpdate }) => {
         <motion.div
           className={`h-full rounded-full transition-colors ${
             isVeryLowQuota
-              ? 'bg-destructive'
+              ? 'bg-gradient-to-r from-red-500 to-red-600'
               : isLowQuota
-              ? 'bg-orange-500'
-              : 'bg-primary'
+              ? 'bg-gradient-to-r from-orange-500 to-amber-500'
+              : 'bg-gradient-to-r from-[#FA8072] to-[#FF8E8E]'
           }`}
           initial={false}
           animate={{ width: `${percentage}%` }}
