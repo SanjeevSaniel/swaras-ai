@@ -12,6 +12,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "migrate:users": "tsx scripts/migrate-users-v2.ts",
+    "sync:clerk-users": "tsx --env-file=.env.local scripts/sync-clerk-users.ts",
     "test:rate-limit": "tsx scripts/test-rate-limit.ts",
     "test:rate-limit-exceeded": "tsx scripts/test-rate-limit-exceeded.ts",
     "test:ist-reset": "tsx scripts/test-ist-reset.ts"
