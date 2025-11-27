@@ -136,18 +136,26 @@ export const useChatStore = create<ChatStore>()(
         }
 
         // Load the persona's conversation or null if none exists
-        const personaConversation = currentState.personaConversations[persona] || null;
+        const personaConversation =
+          currentState.personaConversations[persona] || null;
 
         set({
           selectedPersona: persona,
           currentConversation: personaConversation,
           conversationStats: {
             ...currentState.conversationStats,
-            favoritePersona: personaConversation ? persona : currentState.conversationStats.favoritePersona,
+            favoritePersona: personaConversation
+              ? persona
+              : currentState.conversationStats.favoritePersona,
           },
         });
 
-        console.log(`✨ Selected persona: ${persona}`, personaConversation ? 'with existing conversation' : 'new conversation');
+        console.log(
+          `✨ Selected persona: ${persona}`,
+          personaConversation
+            ? 'with existing conversation'
+            : 'new conversation',
+        );
       },
 
       // Enhanced conversation management
@@ -224,7 +232,7 @@ export const useChatStore = create<ChatStore>()(
         set((state) => {
           // Find which persona this conversation belongs to
           const personaId = Object.keys(state.personaConversations).find(
-            pid => state.personaConversations[pid]?.id === convId
+            (pid) => state.personaConversations[pid]?.id === convId,
           );
 
           if (!personaId) {
@@ -287,7 +295,8 @@ export const useChatStore = create<ChatStore>()(
           const conversationToDelete = state.personaConversations[personaId];
           if (!conversationToDelete) return state;
 
-          const { [personaId]: deleted, ...remaining } = state.personaConversations;
+          const { [personaId]: deleted, ...remaining } =
+            state.personaConversations;
 
           // Recalculate stats
           const remainingConversations = Object.values(remaining);
@@ -297,16 +306,33 @@ export const useChatStore = create<ChatStore>()(
           );
 
           // Update longest conversation if deleted
-          let newLongestConversation: {id: string; messageCount: number; personaId: string} | null = state.conversationStats.longestConversation;
-          if (state.conversationStats.longestConversation?.personaId === personaId) {
+          let newLongestConversation: {
+            id: string;
+            messageCount: number;
+            personaId: string;
+          } | null = state.conversationStats.longestConversation;
+          if (
+            state.conversationStats.longestConversation?.personaId === personaId
+          ) {
             newLongestConversation = remainingConversations.reduce(
-              (longest: {id: string; messageCount: number; personaId: string} | null, conv) => {
+              (
+                longest: {
+                  id: string;
+                  messageCount: number;
+                  personaId: string;
+                } | null,
+                conv,
+              ) => {
                 const messageCount = conv.messages?.length || 0;
                 return messageCount > (longest?.messageCount || 0)
                   ? { id: conv.id, messageCount, personaId: conv.personaId }
                   : longest;
               },
-              null as {id: string; messageCount: number; personaId: string} | null,
+              null as {
+                id: string;
+                messageCount: number;
+                personaId: string;
+              } | null,
             );
           }
 
@@ -379,15 +405,18 @@ export const useChatStore = create<ChatStore>()(
       archiveConversation: (convId) => {
         set((state) => {
           const personaId = Object.keys(state.personaConversations).find(
-            pid => state.personaConversations[pid]?.id === convId
+            (pid) => state.personaConversations[pid]?.id === convId,
           );
           if (!personaId) return state;
 
           return {
             personaConversations: {
               ...state.personaConversations,
-              [personaId]: { ...state.personaConversations[personaId], archived: true }
-            }
+              [personaId]: {
+                ...state.personaConversations[personaId],
+                archived: true,
+              },
+            },
           };
         });
       },
@@ -396,15 +425,15 @@ export const useChatStore = create<ChatStore>()(
       rateConversation: (convId, rating) => {
         set((state) => {
           const personaId = Object.keys(state.personaConversations).find(
-            pid => state.personaConversations[pid]?.id === convId
+            (pid) => state.personaConversations[pid]?.id === convId,
           );
           if (!personaId) return state;
 
           return {
             personaConversations: {
               ...state.personaConversations,
-              [personaId]: { ...state.personaConversations[personaId], rating }
-            }
+              [personaId]: { ...state.personaConversations[personaId], rating },
+            },
           };
         });
       },
@@ -474,7 +503,10 @@ export const useChatStore = create<ChatStore>()(
             : 0;
 
         const recentActivity = conversations.filter((conv) => {
-          const createdAt = typeof conv.createdAt === 'string' ? new Date(conv.createdAt).getTime() : conv.createdAt;
+          const createdAt =
+            typeof conv.createdAt === 'string'
+              ? new Date(conv.createdAt).getTime()
+              : conv.createdAt;
           const daysSinceLastAccess =
             (Date.now() - (conv.lastAccessedAt || createdAt)) /
             (1000 * 60 * 60 * 24);
@@ -594,7 +626,7 @@ export const useChatStore = create<ChatStore>()(
       name: 'swaras-ai-persona-storage',
       partialize: (state) => ({
         personaConversations: state.personaConversations,
-        selectedPersona: state.selectedPersona,
+        // selectedPersona: state.selectedPersona, // Don't persist selected persona
         darkMode: state.darkMode,
         conversationStats: state.conversationStats,
         userPreferences: state.userPreferences,
@@ -605,6 +637,7 @@ export const useChatStore = create<ChatStore>()(
           setTimeout(() => {
             state.initializeTheme();
             state.initializeMentorStatus();
+            state.setSelectedPersona(null); // Ensure no persona is selected on load
           }, 0);
         }
       },
