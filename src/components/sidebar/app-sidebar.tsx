@@ -3,7 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { personaManager } from '@/constants/config';
 import { useChatStore } from '@/store/chat-store';
-import { UserButton, useUser, useClerk } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   LogOut,
@@ -49,7 +50,11 @@ const AppSidebar = ({
 
   // Clerk authentication hooks for mobile dropdown
   const { user } = useUser();
-  const { signOut } = useClerk();
+  const router = useRouter();
+
+  const handleSignOut = () => {
+    router.push('/');
+  };
 
   const allPersonas = personaManager.getAllPersonas({ enabled: true }) as any[];
   const currentPersona = selectedPersona
@@ -207,7 +212,7 @@ const AppSidebar = ({
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className='my-1' />
                   <DropdownMenuItem
-                    onClick={() => signOut()}
+                    onClick={handleSignOut}
                     className='text-red-600 dark:text-red-400 cursor-pointer'
                     inset={false}>
                     <LogOut className='mr-2 h-4 w-4' />
@@ -242,7 +247,11 @@ const AppSidebar = ({
             {allPersonas.map((persona) => {
               const isActive = selectedPersona === persona.id;
               const personaConversation = personaConversationMap[persona.id];
-              const messageCount = personaConversation?.messages?.length || 0;
+              // Use messageCount from conversation object if available, otherwise count messages
+              const messageCount =
+                personaConversation?.messageCount ||
+                personaConversation?.messages?.length ||
+                0;
               const lastMessage =
                 personaConversation?.messages?.[
                   personaConversation.messages.length - 1
@@ -250,7 +259,7 @@ const AppSidebar = ({
 
               return (
                 <motion.div
-                  key={persona.id}
+                  key={`${persona.id}-${messageCount}`}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
