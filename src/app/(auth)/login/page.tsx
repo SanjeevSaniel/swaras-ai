@@ -1,8 +1,5 @@
 // src/app/(auth)/login/page.tsx
-// src/app/(auth)/login/page.tsx
-import { Sparkles } from 'lucide-react';
 import { LoginForm } from '@/components/auth/login-form';
-import Link from 'next/link';
 
 export default function LoginPage() {
   return (
