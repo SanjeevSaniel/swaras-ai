@@ -123,6 +123,21 @@ export async function getUserUsage(userId: string) {
       .where(eq(rateLimits.userId, userId));
 
     if (!rateLimit) {
+      // Check if user exists in users table
+      const [userExists] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, userId));
+
+      if (!userExists) {
+        // User doesn't exist in database yet, return default values
+        console.warn(`User ${userId} not found in database, returning default usage`);
+        return {
+          count: 0,
+          lastResetTimestamp: getTodayStart(),
+        };
+      }
+
       // Create new rate limit record
       [rateLimit] = await db
         .insert(rateLimits)
