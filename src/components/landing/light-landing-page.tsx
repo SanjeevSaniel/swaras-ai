@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { getEnabledPersonas } from '@/constants/personas';
-import { SignInButton, SignUpButton } from '@clerk/nextjs';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Image from 'next/image';
@@ -244,22 +244,22 @@ const LightLandingPage = () => {
             </motion.div>
 
             <div className='flex items-center gap-3'>
-              <SignInButton mode='modal'>
+              <Link href='/login'>
                 <Button
                   size='lg'
                   variant='ghost'
                   className='text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors'>
                   Sign in
                 </Button>
-              </SignInButton>
-              <SignUpButton mode='modal'>
+              </Link>
+              <Link href='/signup'>
                 <Button
                   variant='default'
                   size='lg'
                   className='text-sm bg-gray-900 text-white hover:bg-gray-800 rounded-full px-6 shadow-sm transition-all'>
                   Get started
                 </Button>
-              </SignUpButton>
+              </Link>
             </div>
           </div>
         </div>
@@ -332,7 +332,7 @@ const LightLandingPage = () => {
                 ease: [0.16, 1, 0.3, 1],
               }}
               className='flex flex-col sm:flex-row items-center gap-4'>
-              <SignUpButton mode='modal'>
+              <Link href='/signup'>
                 <Button
                   size='lg'
                   variant='default'
@@ -340,7 +340,7 @@ const LightLandingPage = () => {
                   Start chatting
                   <ArrowRight className='ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform' />
                 </Button>
-              </SignUpButton>
+              </Link>
             </motion.div>
 
             {/* Personas */}
@@ -662,7 +662,7 @@ const LightLandingPage = () => {
                 Join thousands of learners, professionals, and creators using AI
                 mentors to achieve their goals. Start chatting in seconds.
               </p>
-              <SignUpButton mode='modal'>
+              <Link href='/signup'>
                 <Button
                   variant='default'
                   size='lg'
@@ -670,7 +670,7 @@ const LightLandingPage = () => {
                   Get started now
                   <ArrowRight className='ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform' />
                 </Button>
-              </SignUpButton>
+              </Link>
               <p className='text-xs text-gray-500 mt-4'>
                 Instant access • No credit card required
               </p>

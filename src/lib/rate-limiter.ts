@@ -18,9 +18,9 @@ export const RATE_LIMIT_TIERS = {
     dailyLimit: 200,
     resetHour: 0,
   },
-  UNLIMITED: {
-    name: 'Unlimited',
-    dailyLimit: Number.MAX_SAFE_INTEGER,
+  MAXX: {
+    name: 'Maxx',
+    dailyLimit: 1000,
     resetHour: 0,
   },
 };

@@ -15,13 +15,24 @@ export function useMessageSync() {
 
   /**
    * Sync a conversation to the database
+   * @param instant - If true, skip debounce and sync immediately
    */
   const syncConversation = useCallback(
-    async (conversationId: string, personaId: string, messages: any[]) => {
-      if (!user?.id || syncInProgressRef.current) return;
+    async (conversationId: string, personaId: string, messages: any[], instant = false) => {
+      if (!user?.id) {
+        console.log('⚠️ Sync skipped - no user ID');
+        return;
+      }
+
+      // Skip if sync is in progress for instant syncs, but allow queued syncs
+      if (!instant && syncInProgressRef.current) {
+        console.log('⚠️ Sync skipped - already in progress');
+        return;
+      }
 
       try {
         syncInProgressRef.current = true;
+        console.log(`🔄 Starting sync for ${conversationId} with ${messages.length} messages${instant ? ' (instant)' : ''}`);
 
         // Format messages for API
         const formattedMessages = messages.map((msg) => ({
@@ -29,6 +40,13 @@ export function useMessageSync() {
           role: msg.role === 'ai' || msg.role === 'assistant' ? 'assistant' : 'user',
           content: msg.content,
         }));
+
+        console.log('📤 Sending to API:', {
+          conversationId,
+          personaId,
+          messageCount: formattedMessages.length,
+          firstMessage: formattedMessages[0]?.content.substring(0, 50),
+        });
 
         const response = await fetch('/api/messages', {
           method: 'POST',
@@ -43,13 +61,19 @@ export function useMessageSync() {
         });
 
         if (!response.ok) {
+          const errorData = await response.json();
+          console.error('❌ Sync API error:', errorData);
           throw new Error('Failed to sync conversation');
         }
 
+        const result = await response.json();
+        console.log('📥 API response:', result);
+
         lastSyncedRef.current[conversationId] = Date.now();
-        console.log(`✅ Synced conversation ${conversationId} to database`);
+        console.log(`✅ Synced conversation ${conversationId} to database${instant ? ' (instant)' : ''}`);
       } catch (error) {
         console.error('Failed to sync conversation:', error);
+        throw error;
       } finally {
         syncInProgressRef.current = false;
       }

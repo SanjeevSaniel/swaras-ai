@@ -119,7 +119,11 @@ export const metadata = {
 
 const RootLayout = ({ children }) => {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInUrl='/login'
+      signUpUrl='/signup'
+      signInFallbackRedirectUrl='/chat'
+      signUpFallbackRedirectUrl='/chat'>
       <html
         lang='en'
         suppressHydrationWarning

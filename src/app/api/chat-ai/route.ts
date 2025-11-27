@@ -10,8 +10,8 @@ import { createOrUpdateUser } from '@/app/actions';
 
 const isDev = process.env.NODE_ENV === 'development';
 const logger = {
-  log: (...args) => isDev && console.log(...args),
-  error: (...args) => isDev && console.error(...args),
+  log: (...args: any) => isDev && console.log(...args),
+  error: (...args: any) => isDev && console.error(...args),
 };
 
 // Initialize processor (singleton pattern)
@@ -20,7 +20,11 @@ const processor = createHybridProcessor();
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
-export async function POST(req) {
+export async function POST(req: {
+  json: () =>
+    | PromiseLike<{ messages: any; persona: any }>
+    | { messages: any; persona: any };
+}) {
   try {
     // Check authentication
     const { userId } = await auth();
@@ -97,14 +101,18 @@ export async function POST(req) {
     // Note: This happens before streaming, so if streaming fails,
     // the count still increments (acceptable trade-off for simplicity)
     await incrementUsage(userId);
-    logger.log(
-      `✅ Message processed for user ${userId}. Usage updated.`,
-    );
+    logger.log(`✅ Message processed for user ${userId}. Usage updated.`);
 
     // Return stream with rate limit headers
     const response = stream.toTextStreamResponse();
-    response.headers.set('X-RateLimit-Limit', String(rateLimitResult.usage.limit));
-    response.headers.set('X-RateLimit-Remaining', String(rateLimitResult.usage.remaining - 1));
+    response.headers.set(
+      'X-RateLimit-Limit',
+      String(rateLimitResult.usage.limit),
+    );
+    response.headers.set(
+      'X-RateLimit-Remaining',
+      String(rateLimitResult.usage.remaining - 1),
+    );
     response.headers.set('X-RateLimit-Reset', rateLimitResult.usage.resetAt);
 
     return response;
@@ -123,7 +131,7 @@ export async function POST(req) {
   }
 }
 
-function getPersonaSystemPrompt(persona, personaName) {
+function getPersonaSystemPrompt(persona: string | number, personaName: any) {
   const prompts = {
     hitesh: `You are Hitesh Choudhary from "Chai aur Code" - the friendly coding mentor with 1.6M+ students who makes programming feel like a conversation over chai.
 
