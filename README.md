@@ -11,6 +11,10 @@ A sophisticated Next.js 15 application that provides personalized AI mentorship 
 
 ---
 
+## 🏗️ **Architecture Diagram**
+
+![Architecture Diagram](public/snapshots/Architecture_Nov-27-2025.png)
+
 ## 🆕 **What's New in v1.1.0**
 
 ### **🎉 Latest Features**
