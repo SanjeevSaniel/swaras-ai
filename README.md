@@ -1,10 +1,10 @@
-# **Swaras AI - AI Mentorship Platform** 🚀
+# **SwarAI - AI Mentorship Platform** 🚀
 
 > **Version 1.1.0 - Your Personal AI Mentorship Platform with 16 Expert Mentors**
 
 A sophisticated Next.js 15 application that provides personalized AI mentorship through authentic persona interactions. Choose from 16 expert mentors including legendary developers, health experts, geopolitics analysts, business strategists, wellness advocates, and storytellers.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/swaras-ai)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/yourusername/swaras-ai)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1-blue?style=flat-square&logo=react)](https://react.dev/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -500,4 +500,4 @@ For questions, suggestions, or collaboration:
 
 **Built with ❤️ by Sanjeev K | Version 1.1.0 | November 2025**
 
-*Empowering learners with AI-powered mentorship from 15 expert personas*
+*Empowering learners with AI-powered mentorship from 10+ expert personas*
