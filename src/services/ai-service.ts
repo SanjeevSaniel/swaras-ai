@@ -2,8 +2,8 @@
 
 export class AIService {
   static async getPersonaResponse(
-    message,
-    personaId,
+    message: any,
+    personaId: any,
     conversationHistory = [],
   ) {
     try {
@@ -37,7 +37,7 @@ export class AIService {
     }
   }
 
-  static getPersonaGreeting(personaId) {
+  static getPersonaGreeting(personaId: string) {
     const greetings = {
       hitesh: [
         `Haanji! Welcome to Swaras AI! 🎯\n\nMai hun Hitesh Choudhary, aur yahan main tumhe coding sikhaunga bilkul chai banane ki tarah - step by step! ☕️\n\nChaliye JavaScript, React, Node.js, ya career guidance - jo bhi chahiye, batao! Mere 1.6M+ students ke saath journey start karte hain.\n\nKya seekhna hai aaj bhai? Let's code together! 🚀`,
@@ -62,11 +62,17 @@ export class AIService {
     ];
   }
 
-  static createConversation(personaId) {
+  static createConversation(personaId: string) {
     const greeting = this.getPersonaGreeting(personaId);
 
+    // Generate a unique ID for each new conversation to prevent overwriting
+    // Format: personaId-timestamp-random
+    const conversationId = `${personaId}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
     return {
-      id: Date.now().toString(),
+      id: conversationId,
       personaId: personaId,
       messages: [
         {
@@ -82,7 +88,7 @@ export class AIService {
     };
   }
 
-  static createMessage(content, sender = 'user') {
+  static createMessage(content: any, sender = 'user') {
     return {
       id: Date.now() + Math.random(),
       content,
@@ -92,7 +98,10 @@ export class AIService {
   }
 
   // New helper method for better conversation titles
-  static generateConversationTitle(firstUserMessage, personaId) {
+  static generateConversationTitle(
+    firstUserMessage: string,
+    personaId: string,
+  ) {
     const message = firstUserMessage.toLowerCase();
 
     // Technical topics
@@ -115,7 +124,11 @@ export class AIService {
   }
 
   // Enhanced method to handle conversation updates
-  static updateConversationWithResponse(conversation, userMessage, aiResponse) {
+  static updateConversationWithResponse(
+    conversation: { messages: string | any[]; title: any; personaId: any },
+    userMessage: any,
+    aiResponse: any,
+  ) {
     const updatedMessages = [
       ...conversation.messages,
       this.createMessage(userMessage, 'user'),

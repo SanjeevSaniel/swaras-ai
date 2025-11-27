@@ -174,23 +174,30 @@ export const useChatStore = create<ChatStore>()(
       addConversation: (conv) => {
         const state = get();
 
-        if (!state.selectedPersona || !state.mentorsOnline) {
-          console.warn('Cannot add conversation - invalid state');
+        // Allow adding conversation even if mentors are offline (for loading from DB)
+        if (!state.selectedPersona) {
+          console.warn('Cannot add conversation - no persona selected');
           return;
         }
 
         const personaId = conv.personaId || state.selectedPersona;
 
         // Create or update the persona's conversation
+        // IMPORTANT: Respect existing ID if provided (e.g. from DB), otherwise generate new one
+        const conversationId = conv.id || `${personaId}-conversation`;
+
         const enhancedConv = {
           ...conv,
-          id: `${personaId}-conversation`,
+          id: conversationId,
           personaId,
           tags: [],
           rating: null,
           archived: false,
           lastAccessedAt: Date.now(),
-          createdAt: state.personaConversations[personaId]?.createdAt || Date.now(),
+          createdAt:
+            conv.createdAt ||
+            state.personaConversations[personaId]?.createdAt ||
+            Date.now(),
         };
 
         set((state) => ({
@@ -207,7 +214,9 @@ export const useChatStore = create<ChatStore>()(
           },
         }));
 
-        console.log(`💾 Saved conversation for persona: ${personaId}`);
+        console.log(
+          `💾 Saved conversation for persona: ${personaId} with ID: ${conversationId}`,
+        );
       },
 
       // Enhanced conversation updates - persona-based
