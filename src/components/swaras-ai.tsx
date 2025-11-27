@@ -27,6 +27,7 @@ import {
 import { Sheet, SheetContent } from './ui/sheet';
 import WelcomeScreen from './welcome/welcome-screen';
 import Image from 'next/image';
+import { useMessageSync } from '@/hooks/useMessageSync';
 
 const SwarasAI = () => {
   const [responseMetadata, setResponseMetadata] = useState(null);
@@ -62,6 +63,9 @@ const SwarasAI = () => {
   const conversations = getConversations
     ? getConversations()
     : Object.values(personaConversations || {});
+
+  // Initialize message sync hook for database persistence
+  const { syncConversation, loadConversation, loadAllConversations } = useMessageSync();
 
   // Initialize AI SDK's useChat hook
   const chatApi = useChat({
@@ -344,6 +348,53 @@ const SwarasAI = () => {
       fetchUserUsage();
     }
   }, [user]);
+
+  // Load conversation from database when persona is selected
+  useEffect(() => {
+    if (!selectedPersona || !user) return;
+
+    const loadPersistedConversation = async () => {
+      try {
+        // Check if conversation already exists in local store
+        const localConv = personaConversations[selectedPersona];
+        if (localConv && localConv.messages && localConv.messages.length > 0) {
+          logger.log('📦 Using local conversation for', selectedPersona);
+          return;
+        }
+
+        // Load from database
+        logger.log('🔄 Loading conversation from database for', selectedPersona);
+        const dbConversation = await loadConversation(selectedPersona);
+
+        if (dbConversation && dbConversation.messages && dbConversation.messages.length > 0) {
+          // Format conversation for local store
+          const formattedConv = {
+            id: dbConversation.id,
+            personaId: dbConversation.personaId,
+            messages: dbConversation.messages.map((msg: any) => ({
+              id: msg.id,
+              role: msg.role,
+              content: msg.content,
+              timestamp: new Date(msg.createdAt).getTime(),
+            })),
+            title: dbConversation.title,
+            createdAt: new Date(dbConversation.createdAt).getTime(),
+            lastMessageAt: new Date(dbConversation.updatedAt).getTime(),
+            messageCount: dbConversation.messages.length,
+          };
+
+          // Update local store with persisted conversation
+          updateConversation(selectedPersona, formattedConv);
+          setCurrentConversation(formattedConv);
+          logger.log('✅ Loaded conversation from database with', formattedConv.messages.length, 'messages');
+        }
+      } catch (error) {
+        logger.error('❌ Failed to load conversation from database:', error);
+      }
+    };
+
+    loadPersistedConversation();
+  }, [selectedPersona, user, loadConversation, personaConversations, updateConversation, setCurrentConversation]);
 
   // Sync messages from current conversation to useChat
   useEffect(() => {
