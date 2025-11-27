@@ -247,8 +247,8 @@ const LightLandingPage = () => {
               <Link href='/login'>
                 <Button
                   size='lg'
-                  variant='ghost'
-                  className='text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors'>
+                  variant='default'
+                  className='bg-transparent hover:bg-transparent text-sm text-gray-600 hover:text-gray-900'>
                   Sign in
                 </Button>
               </Link>
@@ -278,7 +278,7 @@ const LightLandingPage = () => {
               <div className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-200'>
                 <Sparkles className='w-3.5 h-3.5 text-gray-600' />
                 <span className='text-xs font-medium text-gray-700'>
-                  Powered by GPT-4o
+                  AI Powered Personas
                 </span>
               </div>
             </motion.div>
@@ -345,9 +345,6 @@ const LightLandingPage = () => {
 
             {/* Personas */}
             <div className='flex flex-col items-center justify-center mt-10 w-full'>
-              {/* <div className='text-lg text-gray-400 font-semibold mb-4'>
-                List of available personas
-              </div> */}
               <div className='flex flex-col items-center justify-center gap-3'>
                 <div className='flex items-center -space-x-3'>
                   {personas.slice(0, 6).map((persona, index) => (
@@ -504,12 +501,12 @@ const LightLandingPage = () => {
               </p>
             </motion.div>
 
-            <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto'>
+            <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto'>
               {[
                 {
                   title: 'Multiple AI Mentors',
                   description:
-                    '10+ specialized assistants covering programming, business strategy, health & wellness, creative arts, and more.',
+                    '10+ specialized personas covering programming, business strategy, health & wellness, creative arts, and more.',
                 },
                 {
                   title: 'Real-Time Knowledge',
@@ -521,21 +518,21 @@ const LightLandingPage = () => {
                   description:
                     'Sub-second response times with intelligent query routing. No waiting, just learning.',
                 },
-                {
-                  title: 'Context Awareness',
-                  description:
-                    'Remembers your conversation history for personalized, continuous guidance tailored to you.',
-                },
+                // {
+                //   title: 'Context Awareness',
+                //   description:
+                //     'Remembers your conversation history for personalized, continuous guidance tailored to you.',
+                // },
                 {
                   title: 'Always Available',
                   description:
                     '24/7 access to expert guidance. Get help whenever inspiration strikes or questions arise.',
                 },
-                {
-                  title: 'Mobile Optimized',
-                  description:
-                    'Seamless experience across all devices with touch-friendly interface and voice input support.',
-                },
+                // {
+                //   title: 'Mobile Optimized',
+                //   description:
+                //     'Seamless experience across all devices with touch-friendly interface and voice input support.',
+                // },
               ].map((feature, index) => (
                 <motion.div
                   key={index}
@@ -543,7 +540,7 @@ const LightLandingPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className='p-6 rounded-2xl bg-white border border-gray-200 hover:shadow-md transition-all duration-300'>
+                  className='px-6 pt-4 pb-2 rounded-2xl bg-white border border-gray-200 hover:shadow-md transition-all duration-300'>
                   <h3 className='text-lg font-medium text-gray-900 mb-2'>
                     {feature.title}
                   </h3>
