@@ -95,6 +95,29 @@ Chai code ke liye ready ho? I'm here to help you with your development journey. 
       },
     ],
 
+    suggestionPills: [
+      {
+        display: 'Explain async/await...',
+        full: 'Explain async/await in JavaScript with a chai analogy',
+        category: '☕',
+      },
+      {
+        display: 'React best practices...',
+        full: 'What are the best practices for React development?',
+        category: '⚛️',
+      },
+      {
+        display: 'Help debug this...',
+        full: 'Help me debug this code issue',
+        category: '🐛',
+      },
+      {
+        display: 'Career roadmap...',
+        full: 'What is the best career roadmap for full-stack development?',
+        category: '🎯',
+      },
+    ],
+
     scrapingConfig: {
       enabled: true,
       targets: [
@@ -209,6 +232,29 @@ Stop right there and listen - I'm a software engineer who's built 50+ production
       },
     ],
 
+    suggestionPills: [
+      {
+        display: 'System design for...',
+        full: 'How would you design a scalable URL shortener system?',
+        category: '🏗️',
+      },
+      {
+        display: 'Scale this feature...',
+        full: 'How do I scale this feature to handle millions of users?',
+        category: '📈',
+      },
+      {
+        display: 'Interview prep...',
+        full: 'How should I prepare for system design interviews at FAANG?',
+        category: '💼',
+      },
+      {
+        display: 'Architecture review...',
+        full: 'Can you review my architecture and suggest improvements?',
+        category: '🎯',
+      },
+    ],
+
     scrapingConfig: {
       enabled: true,
       targets: [
@@ -293,6 +339,29 @@ I'm Saptarshi. Design is about solving problems with empathy. Whether you're sta
       instagram: 'https://www.instagram.com/saptarshiux/',
     },
 
+    suggestionPills: [
+      {
+        display: 'UX portfolio tips...',
+        full: 'How should I structure my UX design portfolio to stand out?',
+        category: '🎨',
+      },
+      {
+        display: 'User research...',
+        full: 'What are the best practices for conducting user research and testing?',
+        category: '🔍',
+      },
+      {
+        display: 'Design systems...',
+        full: 'How do I create a scalable design system in Figma?',
+        category: '🎯',
+      },
+      {
+        display: 'Career in UX...',
+        full: 'What skills do I need to break into UX/UI design as a beginner?',
+        category: '💼',
+      },
+    ],
+
     scrapingConfig: null,
     temperature: 0.7,
     enabled: true,
@@ -358,6 +427,29 @@ I'm Puneet Kumar from StoryRides. Every story has a soul, every character has de
       instagram: 'https://www.instagram.com/storyridesofficial/',
       twitter: 'https://x.com/Storyrides2',
     },
+
+    suggestionPills: [
+      {
+        display: 'Start storytelling...',
+        full: 'How do I start writing compelling stories as a beginner?',
+        category: '📖',
+      },
+      {
+        display: 'Character depth...',
+        full: 'How do I create characters that feel real and relatable?',
+        category: '✨',
+      },
+      {
+        display: 'Story structure...',
+        full: 'What are the key elements of a well-structured story?',
+        category: '🎯',
+      },
+      {
+        display: "Writer's block...",
+        full: "How do I overcome writer's block and find inspiration?",
+        category: '💡',
+      },
+    ],
 
     scrapingConfig: null,
     temperature: 0.8,
@@ -426,6 +518,29 @@ I'm Akshat Gupta. Our mythology has all the answers - from the Mahabharata's dha
       facebook: 'https://www.facebook.com/akshat.gupta02',
     },
 
+    suggestionPills: [
+      {
+        display: 'Mahabharata lessons...',
+        full: 'What are the key life lessons from the Mahabharata that apply today?',
+        category: '📚',
+      },
+      {
+        display: 'Vedic wisdom...',
+        full: 'Can you explain Vedic principles for modern life in simple terms?',
+        category: '🕉️',
+      },
+      {
+        display: 'Mythology meaning...',
+        full: 'What is the deeper meaning behind this mythological story?',
+        category: '💭',
+      },
+      {
+        display: 'Dharma dilemma...',
+        full: 'How do I apply the concept of dharma to modern ethical dilemmas?',
+        category: '⚖️',
+      },
+    ],
+
     scrapingConfig: null,
     temperature: 0.7,
     enabled: true,
@@ -491,6 +606,29 @@ I'm Samantha. Living with health challenges taught me that taking care of yourse
       instagram: 'https://www.instagram.com/samantharuthprabhuoffl/',
       twitter: 'https://x.com/Samanthaprabhu2',
     },
+
+    suggestionPills: [
+      {
+        display: 'Wellness routine...',
+        full: 'How do I create a sustainable wellness routine that works with chronic illness?',
+        category: '🌸',
+      },
+      {
+        display: 'Mental health...',
+        full: 'What are some effective self-care practices for managing mental health?',
+        category: '💆',
+      },
+      {
+        display: 'Fitness journey...',
+        full: 'How do I start a fitness journey when dealing with health challenges?',
+        category: '💪',
+      },
+      {
+        display: 'Build resilience...',
+        full: 'How can I build emotional resilience during difficult times?',
+        category: '✨',
+      },
+    ],
 
     scrapingConfig: null,
     temperature: 0.7,
@@ -559,11 +697,151 @@ I'm FoodPharmer, and I'm here to help you cut through the food industry BS and m
       twitter: 'https://x.com/foodpharmer2',
     },
 
+    suggestionPills: [
+      {
+        display: 'Is this healthy?...',
+        full: 'Is brown sugar actually healthier than white sugar?',
+        category: '🥗',
+      },
+      {
+        display: 'Decode label...',
+        full: 'Help me decode this product label for hidden ingredients',
+        category: '🔍',
+      },
+      {
+        display: 'Best protein source...',
+        full: 'What are the best natural protein sources vs supplements?',
+        category: '💪',
+      },
+      {
+        display: 'Diet myth check...',
+        full: 'Can you fact-check this diet myth with scientific evidence?',
+        category: '🔬',
+      },
+    ],
+
     scrapingConfig: null,
     temperature: 0.7,
     enabled: true,
     featured: true,
     tags: ['nutrition', 'health', 'wellness', 'food-science', 'evidence-based'],
+  },
+
+  drpal: {
+    name: 'Dr. Pal Manickam',
+    title: 'Gastroenterologist & Comedian',
+    subtitle: 'Gut Health Expert',
+    description: 'Medical comedy & gut health wisdom',
+    category: PersonaCategories.HEALTH,
+
+    avatar: '🩺',
+    avatarUrl:
+      'https://pbs.twimg.com/profile_images/1955191916188037120/nWikqu6S_400x400.jpg',
+    bgColor: 'from-blue-100 to-cyan-100',
+    textColor: 'text-blue-800',
+    accentColor: 'bg-blue-600',
+
+    expertise: [
+      'Gut Health',
+      'Intermittent Fasting (16:8)',
+      'Weight Loss',
+      'Liver Health',
+      'Indian Diet & Nutrition',
+      'Lifestyle Medicine',
+      'Preventive Health',
+      'Medical Comedy',
+    ],
+
+    communicationStyle: {
+      tone: 'Humorous, strict but caring, energetic',
+      language: 'English with Tamil/Indian references',
+      approach: 'Uses comedy and food analogies to explain health',
+      signature: 'Saravana Bhavan references & "Gut health is everything"',
+      addressing: "Uses 'friends', 'patients', 'folks'",
+    },
+
+    catchphrases: [
+      'Gut health is mental health',
+      "Don't eat after sunset",
+      'Sugar is poison',
+      'Saravana Bhavan is not the enemy, portion size is',
+      'Fasting is the best medicine',
+      'Listen to your gut',
+    ],
+
+    greeting: `Vanakkam! Welcome to the clinic! 🩺
+
+I'm Dr. Pal. I'm here to save your gut from the torture you put it through! Whether it's weight loss, intermittent fasting, or just understanding why your stomach hates you - let's fix it with some science and a little bit of comedy. Remember, no eating after sunset!`,
+
+    bio: 'I am a Gastroenterologist who uses comedy to make health education digestible. My mission is to fight obesity and lifestyle diseases through gut health and intermittent fasting.',
+
+    websiteUrl: 'https://drpalmanickam.com/',
+    socialLinks: {
+      youtube: 'https://www.youtube.com/@DrPal',
+      instagram: 'https://www.instagram.com/dr.pal.manickam/',
+      twitter: 'https://x.com/drpal_manickam',
+      facebook: 'https://www.facebook.com/askdocpal',
+    },
+
+    featuredContent: [
+      {
+        type: 'youtube',
+        title: 'Gut Health 101',
+        url: 'https://www.youtube.com/@DrPal',
+        description: 'Understanding your gut microbiome',
+      },
+    ],
+
+    suggestionPills: [
+      {
+        display: 'Stomach bloating...',
+        full: 'Why is my stomach always bloated after eating?',
+        category: '🎈',
+      },
+      {
+        display: 'Intermittent fasting...',
+        full: 'Is intermittent fasting (16:8) good for me and how do I start?',
+        category: '⏳',
+      },
+      {
+        display: 'Biryani diet...',
+        full: 'Can I eat biryani while trying to lose weight?',
+        category: '🍛',
+      },
+      {
+        display: 'Eating after sunset...',
+        full: "Why do you say we shouldn't eat after sunset?",
+        category: '🌙',
+      },
+    ],
+
+    scrapingConfig: {
+      enabled: true,
+      targets: [
+        {
+          name: 'drpal_website',
+          url: 'https://drpalmanickam.com/',
+          selectors: {
+            title: 'title',
+            description: 'meta[name="description"]',
+            mainHeading: 'h1',
+            content: 'p',
+          },
+        },
+      ],
+    },
+
+    temperature: 0.8,
+    enabled: true,
+    featured: true,
+    tags: [
+      'gut-health',
+      'fasting',
+      'weight-loss',
+      'comedy',
+      'doctor',
+      'indian-diet',
+    ],
   },
 
   // ========================================
@@ -623,6 +901,29 @@ I'm Johnny Harris, and I love uncovering the stories behind the headlines. Let's
     socialLinks: {
       youtube: 'https://www.youtube.com/@johnnyharris',
     },
+
+    suggestionPills: [
+      {
+        display: 'Why did this happen?...',
+        full: 'Why is the South China Sea so heavily contested?',
+        category: '🗺️',
+      },
+      {
+        display: 'History behind...',
+        full: 'What is the history behind the Israel-Palestine conflict?',
+        category: '📜',
+      },
+      {
+        display: 'Geopolitics of...',
+        full: 'Explain the geopolitics of the Ukraine-Russia situation',
+        category: '🌍',
+      },
+      {
+        display: 'Explain the conflict...',
+        full: 'Can you explain what really caused this conflict?',
+        category: '⚔️',
+      },
+    ],
 
     scrapingConfig: null,
     temperature: 0.8,
@@ -697,6 +998,29 @@ I'm your Labour Law Advisor, here to help you understand your workplace rights u
       twitter: 'https://x.com/AdvisorLaborLaw',
     },
 
+    suggestionPills: [
+      {
+        display: 'My rights for...',
+        full: 'What are my rights if my employer fires me without notice period?',
+        category: '⚖️',
+      },
+      {
+        display: 'Legal action for...',
+        full: 'What legal action can I take for workplace harassment?',
+        category: '📋',
+      },
+      {
+        display: 'PF/ESI query...',
+        full: 'How do I claim my PF if the company refuses to release it?',
+        category: '💼',
+      },
+      {
+        display: 'Termination issue...',
+        full: 'My employer terminated me unfairly, what should I do?',
+        category: '🚨',
+      },
+    ],
+
     scrapingConfig: null,
     temperature: 0.6,
     enabled: true,
@@ -765,6 +1089,29 @@ I'm here to simplify markets and help you make informed decisions. From basics t
       youtube: 'https://www.youtube.com/@Zero1byZerodha',
     },
 
+    suggestionPills: [
+      {
+        display: 'Start investing...',
+        full: 'How should I start investing with ₹10,000 as a complete beginner?',
+        category: '💰',
+      },
+      {
+        display: 'Mutual funds vs stocks...',
+        full: 'Should I invest in mutual funds or direct stocks as a beginner?',
+        category: '📊',
+      },
+      {
+        display: 'SIP strategy...',
+        full: 'What is SIP and how do I create a good SIP investment strategy?',
+        category: '📈',
+      },
+      {
+        display: 'Emergency fund...',
+        full: 'How much should I save in an emergency fund and where should I keep it?',
+        category: '🎯',
+      },
+    ],
+
     scrapingConfig: null,
     temperature: 0.6,
     enabled: true,
@@ -831,6 +1178,29 @@ I'm Ali Abdaal, and I'm all about feel-good productivity. Let's explore evidence
       twitter: 'https://x.com/AliAbdaal',
       instagram: 'https://www.instagram.com/aliabdaal/',
     },
+
+    suggestionPills: [
+      {
+        display: 'Productivity tips...',
+        full: 'What are evidence-based productivity tips that actually work?',
+        category: '⚡',
+      },
+      {
+        display: 'Study technique...',
+        full: 'What study techniques does research show are most effective?',
+        category: '📚',
+      },
+      {
+        display: 'Build habits...',
+        full: 'How do I build sustainable habits that stick long-term?',
+        category: '🎯',
+      },
+      {
+        display: 'Time management...',
+        full: 'What are the best time management strategies for students and professionals?',
+        category: '⏰',
+      },
+    ],
 
     scrapingConfig: null,
     temperature: 0.7,
@@ -903,6 +1273,29 @@ I'm Kunal Shah. Let's think differently about business, consumer behavior, and b
       twitter: 'https://x.com/kunalb11',
       instagram: 'https://www.instagram.com/kunalb11/',
     },
+
+    suggestionPills: [
+      {
+        display: 'Delta 4 for...',
+        full: 'Explain Delta 4 theory with real startup examples',
+        category: '🧠',
+      },
+      {
+        display: 'First principles...',
+        full: 'How do I apply first principles thinking to solve business problems?',
+        category: '💡',
+      },
+      {
+        display: 'Market inefficiency...',
+        full: 'How can I spot inefficiencies in existing markets to build a startup?',
+        category: '🎯',
+      },
+      {
+        display: 'Startup strategy...',
+        full: 'What makes a product truly irreversible for users?',
+        category: '🚀',
+      },
+    ],
 
     scrapingConfig: null,
     temperature: 0.8,
@@ -977,6 +1370,29 @@ I'm Mark Manson. Let's talk about what actually matters in life - not the Instag
       youtube: 'https://www.youtube.com/@IAmMarkManson',
     },
 
+    suggestionPills: [
+      {
+        display: 'Life advice on...',
+        full: 'How do I stop caring about what other people think of me?',
+        category: '💭',
+      },
+      {
+        display: 'Stop caring about...',
+        full: 'How do I choose what problems are worth caring about in life?',
+        category: '🎯',
+      },
+      {
+        display: 'Find meaning in...',
+        full: 'How do I find meaning when everything feels pointless?',
+        category: '🌟',
+      },
+      {
+        display: 'Harsh truth about...',
+        full: 'Give me the harsh truth about why positive thinking can be harmful',
+        category: '💥',
+      },
+    ],
+
     scrapingConfig: null,
     temperature: 0.8,
     enabled: true,
@@ -1050,6 +1466,29 @@ I'm Ankur Warikoo. Let's talk about money, career, and life lessons I learned th
       twitter: 'https://x.com/warikoo',
     },
 
+    suggestionPills: [
+      {
+        display: 'Money advice...',
+        full: 'Should I invest in mutual funds or stocks first as a beginner?',
+        category: '💰',
+      },
+      {
+        display: 'Career switch...',
+        full: 'How do I negotiate salary in a job interview without seeming greedy?',
+        category: '💼',
+      },
+      {
+        display: 'Investment tips...',
+        full: 'What are the best money habits to build in your 20s?',
+        category: '📈',
+      },
+      {
+        display: 'Life lesson on...',
+        full: 'What life lessons should everyone know about money and career?',
+        category: '🎯',
+      },
+    ],
+
     scrapingConfig: null,
     temperature: 0.7,
     enabled: true,
@@ -1117,6 +1556,29 @@ I'm Gaurav Taneja, Flying Beast! Let's talk fitness, discipline, and living a ba
       twitter: 'https://x.com/flyingbeast320',
     },
 
+    suggestionPills: [
+      {
+        display: 'Workout routine...',
+        full: 'What is the best beginner gym routine for natural muscle gain?',
+        category: '💪',
+      },
+      {
+        display: 'Stay disciplined...',
+        full: 'How do I stay disciplined with early morning workouts consistently?',
+        category: '⚡',
+      },
+      {
+        display: 'Diet plan...',
+        full: 'What should my diet plan look like for muscle gain and fat loss?',
+        category: '🥗',
+      },
+      {
+        display: 'Balance life...',
+        full: 'How do you balance career, fitness, and family life effectively?',
+        category: '✈️',
+      },
+    ],
+
     scrapingConfig: null,
     temperature: 0.7,
     enabled: true,
@@ -1182,6 +1644,29 @@ So, let's talk about that. I've been reviewing tech for over a decade - smartpho
       instagram: 'https://www.instagram.com/mkbhd/',
       twitter: 'https://x.com/MKBHD',
     },
+
+    suggestionPills: [
+      {
+        display: 'Best smartphone...',
+        full: 'What smartphone should I buy in 2024 for the best value?',
+        category: '📱',
+      },
+      {
+        display: 'Tech comparison...',
+        full: 'How do the latest flagship phones compare in real-world usage?',
+        category: '⚡',
+      },
+      {
+        display: 'Camera quality...',
+        full: 'What makes a smartphone camera truly great beyond megapixels?',
+        category: '📸',
+      },
+      {
+        display: 'EV insights...',
+        full: 'What should I know before buying my first electric vehicle?',
+        category: '🚗',
+      },
+    ],
 
     scrapingConfig: null,
     temperature: 0.7,
