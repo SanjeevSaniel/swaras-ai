@@ -1,7 +1,8 @@
 // src/app/sitemap.js - Dynamic sitemap generation
 
 export default function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://swaras-ai.vercel.app';
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL || 'https://tryswarai.vercel.app/';
 
   return [
     {
