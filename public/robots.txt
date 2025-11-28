@@ -6,7 +6,7 @@ Disallow: /api/
 Disallow: /chat/
 
 # Sitemap
-Sitemap: https://swaras-ai.vercel.app/sitemap.xml
+Sitemap: https://tryswarai.vercel.app/sitemap.xml
 
 # Crawl-delay for polite bots
 Crawl-delay: 1

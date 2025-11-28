@@ -623,7 +623,7 @@ export const useChatStore = create<ChatStore>()(
       },
     }),
     {
-      name: 'swaras-ai-persona-storage',
+      name: 'swar-ai-persona-storage',
       partialize: (state) => ({
         personaConversations: state.personaConversations,
         // selectedPersona: state.selectedPersona, // Don't persist selected persona
