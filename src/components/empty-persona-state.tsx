@@ -241,7 +241,7 @@ const EmptyPersonaState = () => {
             className={`text-xs sm:text-sm font-medium ${
               darkMode ? 'text-slate-400' : 'text-slate-600'
             }`}>
-            All {availablePersonas.length} mentors online
+            {availablePersonas.length} mentors available now
           </span>
         </motion.div>
       </div>
