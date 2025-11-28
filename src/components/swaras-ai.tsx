@@ -8,7 +8,7 @@ import { logger } from '@/utils/logger';
 import { useChat } from '@ai-sdk/react';
 import { useClerk, useUser } from '@clerk/nextjs';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LogOut, Menu, User } from 'lucide-react';
+import { LayoutGrid, LogOut, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import ChatHeader from './chat/chat-header';
@@ -824,7 +824,7 @@ const SwarasAI = () => {
                 : 'text-gray-700 hover:bg-slate-100'
             }`}
             whileTap={{ scale: 0.95 }}>
-            <Menu className='w-6 h-6' />
+            <LayoutGrid className='w-6 h-6' />
           </motion.button>
 
           {/* Center Logo/Title */}
