@@ -8,14 +8,14 @@ import { motion } from 'framer-motion';
 const pricingPlans = [
   {
     name: 'Free',
-    price: '$0',
+    price: '₹0',
     period: 'forever',
     description: 'Get started with AI mentorship',
     features: [
       '10 messages per day',
       'Access to all AI personas',
       'Basic support',
-      // 'Community access',
+      // 'GPT-4o powered responses',
     ],
     cta: 'Get started',
     href: '/signup',
@@ -26,16 +26,15 @@ const pricingPlans = [
   },
   {
     name: 'Pro',
-    price: '$9',
+    price: '₹499',
     period: 'per month',
     description: 'For power users and professionals',
     features: [
       '100 messages per day',
       'Access to all AI personas',
       'Priority support',
-      // 'Advanced features',
-      // 'Message history export',
-      // 'Custom persona preferences',
+      // 'GPT-4o powered responses',
+      // 'Faster response time',
     ],
     cta: 'Upgrade to Pro',
     href: '/signup?plan=pro',
@@ -46,18 +45,16 @@ const pricingPlans = [
   },
   {
     name: 'Maxx',
-    price: '$29',
+    price: '₹2,499',
     period: 'per month',
     description: 'Unlimited access for teams',
     features: [
       '1000 messages per day',
       'Access to all AI personas',
       'Dedicated support',
-      // 'Team collaboration',
+      // 'GPT-4o powered responses',
       // 'Priority processing',
-      // 'API access',
-      // 'Custom integrations',
-      // 'Advanced analytics',
+      // 'API access (coming soon)',
     ],
     cta: 'Go Maxx',
     href: '/signup?plan=maxx',
@@ -153,14 +150,14 @@ export default function PricingSection() {
                   href={plan.href}
                   className='block mb-6'>
                   <Button
-                    variant={plan.ctaVariant}
+                    variant={plan.popular ? 'default' : 'secondary'}
                     size='lg'
                     className={`
                       w-full rounded-full py-6 text-base font-medium transition-all duration-300
                       ${
                         plan.popular
                           ? 'bg-gray-900 text-white hover:bg-gray-800 shadow-md hover:shadow-lg'
-                          : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                          : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border-0'
                       }
                     `}>
                     {plan.cta}

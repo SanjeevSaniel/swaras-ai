@@ -14,10 +14,11 @@
 - **Maxx**: $29/month - 1000 messages/day
 
 ### Designer Attribution ✨
-- **Prominent Badge**: Modern dark badge at the top of the landing page
+- **Link Preview**: Interactive preview of the designer's portfolio on hover using Aceternity UI
+- **Refined UX**: "Crafted by" text for a more elegant presentation
+- **Prominent Badge**: Modern glassmorphism badge at the top of the landing page
 - **Creator Recognition**: Links to [sanjeevkujur.dev](https://sanjeevkujur.dev)
 - **Smooth Animations**: Hover effects with scale and color transitions
-- **Professional Look**: Gradient accent and modern typography
 
 ### Client-Side User Sync 🔄
 - **No Webhooks Required**: Works immediately without ngrok or webhook configuration
