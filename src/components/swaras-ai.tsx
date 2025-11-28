@@ -814,21 +814,82 @@ const SwarasAI = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}>
         {/* Mobile Top Bar - Hamburger Menu & Profile */}
-        <div className='fixed top-4 left-4 right-4 z-50 lg:hidden flex items-center justify-between'>
+        <div className='fixed top-0 left-0 right-0 z-50 lg:hidden flex items-center justify-between px-4 py-3 bg-background/80 backdrop-blur-md border-b border-border/40'>
           {/* Hamburger Menu Button */}
           <motion.button
             onClick={() => setIsMobileSidebarOpen(true)}
-            className={`p-2.5 rounded-lg transition-all duration-200 ${
+            className={`p-2 rounded-lg transition-all duration-200 ${
               darkMode
-                ? 'bg-slate-800 border border-slate-700 text-white hover:bg-slate-700'
-                : 'bg-white border border-slate-200 text-slate-900 hover:bg-slate-50'
-            } shadow-lg`}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}>
-            <Menu className='w-5 h-5' />
+                ? 'text-gray-200 hover:bg-slate-800'
+                : 'text-gray-700 hover:bg-slate-100'
+            }`}
+            whileTap={{ scale: 0.95 }}>
+            <Menu className='w-6 h-6' />
           </motion.button>
+
+          {/* Center Logo/Title */}
+          <div
+            className='flex items-center gap-2 cursor-pointer active:opacity-80 transition-opacity'
+            onClick={() => setSelectedPersona(null)}>
+            <div
+              className='relative w-8 h-8 rounded-lg overflow-hidden shadow-sm flex-shrink-0'
+              style={{
+                background: 'linear-gradient(135deg, #FA8072, #FF8E8E)',
+              }}>
+              <svg
+                className='w-8 h-8 p-1.5'
+                viewBox='0 0 24 24'
+                fill='none'
+                xmlns='http://www.w3.org/2000/svg'>
+                <path
+                  d='M12 3C10 3 8 4 7 5.5C6 5 5 5.5 5 7C4 7.5 3.5 8.5 3.5 9.5C3.5 11 4.5 12 6 12C6 14 7 15.5 8.5 16.5'
+                  stroke='white'
+                  strokeWidth='1.8'
+                  strokeLinecap='round'
+                  opacity='0.95'
+                />
+                <path
+                  d='M12 3C14 3 16 4 17 5.5C18 5 19 5.5 19 7C20 7.5 20.5 8.5 20.5 9.5C20.5 11 19.5 12 18 12C18 14 17 15.5 15.5 16.5'
+                  stroke='white'
+                  strokeWidth='1.8'
+                  strokeLinecap='round'
+                  opacity='0.95'
+                />
+                <path
+                  d='M8 13H16C17.1 13 18 13.9 18 15V18C18 19.1 17.1 20 16 20H13L11 22L9 20H8C6.9 20 6 19.1 6 18V15C6 13.9 6.9 13 8 13Z'
+                  stroke='white'
+                  strokeWidth='1.8'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  opacity='0.95'
+                />
+                <circle
+                  cx='10'
+                  cy='16.5'
+                  r='1'
+                  fill='white'
+                  opacity='0.95'
+                />
+                <circle
+                  cx='12'
+                  cy='16.5'
+                  r='1'
+                  fill='white'
+                  opacity='0.95'
+                />
+                <circle
+                  cx='14'
+                  cy='16.5'
+                  r='1'
+                  fill='white'
+                  opacity='0.95'
+                />
+              </svg>
+            </div>
+            <span className='font-bold text-lg tracking-tight'>
+              Swar<span className='text-[#FA8072]'>AI</span>
+            </span>
+          </div>
 
           {/* Mobile Profile Dropdown */}
           <motion.div
@@ -838,21 +899,19 @@ const SwarasAI = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className={`p-2.5 rounded-lg transition-all duration-200 ${
-                    darkMode
-                      ? 'bg-slate-800 border border-slate-700 text-white hover:bg-slate-700'
-                      : 'bg-white border border-slate-200 text-slate-900 hover:bg-slate-50'
-                  } shadow-lg`}>
+                  className={`p-1 rounded-full transition-all duration-200 ring-2 ring-transparent hover:ring-[#FA8072]/20`}>
                   {user?.imageUrl ? (
                     <Image
                       src={user.imageUrl}
                       alt={user.firstName || 'User'}
-                      width={20}
-                      height={20}
-                      className='rounded-full object-cover'
+                      width={32}
+                      height={32}
+                      className='rounded-full object-cover border border-border'
                     />
                   ) : (
-                    <User className='w-5 h-5' />
+                    <div className='w-8 h-8 rounded-full bg-accent flex items-center justify-center'>
+                      <User className='w-4 h-4 text-foreground' />
+                    </div>
                   )}
                 </button>
               </DropdownMenuTrigger>
