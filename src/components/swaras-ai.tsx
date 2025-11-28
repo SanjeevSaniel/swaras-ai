@@ -28,6 +28,7 @@ import { Sheet, SheetContent } from './ui/sheet';
 import WelcomeScreen from './welcome/welcome-screen';
 import Image from 'next/image';
 import { useMessageSync } from '@/hooks/useMessageSync';
+import { useUserSync } from '@/hooks/useUserSync';
 
 const SwarasAI = () => {
   const [responseMetadata, setResponseMetadata] = useState(null);
@@ -38,8 +39,8 @@ const SwarasAI = () => {
   const [userUsage, setUserUsage] = useState(null);
   const [isRateLimited, setIsRateLimited] = useState(false);
 
-  // Clerk authentication hooks
-  const { user } = useUser();
+  // Clerk authentication hooks with automatic database sync
+  const { user } = useUserSync();
   const { signOut } = useClerk();
 
   const {
@@ -65,7 +66,8 @@ const SwarasAI = () => {
     : Object.values(personaConversations || {});
 
   // Initialize message sync hook for database persistence
-  const { syncConversation, loadConversation, loadAllConversations } = useMessageSync();
+  const { syncConversation, loadConversation, loadAllConversations } =
+    useMessageSync();
 
   // Initialize AI SDK's useChat hook
   const chatApi = useChat({
@@ -363,10 +365,17 @@ const SwarasAI = () => {
         }
 
         // Load from database
-        logger.log('🔄 Loading conversation from database for', selectedPersona);
+        logger.log(
+          '🔄 Loading conversation from database for',
+          selectedPersona,
+        );
         const dbConversation = await loadConversation(selectedPersona);
 
-        if (dbConversation && dbConversation.messages && dbConversation.messages.length > 0) {
+        if (
+          dbConversation &&
+          dbConversation.messages &&
+          dbConversation.messages.length > 0
+        ) {
           // Format conversation for local store
           const formattedConv = {
             id: dbConversation.id,
@@ -386,7 +395,11 @@ const SwarasAI = () => {
           // Update local store with persisted conversation
           updateConversation(selectedPersona, formattedConv);
           setCurrentConversation(formattedConv);
-          logger.log('✅ Loaded conversation from database with', formattedConv.messages.length, 'messages');
+          logger.log(
+            '✅ Loaded conversation from database with',
+            formattedConv.messages.length,
+            'messages',
+          );
         }
       } catch (error) {
         logger.error('❌ Failed to load conversation from database:', error);
@@ -394,7 +407,14 @@ const SwarasAI = () => {
     };
 
     loadPersistedConversation();
-  }, [selectedPersona, user, loadConversation, personaConversations, updateConversation, setCurrentConversation]);
+  }, [
+    selectedPersona,
+    user,
+    loadConversation,
+    personaConversations,
+    updateConversation,
+    setCurrentConversation,
+  ]);
 
   // Sync messages from current conversation to useChat
   useEffect(() => {
