@@ -1,20 +1,23 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { personaManager } from '@/constants/config';
 import { useChatStore } from '@/store/chat-store';
 import { UserButton, useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   LogOut,
   MessageSquarePlus,
   Moon,
+  Search,
   Sun,
   Trash2,
   User,
 } from 'lucide-react';
-import { useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +27,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import UsageQuota from '@/components/usage-quota';
-import Image from 'next/image';
 
 interface AppSidebarProps {
   conversations?: any[];
@@ -33,7 +35,7 @@ interface AppSidebarProps {
   onNewConversation?: () => void;
   onDeleteConversation: (personaId: string) => void;
   selectedPersona: string | null;
-  onSelectPersona: (personaId: string) => void;
+  onSelectPersona: (personaId: string | null) => void;
 }
 
 const AppSidebar = ({
@@ -57,24 +59,56 @@ const AppSidebar = ({
   };
 
   const allPersonas = personaManager.getAllPersonas({ enabled: true }) as any[];
-  const currentPersona = selectedPersona
-    ? personaManager.getPersona(selectedPersona)
-    : null;
+
+  // Filter and group personas
+  const groupedPersonas = useMemo(() => {
+    const filtered = allPersonas.filter((persona) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        persona.name.toLowerCase().includes(query) ||
+        persona.title.toLowerCase().includes(query) ||
+        persona.tags?.some((tag) => tag.toLowerCase().includes(query))
+      );
+    });
+
+    const groups: Record<string, typeof allPersonas> = {};
+
+    // Define category order
+    const categoryOrder = [
+      'health',
+      'technology',
+      'business',
+      'finance',
+      'productivity',
+      'education',
+      'creative',
+      'lifestyle',
+      'fitness',
+      'professional',
+    ];
+
+    filtered.forEach((persona) => {
+      const category = persona.category || 'other';
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push(persona);
+    });
+
+    // Sort categories based on defined order, putting others at the end
+    return Object.entries(groups).sort(([a], [b]) => {
+      const indexA = categoryOrder.indexOf(a.toLowerCase());
+      const indexB = categoryOrder.indexOf(b.toLowerCase());
+
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      return a.localeCompare(b);
+    });
+  }, [allPersonas, searchQuery]);
 
   // Get persona-conversation map for showing message counts
   const personaConversationMap = personaConversations || {};
-
-  const formatTime = (timestamp: number | string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-
-    if (diff < 60000) return 'Just now';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}m`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h`;
-    if (diff < 604800000) return `${Math.floor(diff / 86400000)}d`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
 
   return (
     <div className='w-full sm:w-80 h-full bg-background border-r border-border/40 flex flex-col'>
@@ -82,7 +116,10 @@ const AppSidebar = ({
       <div className='px-4 py-3.5 pr-14 lg:pr-4 border-b border-border/40 bg-background/95 backdrop-blur-sm'>
         <div className='flex items-center justify-between gap-3'>
           {/* Logo & Title */}
-          <div className='flex items-center gap-2.5'>
+          <div
+            className='flex items-center gap-2.5 cursor-pointer hover:opacity-80 transition-opacity'
+            onClick={() => onSelectPersona(null as any)} // Cast to any to bypass strict type check if needed, or update interface
+          >
             <div
               className='relative w-9 h-9 rounded-xl overflow-hidden shadow-md flex-shrink-0'
               style={{
@@ -225,128 +262,142 @@ const AppSidebar = ({
         </div>
       </div>
 
-      {/* Section Header */}
-      <div className='px-4 pt-4 pb-2'>
-        <div className='flex items-center justify-between'>
-          <h2 className='text-sm font-semibold text-muted-foreground/70 uppercase tracking-wide'>
-            Personas
-          </h2>
-          <div className='flex items-center gap-1'>
-            <div className='w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse'></div>
-            <span className='text-xs text-muted-foreground/60'>
-              {allPersonas.length} online
-            </span>
-          </div>
+      {/* Search Bar */}
+      <div className='px-3 py-3'>
+        <div className='relative'>
+          <Search className='absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground/50' />
+          <Input
+            type='text'
+            placeholder='Search mentors...'
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className='pl-9 h-9 bg-accent/20 border-border/40 focus:bg-background transition-colors text-sm focus-visible:ring-[#FA8072]/30 focus-visible:border-[#FA8072]/50'
+          />
         </div>
       </div>
 
       {/* Personas List - Modern Cards */}
-      <div className='flex-1 overflow-y-auto px-3 pb-3'>
-        <div className='space-y-2'>
+      <div className='flex-1 overflow-y-auto px-3 pb-3 custom-scrollbar'>
+        <div className='space-y-4'>
           <AnimatePresence mode='popLayout'>
-            {allPersonas.map((persona) => {
-              const isActive = selectedPersona === persona.id;
-              const personaConversation = personaConversationMap[persona.id];
-              // Use messageCount from conversation object if available, otherwise count messages
-              const messageCount =
-                personaConversation?.messageCount ||
-                personaConversation?.messages?.length ||
-                0;
-              const lastMessage =
-                personaConversation?.messages?.[
-                  personaConversation.messages.length - 1
-                ];
+            {groupedPersonas.map(([category, personas]) => (
+              <motion.div
+                key={category}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className='space-y-1.5'>
+                <h3 className='px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50'>
+                  {category}
+                </h3>
+                <div className='space-y-1'>
+                  {personas.map((persona) => {
+                    const isActive = selectedPersona === persona.id;
+                    const personaConversation =
+                      personaConversationMap[persona.id];
+                    const messageCount =
+                      personaConversation?.messageCount ||
+                      personaConversation?.messages?.length ||
+                      0;
 
-              return (
-                <motion.div
-                  key={`${persona.id}-${messageCount}`}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  layout
-                  whileHover={{ scale: isActive ? 1 : 1.01 }}
-                  className={`group relative rounded-xl p-2.5 cursor-pointer transition-all duration-200 ${
-                    isActive
-                      ? 'bg-gradient-to-br from-accent via-accent to-accent/80 border border-[#FA8072]/30 shadow-md'
-                      : 'bg-accent/30 hover:bg-accent/50 border border-transparent hover:border-border/50'
-                  }`}
-                  onClick={() => onSelectPersona(persona.id)}>
-                  <div className='flex items-center gap-2.5'>
-                    {/* Enhanced Avatar with Profile Image */}
-                    <div className='relative flex-shrink-0'>
-                      <div
-                        className={`w-10 h-10 rounded-xl overflow-hidden shadow-sm transition-all ${
+                    return (
+                      <motion.div
+                        key={persona.id}
+                        layout
+                        whileHover={{ scale: isActive ? 1 : 1.01 }}
+                        className={`group relative rounded-xl p-2.5 cursor-pointer transition-all duration-200 ${
                           isActive
-                            ? 'ring-2 ring-[#FA8072]/40 ring-offset-2 ring-offset-background'
-                            : ''
-                        }`}>
-                        <Image
-                          src={persona.avatarUrl}
-                          alt={persona.name}
-                          width={40}
-                          height={40}
-                          className='object-cover'
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            const nextEl =
-                              target.nextElementSibling as HTMLElement;
-                            target.style.display = 'none';
-                            if (nextEl) nextEl.style.display = 'flex';
-                          }}
-                        />
-                        <div
-                          className='w-10 h-10 bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center text-lg'
-                          style={{ display: 'none' }}>
-                          {persona.avatar || '👤'}
-                        </div>
-                      </div>
-                      {/* Status Badge */}
-                      <div className='absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background shadow-sm'></div>
-                    </div>
-
-                    <div className='flex-1 pt-2 min-w-0'>
-                      {/* Name with Message Count */}
-                      <div className='flex items-center gap-1.5 mb-0.5'>
-                        <h3
-                          className={`text-sm font-semibold truncate leading-tight ${
-                            isActive ? 'text-foreground' : 'text-foreground/90'
-                          }`}>
-                          {persona.name}
-                        </h3>
-                        {messageCount > 0 && (
-                          <div className='flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-[#FA8072]/10 border border-[#FA8072]/20 flex-shrink-0'>
-                            <MessageSquarePlus className='w-2.5 h-2.5 text-[#FA8072]' />
-                            <span className='text-[10px] text-[#FA8072] font-semibold'>
-                              {messageCount}
-                            </span>
+                            ? 'bg-gradient-to-br from-accent via-accent to-accent/80 border border-[#FA8072]/30 shadow-md'
+                            : 'bg-accent/30 hover:bg-accent/50 border border-transparent hover:border-border/50'
+                        }`}
+                        onClick={() => onSelectPersona(persona.id)}>
+                        <div className='flex items-center gap-2.5'>
+                          {/* Enhanced Avatar with Profile Image */}
+                          <div className='relative flex-shrink-0'>
+                            <div
+                              className={`w-10 h-10 rounded-xl overflow-hidden shadow-sm transition-all ${
+                                isActive
+                                  ? 'ring-2 ring-[#FA8072]/40 ring-offset-2 ring-offset-background'
+                                  : ''
+                              }`}>
+                              <Image
+                                src={persona.avatarUrl}
+                                alt={persona.name}
+                                width={40}
+                                height={40}
+                                className='object-cover'
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  const nextEl =
+                                    target.nextElementSibling as HTMLElement;
+                                  target.style.display = 'none';
+                                  if (nextEl) nextEl.style.display = 'flex';
+                                }}
+                              />
+                              <div
+                                className='w-10 h-10 bg-gradient-to-br from-[#FA8072] to-[#FF8E8E] flex items-center justify-center text-lg'
+                                style={{ display: 'none' }}>
+                                {persona.avatar || '👤'}
+                              </div>
+                            </div>
+                            {/* Status Badge */}
+                            <div className='absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background shadow-sm'></div>
                           </div>
-                        )}
-                      </div>
 
-                      {/* Title */}
-                      <p className='text-xs text-muted-foreground/70 truncate leading-tight'>
-                        {persona.title}
-                      </p>
-                    </div>
+                          <div className='flex-1 pt-1 min-w-0'>
+                            {/* Name with Message Count */}
+                            <div className='flex items-center gap-1.5 mb-0.5'>
+                              <h3
+                                className={`text-sm font-semibold truncate leading-tight ${
+                                  isActive
+                                    ? 'text-foreground'
+                                    : 'text-foreground/90'
+                                }`}>
+                                {persona.name}
+                              </h3>
+                              {messageCount > 0 && (
+                                <div className='flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-[#FA8072]/10 border border-[#FA8072]/20 flex-shrink-0'>
+                                  <MessageSquarePlus className='w-2.5 h-2.5 text-[#FA8072]' />
+                                  <span className='text-[10px] text-[#FA8072] font-semibold'>
+                                    {messageCount}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
 
-                    {/* Delete Button - Top Right */}
-                    {personaConversation && (
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        className='absolute bottom-1.5 right-1.5 opacity-0 group-hover:opacity-100 h-6 w-6 p-0 rounded-lg hover:bg-destructive/10 transition-all'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteConversation(persona.id);
-                        }}>
-                        <Trash2 className='h-3 w-3 text-muted-foreground/60 hover:text-red-500 transition-colors' />
-                      </Button>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
+                            {/* Title */}
+                            <p className='text-xs text-muted-foreground/70 truncate leading-tight'>
+                              {persona.title}
+                            </p>
+                          </div>
+
+                          {/* Delete Button - Top Right */}
+                          {personaConversation && (
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='absolute bottom-1.5 right-1.5 opacity-0 group-hover:opacity-100 h-6 w-6 p-0 rounded-lg hover:bg-destructive/10 transition-all'
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDeleteConversation(persona.id);
+                              }}>
+                              <Trash2 className='h-3 w-3 text-muted-foreground/60 hover:text-red-500 transition-colors' />
+                            </Button>
+                          )}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            ))}
           </AnimatePresence>
+
+          {groupedPersonas.length === 0 && (
+            <div className='text-center py-8 text-muted-foreground/50 text-sm'>
+              No mentors found
+            </div>
+          )}
         </div>
       </div>
 
