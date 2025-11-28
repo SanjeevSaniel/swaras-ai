@@ -28,7 +28,7 @@ const pricingPlans = [
     name: 'Pro',
     price: '₹499',
     period: 'per month',
-    description: 'For power users and professionals',
+    description: 'For serious learners & professionals',
     features: [
       '100 messages per day',
       'Access to all AI personas',
@@ -47,7 +47,7 @@ const pricingPlans = [
     name: 'Maxx',
     price: '₹2,499',
     period: 'per month',
-    description: 'Unlimited access for teams',
+    description: 'For teams & power users',
     features: [
       '1000 messages per day',
       'Access to all AI personas',
