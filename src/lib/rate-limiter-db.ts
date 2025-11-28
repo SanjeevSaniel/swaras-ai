@@ -272,6 +272,12 @@ export async function getUserStats(userId: string) {
 
 /**
  * Sync user to database (called from Clerk webhook)
+ * @param userId - Clerk user ID
+ * @param email - User email
+ * @param firstName - User first name
+ * @param lastName - User last name
+ * @param imageUrl - User profile image URL
+ * @param tier - User tier (only applied for new users, existing users preserve their tier)
  */
 export async function syncUserToDatabase(
   userId: string,
@@ -279,7 +285,7 @@ export async function syncUserToDatabase(
   firstName?: string,
   lastName?: string,
   imageUrl?: string,
-  tier: string = 'FREE',
+  tier?: string,
 ) {
   try {
     // Check if user exists
@@ -289,7 +295,8 @@ export async function syncUserToDatabase(
       .where(eq(users.id, userId));
 
     if (existingUser) {
-      // Update existing user
+      // Update existing user - preserve their tier
+      console.log(`📝 Updating existing user: ${userId} (tier: ${existingUser.tier} - preserved)`);
       await db
         .update(users)
         .set({
@@ -297,19 +304,21 @@ export async function syncUserToDatabase(
           firstName: firstName || null,
           lastName: lastName || null,
           imageUrl: imageUrl || null,
-          tier,
+          // Don't update tier for existing users - preserve their current tier
           updatedAt: new Date(),
         })
         .where(eq(users.id, userId));
     } else {
-      // Insert new user
+      // Insert new user with default tier
+      const newUserTier = tier || 'FREE';
+      console.log(`✨ Creating new user: ${userId} (tier: ${newUserTier})`);
       await db.insert(users).values({
         id: userId,
         email,
         firstName: firstName || null,
         lastName: lastName || null,
         imageUrl: imageUrl || null,
-        tier,
+        tier: newUserTier,
       });
     }
 

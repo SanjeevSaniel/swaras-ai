@@ -1,10 +1,10 @@
 # **SwarAI - AI Mentorship Platform** 🚀
 
-> **Version 1.1.0 - Your Personal AI Mentorship Platform with 16 Expert Mentors**
+> **Version 1.2.0 - Your Personal AI Mentorship Platform with 16 Expert Mentors**
 
 A sophisticated Next.js 15 application that provides personalized AI mentorship through authentic persona interactions. Choose from 16 expert mentors including legendary developers, health experts, geopolitics analysts, business strategists, wellness advocates, and storytellers.
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/yourusername/swaras-ai)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/yourusername/swaras-ai)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1-blue?style=flat-square&logo=react)](https://react.dev/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -15,14 +15,14 @@ A sophisticated Next.js 15 application that provides personalized AI mentorship 
 
 ![Architecture Diagram](public/snapshots/Architecture_Nov-27-2025.png)
 
-## 🆕 **What's New in v1.1.0**
+## 🆕 **What's New in v1.2.0**
 
 ### **🎉 Latest Features**
 
-- ✨ **Rate Limiting System** - Fair usage quotas with real-time tracking
-- ✨ **5 New Expert Mentors** - UX Design, Storytelling, Mythology, Wellness, Tech Reviews
-- ✨ **Floating Quota Widget** - Beautiful collapsible usage tracker in sidebar
-- ✨ **Enhanced Landing Pages** - Dynamic persona displays with stacked avatars
+- ✨ **Pricing Plans Section** - Modern pricing cards with 3 tiers (Free, Pro, Maxx)
+- ✨ **Designer Attribution** - Prominent badge showcasing project creator
+- ✨ **Client-Side User Sync** - No webhooks needed, works immediately
+- ✨ **Comprehensive Documentation** - Complete user sync guides and troubleshooting
 
 ### **🎉 Core Features**
 
@@ -434,6 +434,27 @@ Contributions are welcome! Please follow these steps:
 
 ## 📝 **Changelog**
 
+### **v1.2.0** (2025-11-28)
+- ✨ **Pricing Plans Section**: Modern pricing cards inspired by ngrok.com design
+  - 3 tiers: Free (10 msgs/day), Pro (100 msgs/day), Maxx (1000 msgs/day)
+  - Hover effects and animations
+  - "Most popular" badge on Pro plan
+- ✨ **Designer Attribution**: Prominent badge linking to sanjeevkujur.dev
+  - Modern dark badge with gradient accent
+  - Positioned at top of landing page
+  - Hover animations and effects
+- ✨ **Client-Side User Sync**: Simplified user synchronization
+  - No webhooks or ngrok required for development
+  - Automatic sync on first login
+  - Tier preservation for existing users
+  - Session-based deduplication
+- 📚 **Comprehensive Documentation**:
+  - Complete user sync documentation
+  - Troubleshooting guides
+  - Testing procedures
+  - Deployment checklist
+- 🐛 **Bug Fixes**: Fixed import typos in landing page
+
 ### **v1.1.0** (2025-11-26)
 - ✨ **Rate Limiting System**: Fair usage quotas with Clerk metadata storage
 - ✨ **5 New Mentors**: Saptarshi Prakash, Puneet Kumar, Akshat Gupta, Samantha, MKBHD
@@ -502,6 +523,6 @@ For questions, suggestions, or collaboration:
 
 ---
 
-**Built with ❤️ by Sanjeev K | Version 1.1.0 | November 2025**
+**Built with ❤️ by [Sanjeev Kujur](https://sanjeevkujur.dev) | Version 1.2.0 | November 2025**
 
 *Empowering learners with AI-powered mentorship from 10+ expert personas*

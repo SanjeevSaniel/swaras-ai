@@ -56,8 +56,15 @@ export async function POST(req: Request) {
   console.log(`📨 Clerk Webhook received: ${eventType}`);
 
   try {
-    if (eventType === 'user.created' || eventType === 'user.updated') {
-      const { id, email_addresses, first_name, last_name, image_url, public_metadata } = evt.data;
+    if (eventType === 'user.created') {
+      const {
+        id,
+        email_addresses,
+        first_name,
+        last_name,
+        image_url,
+        public_metadata,
+      } = evt.data;
 
       const email = email_addresses[0]?.email_address;
 
@@ -66,20 +73,49 @@ export async function POST(req: Request) {
         return new Response('Error: No email found', { status: 400 });
       }
 
-      // Get tier from public metadata or default to FREE
+      // Get tier from public metadata or default to FREE for new users
       const tier = (public_metadata?.tier as string) || 'FREE';
 
-      // Sync user to database using Drizzle ORM
+      // Sync new user to database with tier
       await syncUserToDatabase(
         id,
         email,
         first_name || undefined,
         last_name || undefined,
         image_url || undefined,
-        tier
+        tier,
       );
 
-      console.log(`✅ User ${eventType === 'user.created' ? 'created' : 'updated'} in database: ${id}`);
+      console.log(`✅ User created in database: ${id} (tier: ${tier})`);
+
+      return new Response(JSON.stringify({ success: true, userId: id }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (eventType === 'user.updated') {
+      const { id, email_addresses, first_name, last_name, image_url } =
+        evt.data;
+
+      const email = email_addresses[0]?.email_address;
+
+      if (!email) {
+        console.error('No email found for user');
+        return new Response('Error: No email found', { status: 400 });
+      }
+
+      // Update user profile but preserve their existing tier
+      await syncUserToDatabase(
+        id,
+        email,
+        first_name || undefined,
+        last_name || undefined,
+        image_url || undefined,
+        // Don't pass tier - let syncUserToDatabase preserve the existing tier
+      );
+
+      console.log(`✅ User profile updated in database: ${id}`);
 
       return new Response(JSON.stringify({ success: true, userId: id }), {
         status: 200,

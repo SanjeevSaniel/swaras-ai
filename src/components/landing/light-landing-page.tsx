@@ -7,6 +7,8 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
+import PricingSection from './pricing-section';
+import { LinkPreview } from '@/components/ui/link-preview';
 
 const LightLandingPage = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -269,11 +271,33 @@ const LightLandingPage = () => {
       <main className='relative'>
         <div className='container mx-auto px-6'>
           <div className='flex flex-col items-center justify-center min-h-screen text-center pt-20'>
-            {/* Badge */}
+            {/* Attribution Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className='mb-6'>
+              <LinkPreview
+                url='https://sanjeevkujur.dev'
+                className='group relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-gray-200 shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300'>
+                <span className='text-xs text-gray-500 font-medium'>
+                  Crafted by
+                </span>
+                <span className='text-xs font-bold text-gray-900 group-hover:text-[#FA8072] transition-colors'>
+                  Sanjeev Kujur
+                </span>
+              </LinkPreview>
+            </motion.div>
+
+            {/* AI Powered Personas Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 0.6,
+                delay: 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className='mb-8'>
               <div className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-200'>
                 <Sparkles className='w-3.5 h-3.5 text-gray-600' />
@@ -485,7 +509,9 @@ const LightLandingPage = () => {
         </div>
 
         {/* Features Section */}
-        <div className='bg-gray-50 py-24'>
+        <div
+          className='bg-gray-50 py-24'
+          id='features'>
           <div className='container mx-auto px-6'>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -552,6 +578,9 @@ const LightLandingPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Pricing Section */}
+        <PricingSection />
 
         {/* Use Cases Section */}
         <div className='container mx-auto px-6 py-24'>

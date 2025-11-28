@@ -72,15 +72,41 @@ npm run dev
 
 Add the same environment variables to your hosting platform's settings.
 
-## 8. Optional: Webhook Setup (Production)
+## 8. Webhook Setup (Required for Data Sync)
+
+> **⚠️ IMPORTANT**: Webhooks are **required** for keeping Clerk user data synchronized with your Neon database. Without webhooks, user data will not sync properly.
 
 1. In Clerk Dashboard, go to **Webhooks**
-2. Create a new webhook endpoint
-3. Select the events you want to listen to
-4. Add the webhook secret to your environment variables:
+2. Click **Add Endpoint**
+3. Enter your webhook URL:
+   - Development: `https://your-domain.ngrok.io/api/webhooks/clerk`
+   - Production: `https://your-domain.com/api/webhooks/clerk`
+4. Select these events (required):
+   - ✅ `user.created` - Syncs new users to database
+   - ✅ `user.updated` - Updates user profile data (preserves tier)
+   - ✅ `user.deleted` - Removes users from database
+5. Copy the **Signing Secret** (starts with `whsec_`)
+6. Add it to your environment variables:
 ```env
 CLERK_WEBHOOK_SECRET=whsec_your_webhook_secret
 ```
+
+### Why Webhooks Are Critical
+
+- **Automatic Sync**: User data is automatically synced when users sign up or update their profile
+- **Tier Preservation**: New users get FREE tier; existing users keep their current tier (PRO/MAXX)
+- **Profile Updates**: Email, name, and profile image stay in sync between Clerk and your database
+- **No Client-Side Code**: All synchronization happens server-side through webhooks
+
+### Testing Webhooks Locally
+
+For local development, use a tool like [ngrok](https://ngrok.com) to expose your localhost:
+
+```bash
+ngrok http 3000
+```
+
+Then use the ngrok URL in your Clerk webhook settings.
 
 ## Features Enabled
 

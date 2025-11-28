@@ -28,7 +28,7 @@ import { Sheet, SheetContent } from './ui/sheet';
 import WelcomeScreen from './welcome/welcome-screen';
 import Image from 'next/image';
 import { useMessageSync } from '@/hooks/useMessageSync';
-import { useUserSync } from '@/hooks/useUserSync';
+import { useEnsureUserSync } from '@/hooks/useEnsureUserSync';
 
 const SwarasAI = () => {
   const [responseMetadata, setResponseMetadata] = useState(null);
@@ -39,8 +39,8 @@ const SwarasAI = () => {
   const [userUsage, setUserUsage] = useState(null);
   const [isRateLimited, setIsRateLimited] = useState(false);
 
-  // Clerk authentication hooks with automatic database sync
-  const { user } = useUserSync();
+  // Clerk authentication with automatic database sync (no webhooks needed)
+  const { user } = useEnsureUserSync();
   const { signOut } = useClerk();
 
   const {
