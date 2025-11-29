@@ -191,7 +191,6 @@ const AppSidebar = ({
           <div className='flex items-center gap-2 flex-shrink-0'>
             {/* Theme Toggle */}
             <Button
-              isIconOnly
               variant='ghost'
               size='icon'
               onClick={toggleDarkMode}
