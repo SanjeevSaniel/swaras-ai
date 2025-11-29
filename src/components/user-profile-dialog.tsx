@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, LogOut, CreditCard, Download, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { UpgradeCheckoutDialog } from './upgrade-checkout-dialog';
 
 interface UserProfileDialogProps {
   open: boolean;
@@ -34,6 +35,9 @@ export function UserProfileDialog({
     tier: 'Free',
   });
   const [loadingUsage, setLoadingUsage] = useState(true);
+  const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
+  const [selectedPlanForCheckout, setSelectedPlanForCheckout] =
+    useState<any>(null);
 
   // Fetch usage stats
   useEffect(() => {
@@ -209,33 +213,33 @@ export function UserProfileDialog({
                 </div>
 
                 {/* Usage Stats */}
-                <div className='rounded-xl border border-gray-200 p-5 bg-gray-50/50'>
-                  <div className='flex items-center justify-between mb-3'>
-                    <span className='font-medium text-gray-700'>
-                      Daily Message Quota
+                <div className='rounded-lg border border-border bg-card p-4'>
+                  <div className='flex items-center justify-between mb-2'>
+                    <span className='text-sm font-medium text-card-foreground'>
+                      Daily Messages
                     </span>
-                    <span className='text-sm font-medium text-gray-900'>
+                    <span className='text-sm font-semibold text-card-foreground'>
                       {loadingUsage
                         ? '...'
                         : `${usageStats.used} / ${usageStats.limit}`}
                     </span>
                   </div>
-                  <div className='w-full bg-gray-200 rounded-full h-2.5 overflow-hidden'>
+                  <div className='w-full bg-secondary rounded-full h-2 overflow-hidden'>
                     <motion.div
                       className={`h-full rounded-full ${
                         usageStats.percentage > 90
-                          ? 'bg-red-500'
+                          ? 'bg-destructive'
                           : usageStats.percentage > 75
                           ? 'bg-orange-500'
-                          : 'bg-gray-900'
+                          : 'bg-primary'
                       }`}
                       initial={{ width: 0 }}
                       animate={{ width: `${usageStats.percentage}%` }}
                       transition={{ duration: 0.5 }}
                     />
                   </div>
-                  <p className='text-xs text-gray-500 mt-2'>
-                    Resets daily at midnight. Upgrade for unlimited messages.
+                  <p className='text-xs text-muted-foreground mt-2'>
+                    Resets daily at midnight
                   </p>
                 </div>
 
@@ -329,7 +333,11 @@ export function UserProfileDialog({
                                 ? 'bg-white text-black hover:bg-gray-100'
                                 : 'bg-gray-900 text-white hover:bg-gray-800'
                             }`}
-                            size='sm'>
+                            size='sm'
+                            onClick={() => {
+                              setSelectedPlanForCheckout(plan);
+                              setCheckoutDialogOpen(true);
+                            }}>
                             {plan.name === 'Free'
                               ? 'Downgrade to Free'
                               : `Upgrade to ${plan.name}`}
@@ -447,6 +455,28 @@ export function UserProfileDialog({
           </Tabs>
         </div>
       </DialogContent>
+
+      {/* Upgrade Checkout Dialog */}
+      <UpgradeCheckoutDialog
+        open={checkoutDialogOpen}
+        onOpenChange={setCheckoutDialogOpen}
+        selectedPlan={selectedPlanForCheckout}
+        onSuccess={() => {
+          // Refresh usage stats after successful payment
+          const fetchUsage = async () => {
+            try {
+              const response = await fetch('/api/user/usage');
+              if (response.ok) {
+                const data = await response.json();
+                setUsageStats(data);
+              }
+            } catch (error) {
+              console.error('Failed to fetch usage stats:', error);
+            }
+          };
+          fetchUsage();
+        }}
+      />
     </Dialog>
   );
 }
