@@ -7,6 +7,11 @@ import { streamText } from 'ai';
 import { auth } from '@clerk/nextjs/server';
 import { checkRateLimit, incrementUsage } from '@/lib/rate-limiter-db';
 import { createOrUpdateUser } from '@/app/actions';
+import {
+  getMemoryContext,
+  addMemory,
+  type MemoryMessage,
+} from '@/services/memory-service';
 
 const isDev = process.env.NODE_ENV === 'development';
 const logger = {
@@ -78,10 +83,21 @@ export async function POST(req: {
     logger.log(`📝 User message: "${lastMessage.content}"`);
 
     // Get conversation history (excluding the last message)
-    const history = messages.slice(0, -1);
+    // OPTIMIZATION: Keep only the last 10 messages to save tokens/cost
+    // This implements a "Sliding Window" context
+    const history = messages.slice(0, -1).slice(-10);
 
-    // Get persona system prompt
-    const systemPrompt = getPersonaSystemPrompt(persona, personaName);
+    // MEMORY: Retrieve relevant long-term memories from Mem0
+    const memoryContext = await getMemoryContext(
+      userId,
+      persona,
+      lastMessage.content,
+    );
+    logger.log(`🧠 Memory context retrieved (${memoryContext.length} chars)`);
+
+    // Get persona system prompt and inject memory context
+    const baseSystemPrompt = getPersonaSystemPrompt(persona, personaName);
+    const systemPrompt = baseSystemPrompt + memoryContext;
 
     // Stream the response using Vercel AI SDK
     const stream = streamText({
@@ -103,17 +119,63 @@ export async function POST(req: {
     await incrementUsage(userId);
     logger.log(`✅ Message processed for user ${userId}. Usage updated.`);
 
+    // MEMORY: Store conversation turn with AI response after streaming completes
+    // We'll accumulate the response and store it when done
+    let accumulatedResponse = '';
+
+    // Create a transform stream to capture the response
+    const { readable, writable } = new TransformStream();
+    const reader = stream.toTextStreamResponse().body?.getReader();
+    const writer = writable.getWriter();
+
+    // Stream and capture response simultaneously
+    (async () => {
+      if (!reader) return;
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          // Accumulate response text
+          const text = new TextDecoder().decode(value);
+          accumulatedResponse += text;
+
+          // Pass through to client
+          await writer.write(value);
+        }
+
+        await writer.close();
+
+        // Store complete conversation turn in Mem0
+        if (accumulatedResponse) {
+          logger.log(
+            `💾 Storing complete conversation turn (${accumulatedResponse.length} chars)`,
+          );
+          addMemory(
+            userId,
+            persona,
+            [{ role: 'user', content: lastMessage.content }],
+            accumulatedResponse, // Include AI response
+          ).catch((err) =>
+            logger.error('Failed to store memory (non-blocking):', err),
+          );
+        }
+      } catch (error) {
+        logger.error('Error in stream capture:', error);
+        await writer.abort(error);
+      }
+    })();
+
     // Return stream with rate limit headers
-    const response = stream.toTextStreamResponse();
-    response.headers.set(
-      'X-RateLimit-Limit',
-      String(rateLimitResult.usage.limit),
-    );
-    response.headers.set(
-      'X-RateLimit-Remaining',
-      String(rateLimitResult.usage.remaining - 1),
-    );
-    response.headers.set('X-RateLimit-Reset', rateLimitResult.usage.resetAt);
+    const response = new Response(readable, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'X-RateLimit-Limit': String(rateLimitResult.usage.limit),
+        'X-RateLimit-Remaining': String(rateLimitResult.usage.remaining - 1),
+        'X-RateLimit-Reset': rateLimitResult.usage.resetAt,
+      },
+    });
 
     return response;
   } catch (error) {

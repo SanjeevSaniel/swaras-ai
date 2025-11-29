@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import PricingSection from './pricing-section';
 import { LinkPreview } from '@/components/ui/link-preview';
+import { PersonaGrid } from './persona-grid';
 
 const LightLandingPage = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -367,50 +368,20 @@ const LightLandingPage = () => {
               </Link>
             </motion.div>
 
-            {/* Personas */}
-            <div className='flex flex-col items-center justify-center mt-10 w-full'>
-              <div className='flex flex-col items-center justify-center gap-3'>
-                <div className='flex items-center -space-x-3'>
-                  {personas.slice(0, 6).map((persona, index) => (
-                    <motion.div
-                      key={persona.id}
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
-                      className='group relative'>
-                      <div className='w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 hover:z-50 transition-transform cursor-pointer'>
-                        <Image
-                          src={persona.image}
-                          alt={persona.name}
-                          width={48}
-                          height={48}
-                          className='w-full h-full object-cover'
-                        />
-                      </div>
-                      {/* Tooltip */}
-                      <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50'>
-                        {persona.name}
-                        <div className='absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900'></div>
-                      </div>
-                    </motion.div>
-                  ))}
-                  {(personas.length > 6 || remainingCount > 0) && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: 0.4 + 6 * 0.05 }}
-                      className='w-12 h-12 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-xs font-bold text-white border-2 border-white shadow-lg hover:scale-110 transition-transform cursor-pointer'>
-                      +{Math.max(0, personas.length - 6) + remainingCount}
-                    </motion.div>
-                  )}
-                </div>
-                <div className='text-sm text-gray-600 ml-2'>
-                  <span className='font-semibold text-gray-900'>
-                    10+ AI Personas
-                  </span>
-                  <span className='hidden sm:inline'> ready to help you</span>
-                </div>
-              </div>
+            {/* Personas Grid */}
+            <div className='flex flex-col items-center justify-center mt-16 w-full'>
+              <PersonaGrid />
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 0.8 }}
+                className='text-sm text-gray-500 mt-6'>
+                <span className='font-semibold text-gray-900'>
+                  10+ AI Personas
+                </span>
+                <span className='hidden sm:inline'> ready to help you</span>
+              </motion.div>
             </div>
 
             {/* Feature Cards */}
