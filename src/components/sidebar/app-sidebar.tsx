@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import UsageQuota from '@/components/usage-quota';
+import { UserProfileDialog } from '@/components/user-profile-dialog';
 
 interface AppSidebarProps {
   conversations?: any[];
@@ -49,6 +50,7 @@ const AppSidebar = ({
 }: AppSidebarProps) => {
   const { darkMode, toggleDarkMode, personaConversations } = useChatStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
 
   // Clerk authentication hooks for mobile dropdown
   const { user } = useUser();
@@ -189,7 +191,6 @@ const AppSidebar = ({
           <div className='flex items-center gap-2 flex-shrink-0'>
             {/* Theme Toggle */}
             <Button
-              isIconOnly
               variant='ghost'
               size='icon'
               onClick={toggleDarkMode}
@@ -204,14 +205,23 @@ const AppSidebar = ({
 
             {/* User Profile - Hidden on mobile, shown on desktop */}
             <div className='ml-0.5 hidden lg:block'>
-              <UserButton
-                afterSignOutUrl='/'
-                appearance={{
-                  elements: {
-                    avatarBox: 'w-8 h-8 rounded-lg shadow-sm',
-                  },
-                }}
-              />
+              <button
+                onClick={() => setProfileDialogOpen(true)}
+                className='w-8 h-8 rounded-lg overflow-hidden shadow-sm hover:opacity-80 transition-opacity'>
+                {user?.imageUrl ? (
+                  <Image
+                    src={user.imageUrl}
+                    alt={user.firstName || 'User'}
+                    width={32}
+                    height={32}
+                    className='object-cover'
+                  />
+                ) : (
+                  <div className='w-8 h-8 bg-accent flex items-center justify-center'>
+                    <User className='w-4 h-4 text-foreground' />
+                  </div>
+                )}
+              </button>
             </div>
 
             {/* Mobile-only Custom Profile Dropdown */}
@@ -400,11 +410,15 @@ const AppSidebar = ({
           )}
         </div>
       </div>
-
       {/* Usage Quota - Sticky at bottom */}
       <div className='border-t border-border/40 bg-background/95 backdrop-blur-sm p-2'>
         <UsageQuota onUsageUpdate={() => {}} />
       </div>
+
+      <UserProfileDialog
+        open={profileDialogOpen}
+        onOpenChange={setProfileDialogOpen}
+      />
     </div>
   );
 };

@@ -15,6 +15,8 @@ const ChatInput = ({
   isLoading,
   userUsage,
   isRateLimited,
+  hideSuggestions = false,
+  compact = false,
 }) => {
   const [message, setMessage] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -200,11 +202,19 @@ const ChatInput = ({
     }
   };
 
-  const showSuggestions = !message.trim() && !disabled;
+  const showSuggestions = !hideSuggestions && !message.trim() && !disabled;
 
   return (
-    <div className='absolute bottom-0 left-0 right-0 p-2 sm:p-4 pointer-events-none'>
-      <div className='max-w-4xl mx-auto pointer-events-auto'>
+    <div
+      className={
+        compact
+          ? 'w-full bg-white border-t border-zinc-100 px-3'
+          : 'absolute bottom-0 left-0 right-0 p-2 sm:p-4 pointer-events-none'
+      }>
+      <div
+        className={
+          compact ? 'w-full' : 'max-w-4xl mx-auto pointer-events-auto'
+        }>
         {/* Quick Suggestions - Mobile Optimized */}
         {showSuggestions && (
           <div className='mb-2 sm:mb-3'>
@@ -231,7 +241,11 @@ const ChatInput = ({
         <form onSubmit={onSubmit}>
           <div
             className={`relative flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border backdrop-blur-xl transition-all duration-200 ${
-              isFocused
+              compact
+                ? isFocused
+                  ? 'border-[#FA8072]/50 bg-white shadow-2xl ring-2 ring-[#FA8072]/10'
+                  : 'border-zinc-200 bg-white shadow-lg hover:shadow-xl'
+                : isFocused
                 ? 'border-[#FA8072]/50 bg-background/98 shadow-2xl ring-2 ring-[#FA8072]/10'
                 : 'border-border/60 bg-background/95 shadow-lg hover:shadow-xl'
             }`}>
@@ -245,9 +259,11 @@ const ChatInput = ({
               onBlur={() => setIsFocused(false)}
               placeholder={
                 isRateLimited
-                  ? `Daily limit reached. Resets in ${
-                      timeUntilReset || 'calculating...'
-                    }`
+                  ? compact
+                    ? 'Free limit reached. Sign up to continue!'
+                    : `Daily limit reached. Resets in ${
+                        timeUntilReset || 'calculating...'
+                      }`
                   : disabled
                   ? 'Select a mentor to start chatting...'
                   : isListening
@@ -256,7 +272,11 @@ const ChatInput = ({
               }
               disabled={disabled}
               rows={1}
-              className='flex-1 resize-none bg-transparent border-none outline-none text-sm leading-[1.5] text-foreground placeholder:text-muted-foreground/50 disabled:opacity-50 min-h-[21px] max-h-[105px] overflow-y-auto custom-scrollbar'
+              className={
+                compact
+                  ? 'flex-1 resize-none bg-transparent border-none outline-none text-sm leading-[1.5] text-zinc-900 placeholder:text-zinc-400 disabled:opacity-50 min-h-[21px] max-h-[105px] overflow-y-auto custom-scrollbar'
+                  : 'flex-1 resize-none bg-transparent border-none outline-none text-sm leading-[1.5] text-foreground placeholder:text-muted-foreground/50 disabled:opacity-50 min-h-[21px] max-h-[105px] overflow-y-auto custom-scrollbar'
+              }
               style={{
                 height: 'auto',
               }}
@@ -270,7 +290,13 @@ const ChatInput = ({
                 disabled={disabled}
                 whileTap={{ scale: 0.95 }}
                 className={`h-8 w-8 sm:h-9 sm:w-9 rounded-lg flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
-                  disabled
+                  compact
+                    ? disabled
+                      ? 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+                      : isListening
+                      ? 'bg-red-500 text-white shadow-lg animate-pulse'
+                      : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900'
+                    : disabled
                     ? 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed'
                     : isListening
                     ? 'bg-red-500 text-white shadow-lg animate-pulse'
@@ -293,7 +319,9 @@ const ChatInput = ({
               disabled={!message.trim() || disabled}
               className={`h-8 w-8 sm:h-9 sm:w-9 p-0 rounded-lg flex-shrink-0 transition-all duration-200 ${
                 !message.trim() || disabled
-                  ? 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed'
+                  ? compact
+                    ? 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+                    : 'bg-muted/50 text-muted-foreground/40 cursor-not-allowed'
                   : 'bg-gradient-to-r from-[#FA8072] to-[#FF8E8E] text-white hover:from-[#FF9189] hover:to-[#FFA3A3] shadow-md hover:shadow-lg hover:scale-105 active:scale-95'
               }`}>
               <Send className='w-3.5 h-3.5 sm:w-4 sm:h-4' />

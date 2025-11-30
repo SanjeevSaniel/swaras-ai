@@ -8,9 +8,15 @@ import Image from 'next/image';
 
 interface ChatHeaderProps {
   selectedPersona: string;
+  compact?: boolean;
+  rateLimitInfo?: { remaining: number; limit: number };
 }
 
-const ChatHeader = ({ selectedPersona }: ChatHeaderProps) => {
+const ChatHeader = ({
+  selectedPersona,
+  compact = false,
+  rateLimitInfo,
+}: ChatHeaderProps) => {
   const { darkMode } = useChatStore();
   const persona = personas[selectedPersona];
 
@@ -56,18 +62,24 @@ const ChatHeader = ({ selectedPersona }: ChatHeaderProps) => {
           <div className='flex items-center space-x-1.5 sm:space-x-2'>
             <h2
               className={`font-semibold text-sm sm:text-base truncate ${
-                darkMode ? 'text-gray-100' : 'text-gray-900'
+                compact
+                  ? 'text-zinc-900'
+                  : darkMode
+                  ? 'text-gray-100'
+                  : 'text-gray-900'
               }`}>
               {persona.name}
             </h2>
-            {/* <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                darkMode
-                  ? 'bg-green-900/30 text-green-400'
-                  : 'bg-green-100 text-green-600'
-              }`}>
-              Online
-            </span> */}
+            {compact && rateLimitInfo && (
+              <span
+                className={`text-[10px] font-medium px-1.5 py-0.5 rounded border ${
+                  rateLimitInfo.remaining === 0
+                    ? 'bg-red-50 text-red-600 border-red-200'
+                    : 'bg-zinc-100 text-zinc-600 border-zinc-200'
+                }`}>
+                {rateLimitInfo.remaining}/{rateLimitInfo.limit}
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import LightLandingPage from '@/components/landing/light-landing-page';
+import { AnonymousChatWidget } from '@/components/landing/anonymous-chat-widget';
 import { useUser } from '@clerk/nextjs';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -34,7 +35,12 @@ export default function Home() {
 
   // Show landing page for non-authenticated users
   if (!isSignedIn) {
-    return <LightLandingPage />;
+    return (
+      <>
+        <LightLandingPage />
+        <AnonymousChatWidget />
+      </>
+    );
   }
 
   // This shouldn't render due to the useEffect redirect, but just in case
