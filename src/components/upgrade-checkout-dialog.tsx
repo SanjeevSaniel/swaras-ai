@@ -54,6 +54,8 @@ interface UpgradeCheckoutDialogProps {
   onOpenChange: (open: boolean) => void;
   /** The plan selected for upgrade */
   selectedPlan: Plan | null;
+  /** Current subscription details for proration */
+  currentSubscription?: any;
   /** Callback fired on successful payment */
   onSuccess?: () => void;
 }
@@ -72,6 +74,7 @@ export function UpgradeCheckoutDialog({
   open,
   onOpenChange,
   selectedPlan,
+  currentSubscription,
   onSuccess,
 }: UpgradeCheckoutDialogProps) {
   // State for terms acceptance
@@ -127,20 +130,52 @@ export function UpgradeCheckoutDialog({
 
   if (!selectedPlan) return null;
 
-  // Calculate pricing details
+  // Calculate pricing details (prices are GST-inclusive)
   const priceValue = parseFloat(selectedPlan.price.replace(/[^0-9.]/g, ''));
-  const gst = priceValue * 0.18; // 18% GST
-  const total = priceValue + gst;
+
+  // Calculate Proration Discount
+  let discount = 0;
+  if (
+    currentSubscription &&
+    currentSubscription.status === 'active' &&
+    currentSubscription.expiresAt &&
+    currentSubscription.planName !== 'Free'
+  ) {
+    const now = new Date();
+    const expiresAt = new Date(currentSubscription.expiresAt);
+
+    if (expiresAt > now) {
+      const totalDays = 30; // Assuming 30 day cycle
+      const remainingTime = expiresAt.getTime() - now.getTime();
+      const remainingDays = Math.ceil(remainingTime / (1000 * 60 * 60 * 24));
+
+      const PLAN_PRICES: Record<string, number> = {
+        Pro: 499,
+        Maxx: 999,
+      };
+
+      const oldPrice = PLAN_PRICES[currentSubscription.planName] || 0;
+      const dailyRate = oldPrice / totalDays;
+      const remainingValue = dailyRate * remainingDays;
+
+      if (remainingValue > 0) {
+        discount = Math.round(remainingValue);
+      }
+    }
+  }
+
+  // Prices are GST-inclusive, so just subtract discount
+  const total = Math.max(0, priceValue - discount);
 
   return (
     <Dialog
       open={open}
       onOpenChange={onOpenChange}>
       <DialogContent
-        className='sm:max-w-[600px] max-h-[90vh] flex flex-col p-0 overflow-hidden'
+        className='sm:max-w-[600px] max-h-[95vh] flex flex-col p-0 overflow-hidden'
         showCloseButton={false}>
         {/* Header */}
-        <DialogHeader className='px-6 py-4 border-b border-gray-100'>
+        <DialogHeader className='px-6 py-4 border-b border-border'>
           <div className='flex items-center justify-between'>
             <DialogTitle className='text-xl font-semibold'>
               Complete Your Upgrade
@@ -148,7 +183,7 @@ export function UpgradeCheckoutDialog({
             <Button
               variant='ghost'
               size='icon'
-              className='h-8 w-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              className='h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent'
               onClick={() => onOpenChange(false)}
               disabled={isProcessing}>
               <X className='h-4 w-4' />
@@ -159,13 +194,13 @@ export function UpgradeCheckoutDialog({
         {/* Content - Scrollable */}
         <div className='flex-1 overflow-y-auto px-6 py-6 space-y-6'>
           {/* Plan Summary Card */}
-          <div className='rounded-xl border-2 border-gray-900 bg-gradient-to-br from-gray-50 to-white p-6'>
+          <div className='rounded-xl border-2 border-primary bg-gradient-to-br from-secondary/50 to-background p-6'>
             <div className='flex items-start justify-between mb-4'>
               <div>
-                <h3 className='text-2xl font-bold text-gray-900'>
+                <h3 className='text-2xl font-bold text-foreground'>
                   {selectedPlan.name} Plan
                 </h3>
-                <p className='text-sm text-gray-600 mt-1'>
+                <p className='text-sm text-muted-foreground mt-1'>
                   {selectedPlan.description}
                 </p>
               </div>
@@ -181,48 +216,59 @@ export function UpgradeCheckoutDialog({
             {/* Price Display */}
             <div className='mb-4'>
               <div className='flex items-baseline gap-2'>
-                <span className='text-4xl font-bold text-gray-900'>
+                <span className='text-4xl font-bold text-foreground'>
                   {selectedPlan.price}
                 </span>
-                <span className='text-gray-600'>{selectedPlan.period}</span>
+                <span className='text-muted-foreground'>
+                  {selectedPlan.period}
+                </span>
               </div>
             </div>
 
             {/* Features List */}
             <div className='space-y-2'>
-              <p className='text-sm font-medium text-gray-700 mb-3'>
+              <p className='text-sm font-medium text-foreground mb-3'>
                 What&apos;s included:
               </p>
               {selectedPlan.features.map((feature, index) => (
                 <div
                   key={index}
                   className='flex items-start gap-2'>
-                  <Check className='h-4 w-4 text-green-600 mt-0.5 flex-shrink-0' />
-                  <span className='text-sm text-gray-700'>{feature}</span>
+                  <Check className='h-4 w-4 text-green-500 mt-0.5 flex-shrink-0' />
+                  <span className='text-sm text-foreground'>{feature}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Order Summary */}
-          <div className='rounded-xl border border-gray-200 p-5 bg-gray-50/50'>
-            <h4 className='font-semibold text-gray-900 mb-4'>Order Summary</h4>
+          <div className='rounded-xl border border-border p-5 bg-card'>
+            <h4 className='font-semibold text-foreground mb-4'>
+              Order Summary
+            </h4>
             <div className='space-y-3'>
               <div className='flex justify-between text-sm'>
-                <span className='text-gray-600'>Plan Price</span>
-                <span className='font-medium text-gray-900'>
+                <span className='text-muted-foreground'>
+                  Plan Price (incl. GST)
+                </span>
+                <span className='font-medium text-foreground'>
                   {selectedPlan.price}
                 </span>
               </div>
-              <div className='flex justify-between text-sm'>
-                <span className='text-gray-600'>GST (18%)</span>
-                <span className='font-medium text-gray-900'>
-                  ₹{gst.toFixed(2)}
-                </span>
-              </div>
-              <div className='border-t border-gray-200 pt-3 flex justify-between'>
-                <span className='font-semibold text-gray-900'>Total</span>
-                <span className='font-bold text-xl text-gray-900'>
+
+              {discount > 0 && (
+                <div className='flex justify-between text-sm text-green-600'>
+                  <span>
+                    Proration Discount (Remaining {currentSubscription.planName}
+                    )
+                  </span>
+                  <span className='font-medium'>-₹{discount.toFixed(2)}</span>
+                </div>
+              )}
+
+              <div className='border-t border-border pt-3 flex justify-between'>
+                <span className='font-semibold text-foreground'>Total</span>
+                <span className='font-bold text-xl text-foreground'>
                   ₹{total.toFixed(2)}
                 </span>
               </div>
@@ -230,17 +276,17 @@ export function UpgradeCheckoutDialog({
           </div>
 
           {/* Payment Method - Placeholder */}
-          <div className='rounded-xl border border-gray-200 p-5'>
+          <div className='rounded-xl border border-border p-5'>
             <div className='flex items-center gap-2 mb-4'>
-              <CreditCard className='h-5 w-5 text-gray-700' />
-              <h4 className='font-semibold text-gray-900'>Payment Method</h4>
+              <CreditCard className='h-5 w-5 text-foreground' />
+              <h4 className='font-semibold text-foreground'>Payment Method</h4>
             </div>
-            <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
-              <p className='text-sm text-blue-900'>
+            <div className='bg-blue-50/10 border border-blue-200/20 rounded-lg p-4'>
+              <p className='text-sm text-blue-500'>
                 <strong>Razorpay Integration</strong> - Secure payment gateway
                 supporting UPI, Cards, Net Banking, and Wallets
               </p>
-              <p className='text-xs text-blue-700 mt-2'>
+              <p className='text-xs text-blue-400 mt-2'>
                 (Payment gateway will be activated after integration)
               </p>
             </div>
@@ -253,22 +299,22 @@ export function UpgradeCheckoutDialog({
               id='terms'
               checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
-              className='mt-1 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900'
+              className='mt-1 h-4 w-4 rounded border-input bg-background text-primary focus:ring-primary'
               disabled={isProcessing}
             />
             <label
               htmlFor='terms'
-              className='text-sm text-gray-600'>
+              className='text-sm text-muted-foreground'>
               I agree to the{' '}
               <a
                 href='#'
-                className='text-gray-900 underline hover:no-underline'>
+                className='text-foreground underline hover:no-underline'>
                 Terms of Service
               </a>{' '}
               and{' '}
               <a
                 href='#'
-                className='text-gray-900 underline hover:no-underline'>
+                className='text-foreground underline hover:no-underline'>
                 Privacy Policy
               </a>
               . I understand that my subscription will auto-renew monthly.
@@ -283,7 +329,7 @@ export function UpgradeCheckoutDialog({
         </div>
 
         {/* Footer - Action Buttons */}
-        <div className='border-t border-gray-100 px-6 py-4 bg-gray-50'>
+        <div className='border-t border-border px-6 py-4 bg-muted/20'>
           <div className='flex gap-3'>
             <Button
               variant='outline'
@@ -296,13 +342,13 @@ export function UpgradeCheckoutDialog({
             <Button
               variant='default'
               size='default'
-              className='flex-1 bg-gray-900 text-white hover:bg-gray-800'
+              className='flex-1'
               onClick={handleProceedToPayment}
               disabled={!termsAccepted || isProcessing}>
               {isProcessing ? (
                 <>
                   <motion.div
-                    className='h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2'
+                    className='h-4 w-4 border-2 border-background border-t-transparent rounded-full mr-2'
                     animate={{ rotate: 360 }}
                     transition={{
                       duration: 1,
