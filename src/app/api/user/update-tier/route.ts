@@ -1,20 +1,20 @@
 /**
  * Update User Tier API Route
- *
+ * 
  * Updates the user's tier in the database based on their subscription plan.
  * This endpoint is called after successful payment verification to upgrade/downgrade the user.
- *
+ * 
  * @route POST /api/user/update-tier
  * @access Protected (requires authentication)
- *
+ * 
  * @body {string} planName - The plan name ('Free', 'Pro', 'Maxx')
- *
+ * 
  * @returns {object} Updated user tier information
  */
 
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/db';
-import { users } from '@/db/schema';
+import { users, planAudits, subscriptions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 const PLAN_TO_TIER_MAP: Record<string, string> = {
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
           error: 'Unauthorized',
           message: 'You must be signed in to update tier',
         }),
-        { status: 401, headers: { 'Content-Type': 'application/json' } },
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
@@ -45,11 +45,30 @@ export async function POST(req: Request) {
           error: 'Bad Request',
           message: 'Invalid plan name. Must be one of: Free, Pro, Maxx',
         }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } },
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
     const tier = PLAN_TO_TIER_MAP[planName];
+
+    // First, check if user exists in database
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+    });
+
+    if (!existingUser) {
+      return new Response(
+        JSON.stringify({
+          error: 'User Not Synced',
+          message: 'Your account is not yet synced. Please refresh the page and try again.',
+        }),
+        { status: 404, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const oldTier = existingUser.tier;
+    // Find the plan name for the old tier
+    const oldPlan = Object.keys(PLAN_TO_TIER_MAP).find(key => PLAN_TO_TIER_MAP[key] === oldTier) || 'Unknown';
 
     const [updatedUser] = await db
       .update(users)
@@ -63,13 +82,66 @@ export async function POST(req: Request) {
           error: 'Not Found',
           message: 'User not found in database. Please refresh and try again.',
         }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } },
+        { status: 404, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log(
-      `✅ Updated user ${userId} tier to ${tier} (plan: ${planName})`,
-    );
+    // Log the plan change to audit table
+    try {
+      await db.insert(planAudits).values({
+        userId,
+        oldPlan,
+        newPlan: planName,
+        action: tier === 'FREE' ? 'DOWNGRADE' : 'UPGRADE',
+      });
+      console.log(`✅ Audit log created for user ${userId}: ${oldPlan} -> ${planName}`);
+    } catch (auditError) {
+      console.error('Failed to create audit log:', auditError);
+    }
+
+    // Update or create subscription record
+    try {
+      // Calculate expiry date (30 days from now for paid plans, null for free)
+      const now = new Date();
+      let expiresAt: Date | null = null;
+      
+      if (tier !== 'FREE') {
+        expiresAt = new Date(now);
+        expiresAt.setDate(expiresAt.getDate() + 30);
+      }
+
+      // Check for existing subscription
+      const existingSubscription = await db.query.subscriptions.findFirst({
+        where: eq(subscriptions.userId, userId),
+      });
+
+      if (existingSubscription) {
+        await db
+          .update(subscriptions)
+          .set({
+            planName,
+            status: 'active',
+            startedAt: now,
+            expiresAt,
+            updatedAt: now,
+          })
+          .where(eq(subscriptions.userId, userId));
+      } else {
+        await db.insert(subscriptions).values({
+          userId,
+          planName,
+          status: 'active',
+          startedAt: now,
+          expiresAt,
+        });
+      }
+      console.log(`✅ Subscription updated for user ${userId}`);
+    } catch (subError) {
+      console.error('Failed to update subscription:', subError);
+      // Don't fail request if subscription update fails, but log it
+    }
+
+    console.log(`✅ Updated user ${userId} tier to ${tier} (plan: ${planName})`);
 
     return new Response(
       JSON.stringify({
@@ -78,7 +150,7 @@ export async function POST(req: Request) {
         planName,
         message: `Successfully updated to ${planName} plan`,
       }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('Error updating user tier:', error);
@@ -88,7 +160,7 @@ export async function POST(req: Request) {
         message: 'Failed to update user tier',
         details: error instanceof Error ? error.message : 'Unknown error',
       }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 }
