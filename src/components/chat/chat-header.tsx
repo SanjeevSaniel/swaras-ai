@@ -70,7 +70,7 @@ const ChatHeader = ({
               }`}>
               {persona.name}
             </h2>
-            {compact && rateLimitInfo && (
+            {/* {compact && rateLimitInfo && (
               <span
                 className={`text-[10px] font-medium px-1.5 py-0.5 rounded border ${
                   rateLimitInfo.remaining === 0
@@ -79,7 +79,7 @@ const ChatHeader = ({
                 }`}>
                 {rateLimitInfo.remaining}/{rateLimitInfo.limit}
               </span>
-            )}
+            )} */}
           </div>
         </div>
       </div>
