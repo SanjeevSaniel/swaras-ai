@@ -24,6 +24,12 @@ This application now includes a comprehensive rate limiting system to prevent un
 - **Reset Time**: Midnight UTC
 - **How to Upgrade**: Set `rateLimitTier: "PRO"` in Clerk user metadata
 
+### Anonymous Tier
+- **Total Limit**: 3 messages (Lifetime)
+- **Tracking**: IP Address based
+- **Reset**: Never (requires sign up)
+- **Sync**: Across browsers and tabs
+
 ### Unlimited Tier
 - **Daily Limit**: Unlimited
 - **Reset Time**: N/A

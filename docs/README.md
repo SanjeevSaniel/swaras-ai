@@ -239,6 +239,11 @@ A: Add webhooks (optional) or updates sync on next login.
 
 ## 📝 Recent Updates
 
+**2025-11-30:**
+- ✅ Added **Anonymous Chat Widget** functionality
+- ✅ Implemented IP-based rate limiting
+- ✅ Updated documentation for v1.3.0
+
 **2024-11-28:**
 - ✅ Created comprehensive **USER_SYNC_DOCUMENTATION.md**
 - ✅ Updated **READY_TO_USE.md** with current implementation
