@@ -314,3 +314,57 @@ export type NewPlanAudit = typeof planAudits.$inferInsert;
 
 export type BillingDetail = typeof billingDetails.$inferSelect;
 export type NewBillingDetail = typeof billingDetails.$inferInsert;
+
+/**
+ * Anonymous Users table - tracks IP-based usage for landing page chat
+ */
+export const anonymousUsers = pgTable('anonymous_users', {
+  // IP Address as primary key (IPv6 max length is 45)
+  ipAddress: varchar('ip_address', { length: 45 }).primaryKey(),
+
+  // Number of interactions (message pairs)
+  interactionCount: integer('interaction_count').notNull().default(0),
+
+  // Timestamps
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+/**
+ * Anonymous Messages table - stores chat history for anonymous users
+ */
+export const anonymousMessages = pgTable(
+  'anonymous_messages',
+  {
+    // Auto-generated ID
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+
+    // IP Address (foreign key to anonymous_users)
+    ipAddress: varchar('ip_address', { length: 45 })
+      .notNull()
+      .references(() => anonymousUsers.ipAddress, { onDelete: 'cascade' }),
+
+    // Role: 'user' or 'assistant'
+    role: varchar('role', { length: 20 }).notNull(),
+
+    // Message content
+    content: text('content').notNull(),
+
+    // Timestamp
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    // Index for fetching history by IP
+    ipIdx: index('anonymous_messages_ip_idx').on(table.ipAddress),
+    // Index for sorting by time
+    createdIdx: index('anonymous_messages_created_idx').on(table.createdAt),
+  }),
+);
+
+export type AnonymousUser = typeof anonymousUsers.$inferSelect;
+export type NewAnonymousUser = typeof anonymousUsers.$inferInsert;
+
+export type AnonymousMessage = typeof anonymousMessages.$inferSelect;
+export type NewAnonymousMessage = typeof anonymousMessages.$inferInsert;
