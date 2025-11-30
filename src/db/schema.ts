@@ -153,58 +153,142 @@ export const subscriptions = pgTable('subscriptions', {
 /**
  * Payments table - stores payment transaction records
  */
-export const payments = pgTable('payments', {
-  // Auto-generated payment ID
-  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+export const payments = pgTable(
+  'payments',
+  {
+    // Auto-generated payment ID
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
 
-  // User ID (foreign key to users table)
+    // User ID (foreign key to users table)
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+
+    // Subscription ID (foreign key to subscriptions table, nullable)
+    subscriptionId: text('subscription_id').references(() => subscriptions.id, {
+      onDelete: 'set null',
+    }),
+
+    // Razorpay order ID
+    razorpayOrderId: varchar('razorpay_order_id', { length: 255 }),
+
+    // Razorpay payment ID (after successful payment)
+    razorpayPaymentId: varchar('razorpay_payment_id', { length: 255 }),
+
+    // Razorpay signature (for verification)
+    razorpaySignature: varchar('razorpay_signature', { length: 500 }),
+
+    // Payment amount (in rupees)
+    amount: varchar('amount', { length: 20 }).notNull(),
+
+    // Currency code (default: INR)
+    currency: varchar('currency', { length: 10 }).notNull().default('INR'),
+
+    // Payment status: 'pending', 'success', 'failed', 'refunded'
+    status: varchar('status', { length: 50 }).notNull().default('pending'),
+
+    // Payment method: 'card', 'upi', 'netbanking', etc.
+    paymentMethod: varchar('payment_method', { length: 50 }),
+
+    // Plan name for this payment
+    planName: varchar('plan_name', { length: 50 }).notNull(),
+
+    // Invoice URL (optional)
+    invoiceUrl: text('invoice_url'),
+
+    // Receipt URL (optional)
+    receiptUrl: text('receipt_url'),
+
+    // Timestamps
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    // Index for user lookups
+    userIdx: index('payments_user_idx').on(table.userId),
+    // Index for status queries
+    statusIdx: index('payments_status_idx').on(table.status),
+    // Index for Razorpay order ID lookups
+    razorpayOrderIdx: index('payments_razorpay_order_idx').on(
+      table.razorpayOrderId,
+    ),
+    // Index for Razorpay payment ID lookups
+    razorpayPaymentIdx: index('payments_razorpay_payment_idx').on(
+      table.razorpayPaymentId,
+    ),
+    // Composite index for user payment history (sorted by date)
+    userCreatedIdx: index('payments_user_created_idx').on(
+      table.userId,
+      table.createdAt,
+    ),
+  }),
+);
+
+/**
+ * Plan Audits table - tracks history of plan changes
+ */
+export const planAudits = pgTable(
+  'plan_audits',
+  {
+    // Auto-generated ID
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+
+    // User ID (foreign key to users table)
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+
+    // Old plan name (nullable for new users)
+    oldPlan: varchar('old_plan', { length: 50 }),
+
+    // New plan name
+    newPlan: varchar('new_plan', { length: 50 }).notNull(),
+
+    // Action type: 'UPGRADE', 'DOWNGRADE', 'CANCEL', 'INITIAL'
+    action: varchar('action', { length: 20 }).notNull(),
+
+    // Timestamps
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    // Index for user lookups
+    userIdx: index('plan_audits_user_idx').on(table.userId),
+    // Index for sorting by date
+    createdIdx: index('plan_audits_created_idx').on(table.createdAt),
+  }),
+);
+
+/**
+ * Billing Details table - stores user billing information
+ */
+export const billingDetails = pgTable('billing_details', {
+  // User ID (primary key, one-to-one with users)
   userId: text('user_id')
-    .notNull()
+    .primaryKey()
     .references(() => users.id, { onDelete: 'cascade' }),
 
-  // Subscription ID (foreign key to subscriptions table, nullable)
-  subscriptionId: text('subscription_id')
-    .references(() => subscriptions.id, { onDelete: 'set null' }),
+  // Billing Name
+  name: varchar('name', { length: 255 }).notNull(),
 
-  // Razorpay order ID
-  razorpayOrderId: varchar('razorpay_order_id', { length: 255 }),
+  // Address
+  addressLine1: text('address_line1'),
+  addressLine2: text('address_line2'),
+  city: varchar('city', { length: 100 }),
+  state: varchar('state', { length: 100 }),
+  postalCode: varchar('postal_code', { length: 20 }),
+  country: varchar('country', { length: 100 }).default('India'),
 
-  // Razorpay payment ID (after successful payment)
-  razorpayPaymentId: varchar('razorpay_payment_id', { length: 255 }),
-
-  // Razorpay signature (for verification)
-  razorpaySignature: varchar('razorpay_signature', { length: 500 }),
-
-  // Payment amount (in rupees)
-  amount: varchar('amount', { length: 20 }).notNull(),
-
-  // Currency code (default: INR)
-  currency: varchar('currency', { length: 10 }).notNull().default('INR'),
-
-  // Payment status: 'pending', 'success', 'failed', 'refunded'
-  status: varchar('status', { length: 50 }).notNull().default('pending'),
-
-  // Payment method: 'card', 'upi', 'netbanking', etc.
-  paymentMethod: varchar('payment_method', { length: 50 }),
-
-  // Plan name for this payment
-  planName: varchar('plan_name', { length: 50 }).notNull(),
+  // Tax Info
+  gstNumber: varchar('gst_number', { length: 50 }),
 
   // Timestamps
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-}, (table) => ({
-  // Index for user lookups
-  userIdx: index('payments_user_idx').on(table.userId),
-  // Index for status queries
-  statusIdx: index('payments_status_idx').on(table.status),
-  // Index for Razorpay order ID lookups
-  razorpayOrderIdx: index('payments_razorpay_order_idx').on(table.razorpayOrderId),
-  // Index for Razorpay payment ID lookups
-  razorpayPaymentIdx: index('payments_razorpay_payment_idx').on(table.razorpayPaymentId),
-  // Composite index for user payment history (sorted by date)
-  userCreatedIdx: index('payments_user_created_idx').on(table.userId, table.createdAt),
-}));
+});
 
 // Export types for TypeScript
 export type User = typeof users.$inferSelect;
@@ -224,3 +308,9 @@ export type NewSubscription = typeof subscriptions.$inferInsert;
 
 export type Payment = typeof payments.$inferSelect;
 export type NewPayment = typeof payments.$inferInsert;
+
+export type PlanAudit = typeof planAudits.$inferSelect;
+export type NewPlanAudit = typeof planAudits.$inferInsert;
+
+export type BillingDetail = typeof billingDetails.$inferSelect;
+export type NewBillingDetail = typeof billingDetails.$inferInsert;
