@@ -11,7 +11,12 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Image from 'next/image';
 
-const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
+const ChatMessages = ({
+  messages,
+  isTyping,
+  selectedPersona,
+  compact = false,
+}) => {
   const messagesEndRef = useRef(null);
   const [copiedIndex, setCopiedIndex] = useState(null);
   const { darkMode, mentorsOnline } = useChatStore();
@@ -36,9 +41,12 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
     setTimeout(() => setCopiedIndex(null), 2000);
   };
 
-  // WhatsApp-style persona header that appears at top of chat
   const PersonaHeader = () => {
     if (!persona) return null;
+
+    if (compact) {
+      return null;
+    }
 
     return (
       <motion.div
@@ -245,7 +253,8 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                           className='object-cover'
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            const nextEl = target.nextElementSibling as HTMLElement;
+                            const nextEl =
+                              target.nextElementSibling as HTMLElement;
                             target.style.display = 'none';
                             if (nextEl) nextEl.style.display = 'flex';
                           }}
@@ -283,9 +292,13 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                     )}
 
                     <div
-                      className={`group relative rounded-2xl px-4 py-3 shadow-md transition-all ${
+                      className={`group relative rounded-2xl ${
+                        compact ? 'px-3 py-2' : 'px-4 py-3'
+                      } shadow-md transition-all ${
                         isUser
                           ? 'text-white rounded-br-sm'
+                          : compact
+                          ? 'bg-zinc-50 border border-zinc-200 rounded-bl-sm'
                           : 'bg-card border-2 border-border/60 rounded-bl-sm hover:border-border/80'
                       }`}
                       style={
@@ -301,6 +314,8 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                         className={`text-sm leading-relaxed ${
                           isUser
                             ? 'text-white font-medium whitespace-pre-wrap'
+                            : compact
+                            ? 'text-zinc-900'
                             : ''
                         }`}>
                         {/* Handle both string content and AI SDK parts format */}
@@ -317,224 +332,230 @@ const ChatMessages = ({ messages, isTyping, selectedPersona }) => {
                           )
                         ) : (
                           // Assistant messages: render as markdown
-                          <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                              // Custom styling for markdown elements
-                              p: ({ node, children, ...props }) => {
-                                // Check if paragraph contains highlighted text markers
-                                const text = (node?.children?.[0] as any)?.value || '';
+                          <div
+                            className={
+                              compact ? 'text-zinc-900 [&_*]:text-zinc-900' : ''
+                            }>
+                            <ReactMarkdown
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                // Custom styling for markdown elements
+                                p: ({ node, children, ...props }) => {
+                                  // Check if paragraph contains highlighted text markers
+                                  const text =
+                                    (node?.children?.[0] as any)?.value || '';
 
-                                // Handle different highlight patterns - return styled paragraphs, not divs
-                                if (
-                                  text.startsWith('💡') ||
-                                  text.startsWith('ℹ️') ||
-                                  text.includes('Note:') ||
-                                  text.includes('Tip:')
-                                ) {
-                                  return (
-                                    <p
-                                      className='mb-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border-l-4 border-blue-500 text-foreground text-sm'
-                                      {...props}>
-                                      {children}
-                                    </p>
-                                  );
-                                }
-                                if (
-                                  text.startsWith('⚠️') ||
-                                  text.includes('Warning:') ||
-                                  text.includes('Important:')
-                                ) {
-                                  return (
-                                    <p
-                                      className='mb-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border-l-4 border-amber-500 text-foreground text-sm'
-                                      {...props}>
-                                      {children}
-                                    </p>
-                                  );
-                                }
-                                if (
-                                  text.startsWith('✅') ||
-                                  text.includes('Success:')
-                                ) {
-                                  return (
-                                    <p
-                                      className='mb-2 p-3 rounded-lg bg-green-50 dark:bg-green-950/30 border-l-4 border-green-500 text-foreground text-sm'
-                                      {...props}>
-                                      {children}
-                                    </p>
-                                  );
-                                }
-                                if (
-                                  text.startsWith('❌') ||
-                                  text.includes('Error:')
-                                ) {
-                                  return (
-                                    <p
-                                      className='mb-2 p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border-l-4 border-red-500 text-foreground text-sm'
-                                      {...props}>
-                                      {children}
-                                    </p>
-                                  );
-                                }
+                                  // Handle different highlight patterns - return styled paragraphs, not divs
+                                  if (
+                                    text.startsWith('💡') ||
+                                    text.startsWith('ℹ️') ||
+                                    text.includes('Note:') ||
+                                    text.includes('Tip:')
+                                  ) {
+                                    return (
+                                      <p
+                                        className='mb-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border-l-4 border-blue-500 text-foreground text-sm'
+                                        {...props}>
+                                        {children}
+                                      </p>
+                                    );
+                                  }
+                                  if (
+                                    text.startsWith('⚠️') ||
+                                    text.includes('Warning:') ||
+                                    text.includes('Important:')
+                                  ) {
+                                    return (
+                                      <p
+                                        className='mb-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border-l-4 border-amber-500 text-foreground text-sm'
+                                        {...props}>
+                                        {children}
+                                      </p>
+                                    );
+                                  }
+                                  if (
+                                    text.startsWith('✅') ||
+                                    text.includes('Success:')
+                                  ) {
+                                    return (
+                                      <p
+                                        className='mb-2 p-3 rounded-lg bg-green-50 dark:bg-green-950/30 border-l-4 border-green-500 text-foreground text-sm'
+                                        {...props}>
+                                        {children}
+                                      </p>
+                                    );
+                                  }
+                                  if (
+                                    text.startsWith('❌') ||
+                                    text.includes('Error:')
+                                  ) {
+                                    return (
+                                      <p
+                                        className='mb-2 p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border-l-4 border-red-500 text-foreground text-sm'
+                                        {...props}>
+                                        {children}
+                                      </p>
+                                    );
+                                  }
 
-                                return (
-                                  <p
-                                    className='mb-2 last:mb-0 text-foreground'
-                                    {...props}>
-                                    {children}
-                                  </p>
-                                );
-                              },
-                              ul: ({ node, ...props }) => (
-                                <ul
-                                  className='mb-2 ml-4 list-disc text-foreground'
-                                  {...props}
-                                />
-                              ),
-                              ol: ({ node, ...props }) => (
-                                <ol
-                                  className='mb-2 ml-4 list-decimal text-foreground'
-                                  {...props}
-                                />
-                              ),
-                              li: ({ node, ...props }) => (
-                                <li
-                                  className='mb-1 text-foreground'
-                                  {...props}
-                                />
-                              ),
-                              code: ({
-                                node,
-                                className,
-                                children,
-                                ...props
-                              }: any) => {
-                                const inline = (props as any).inline;
-                                // Extract language from className (format: language-js, language-python, etc.)
-                                const match = /language-(\w+)/.exec(
-                                  className || '',
-                                );
-                                const language = match ? match[1] : null;
-
-                                return inline ? (
-                                  <code
-                                    className='px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[#FA8072] dark:text-[#FF8E8E] font-mono text-xs border border-slate-200 dark:border-slate-700'
-                                    {...props}>
-                                    {children}
-                                  </code>
-                                ) : (
-                                  <code
-                                    className='block p-4 pt-3 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono text-xs overflow-x-auto relative rounded-lg border border-slate-200 dark:border-slate-700 my-3'
-                                    {...props}>
-                                    {/* Language badge */}
-                                    {language && (
-                                      <span className='absolute top-2 right-2 z-10 inline-block'>
-                                        <Badge
-                                          variant='secondary'
-                                          className='text-[10px] font-mono uppercase bg-[#FA8072] dark:bg-[#FF8E8E] text-white border-0 shadow-sm'>
-                                          {language}
-                                        </Badge>
-                                      </span>
-                                    )}
-                                    {children}
-                                  </code>
-                                );
-                              },
-                              pre: ({ node, children, ...props }) => (
-                                <>{children}</>
-                              ),
-                              strong: ({ node, ...props }) => (
-                                <strong
-                                  className='font-bold text-foreground'
-                                  {...props}
-                                />
-                              ),
-                              em: ({ node, ...props }) => (
-                                <em
-                                  className='italic text-foreground'
-                                  {...props}
-                                />
-                              ),
-                              a: ({ node, ...props }) => (
-                                <a
-                                  className='text-[#FA8072] dark:text-[#FF8E8E] hover:underline font-medium'
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  {...props}
-                                />
-                              ),
-                              h1: ({ node, ...props }) => (
-                                <h1
-                                  className='text-lg font-bold mb-2 mt-3 text-foreground'
-                                  {...props}
-                                />
-                              ),
-                              h2: ({ node, ...props }) => (
-                                <h2
-                                  className='text-base font-bold mb-2 mt-3 text-foreground'
-                                  {...props}
-                                />
-                              ),
-                              h3: ({ node, ...props }) => (
-                                <h3
-                                  className='text-sm font-bold mb-2 mt-2 text-foreground'
-                                  {...props}
-                                />
-                              ),
-                              blockquote: ({ node, ...props }) => (
-                                <blockquote
-                                  className='border-l-4 border-[#FA8072] dark:border-[#FF8E8E] pl-3 italic my-2 text-slate-600 dark:text-slate-400'
-                                  {...props}
-                                />
-                              ),
-                              table: ({ node, ...props }) => (
-                                <div className='overflow-x-auto my-2'>
-                                  <table
-                                    className='min-w-full border border-slate-200 dark:border-slate-700 text-foreground'
+                                  return (
+                                    <p
+                                      className='mb-2 last:mb-0 text-foreground'
+                                      {...props}>
+                                      {children}
+                                    </p>
+                                  );
+                                },
+                                ul: ({ node, ...props }) => (
+                                  <ul
+                                    className='mb-2 ml-4 list-disc text-foreground'
                                     {...props}
                                   />
-                                </div>
-                              ),
-                              thead: ({ node, ...props }) => (
-                                <thead
-                                  className='bg-slate-100 dark:bg-slate-800'
-                                  {...props}
-                                />
-                              ),
-                              tbody: ({ node, ...props }) => (
-                                <tbody
-                                  className='divide-y divide-slate-200 dark:divide-slate-700'
-                                  {...props}
-                                />
-                              ),
-                              tr: ({ node, ...props }) => (
-                                <tr
-                                  className='text-foreground'
-                                  {...props}
-                                />
-                              ),
-                              th: ({ node, ...props }) => (
-                                <th
-                                  className='px-3 py-2 text-left text-xs font-semibold text-foreground border-b border-slate-200 dark:border-slate-700'
-                                  {...props}
-                                />
-                              ),
-                              td: ({ node, ...props }) => (
-                                <td
-                                  className='px-3 py-2 text-xs text-foreground'
-                                  {...props}
-                                />
-                              ),
-                            }}>
-                            {typeof message.content === 'string'
-                              ? message.content
-                              : message.content
-                                  ?.map(
-                                    (part) => part.text || part.content || '',
-                                  )
-                                  .join('')}
-                          </ReactMarkdown>
+                                ),
+                                ol: ({ node, ...props }) => (
+                                  <ol
+                                    className='mb-2 ml-4 list-decimal text-foreground'
+                                    {...props}
+                                  />
+                                ),
+                                li: ({ node, ...props }) => (
+                                  <li
+                                    className='mb-1 text-foreground'
+                                    {...props}
+                                  />
+                                ),
+                                code: ({
+                                  node,
+                                  className,
+                                  children,
+                                  ...props
+                                }: any) => {
+                                  const inline = (props as any).inline;
+                                  // Extract language from className (format: language-js, language-python, etc.)
+                                  const match = /language-(\w+)/.exec(
+                                    className || '',
+                                  );
+                                  const language = match ? match[1] : null;
+
+                                  return inline ? (
+                                    <code
+                                      className='px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[#FA8072] dark:text-[#FF8E8E] font-mono text-xs border border-slate-200 dark:border-slate-700'
+                                      {...props}>
+                                      {children}
+                                    </code>
+                                  ) : (
+                                    <code
+                                      className='block p-4 pt-3 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono text-xs overflow-x-auto relative rounded-lg border border-slate-200 dark:border-slate-700 my-3'
+                                      {...props}>
+                                      {/* Language badge */}
+                                      {language && (
+                                        <span className='absolute top-2 right-2 z-10 inline-block'>
+                                          <Badge
+                                            variant='secondary'
+                                            className='text-[10px] font-mono uppercase bg-[#FA8072] dark:bg-[#FF8E8E] text-white border-0 shadow-sm'>
+                                            {language}
+                                          </Badge>
+                                        </span>
+                                      )}
+                                      {children}
+                                    </code>
+                                  );
+                                },
+                                pre: ({ node, children, ...props }) => (
+                                  <>{children}</>
+                                ),
+                                strong: ({ node, ...props }) => (
+                                  <strong
+                                    className='font-bold text-foreground'
+                                    {...props}
+                                  />
+                                ),
+                                em: ({ node, ...props }) => (
+                                  <em
+                                    className='italic text-foreground'
+                                    {...props}
+                                  />
+                                ),
+                                a: ({ node, ...props }) => (
+                                  <a
+                                    className='text-[#FA8072] dark:text-[#FF8E8E] hover:underline font-medium'
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    {...props}
+                                  />
+                                ),
+                                h1: ({ node, ...props }) => (
+                                  <h1
+                                    className='text-lg font-bold mb-2 mt-3 text-foreground'
+                                    {...props}
+                                  />
+                                ),
+                                h2: ({ node, ...props }) => (
+                                  <h2
+                                    className='text-base font-bold mb-2 mt-3 text-foreground'
+                                    {...props}
+                                  />
+                                ),
+                                h3: ({ node, ...props }) => (
+                                  <h3
+                                    className='text-sm font-bold mb-2 mt-2 text-foreground'
+                                    {...props}
+                                  />
+                                ),
+                                blockquote: ({ node, ...props }) => (
+                                  <blockquote
+                                    className='border-l-4 border-[#FA8072] dark:border-[#FF8E8E] pl-3 italic my-2 text-slate-600 dark:text-slate-400'
+                                    {...props}
+                                  />
+                                ),
+                                table: ({ node, ...props }) => (
+                                  <div className='overflow-x-auto my-2'>
+                                    <table
+                                      className='min-w-full border border-slate-200 dark:border-slate-700 text-foreground'
+                                      {...props}
+                                    />
+                                  </div>
+                                ),
+                                thead: ({ node, ...props }) => (
+                                  <thead
+                                    className='bg-slate-100 dark:bg-slate-800'
+                                    {...props}
+                                  />
+                                ),
+                                tbody: ({ node, ...props }) => (
+                                  <tbody
+                                    className='divide-y divide-slate-200 dark:divide-slate-700'
+                                    {...props}
+                                  />
+                                ),
+                                tr: ({ node, ...props }) => (
+                                  <tr
+                                    className='text-foreground'
+                                    {...props}
+                                  />
+                                ),
+                                th: ({ node, ...props }) => (
+                                  <th
+                                    className='px-3 py-2 text-left text-xs font-semibold text-foreground border-b border-slate-200 dark:border-slate-700'
+                                    {...props}
+                                  />
+                                ),
+                                td: ({ node, ...props }) => (
+                                  <td
+                                    className='px-3 py-2 text-xs text-foreground'
+                                    {...props}
+                                  />
+                                ),
+                              }}>
+                              {typeof message.content === 'string'
+                                ? message.content
+                                : message.content
+                                    ?.map(
+                                      (part) => part.text || part.content || '',
+                                    )
+                                    .join('')}
+                            </ReactMarkdown>
+                          </div>
                         )}
                         {!message.content && message.text && message.text}
                       </div>
