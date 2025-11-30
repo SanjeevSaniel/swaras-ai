@@ -12,27 +12,20 @@
  * @body {string} razorpay_signature - The payment signature for verification
  *
  * @returns {object} Verification result and subscription details
- *
- * @example
- * ```typescript
- * const response = await fetch('/api/payments/verify', {
- *   method: 'POST',
- *   headers: { 'Content-Type': 'application/json' },
- *   body: JSON.stringify({
- *     razorpay_order_id: 'order_xxx',
- *     razorpay_payment_id: 'pay_xxx',
- *     razorpay_signature: 'signature_xxx',
- *   }),
- * });
- * ```
  */
 
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/db';
-import { payments, subscriptions } from '@/db/schema';
+import { payments, subscriptions, users, planAudits } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 // TODO: Uncomment when Razorpay is integrated
 // import crypto from 'crypto';
+
+const PLAN_TO_TIER_MAP: Record<string, string> = {
+  Free: 'FREE',
+  Pro: 'PRO',
+  Maxx: 'MAXX',
+};
 
 export async function POST(req: Request) {
   try {
@@ -120,7 +113,7 @@ export async function POST(req: Request) {
 
     // Create or update subscription
     const expiresAt = new Date();
-    expiresAt.setMonth(expiresAt.getMonth() + 1); // 1 month subscription
+    expiresAt.setDate(expiresAt.getDate() + 30); // 30 days subscription
 
     const existingSubscription = await db.query.subscriptions.findFirst({
       where: eq(subscriptions.userId, userId),
@@ -150,37 +143,29 @@ export async function POST(req: Request) {
     }
 
     // Update user tier in the database
-    // This ensures the user's tier matches their subscription plan
-    try {
-      const tierUpdateResponse = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-        }/api/user/update-tier`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            // Forward the authorization header
-            Authorization: req.headers.get('Authorization') || '',
-          },
-          body: JSON.stringify({ planName: paymentRecord.planName }),
-        },
-      );
+    const tier = PLAN_TO_TIER_MAP[paymentRecord.planName] || 'FREE';
+    
+    // Get old tier for audit
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+    });
+    const oldTier = user?.tier || 'FREE';
+    const oldPlan = Object.keys(PLAN_TO_TIER_MAP).find(key => PLAN_TO_TIER_MAP[key] === oldTier) || 'Unknown';
 
-      if (!tierUpdateResponse.ok) {
-        console.error(
-          'Failed to update user tier:',
-          await tierUpdateResponse.text(),
-        );
-        // Don't fail the payment verification if tier update fails
-        // The subscription is still created successfully
-      } else {
-        console.log(`✅ User tier updated to ${paymentRecord.planName}`);
-      }
-    } catch (tierError) {
-      console.error('Error updating user tier:', tierError);
-      // Continue even if tier update fails
-    }
+    await db
+      .update(users)
+      .set({ tier, updatedAt: new Date() })
+      .where(eq(users.id, userId));
+
+    // Create audit log
+    await db.insert(planAudits).values({
+      userId,
+      oldPlan,
+      newPlan: paymentRecord.planName,
+      action: 'UPGRADE', // Payment usually implies upgrade or renewal
+    });
+
+    console.log(`✅ Payment verified and user upgraded to ${paymentRecord.planName}`);
 
     return new Response(
       JSON.stringify({
