@@ -1,10 +1,10 @@
 # **SwarAI - AI Mentorship Platform** 🚀
 
-> **Version 1.2.0 - Your Personal AI Mentorship Platform with 16 Expert Mentors**
+> **Version 1.3.0 - Your Personal AI Mentorship Platform with 16 Expert Mentors**
 
 A sophisticated Next.js 15 application that provides personalized AI mentorship through authentic persona interactions. Choose from 16 expert mentors including legendary developers, health experts, geopolitics analysts, business strategists, wellness advocates, and storytellers.
 
-[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/yourusername/swar-ai)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](https://github.com/yourusername/swar-ai)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1-blue?style=flat-square&logo=react)](https://react.dev/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -15,14 +15,15 @@ A sophisticated Next.js 15 application that provides personalized AI mentorship 
 
 ![Architecture Diagram](public/snapshots/Architecture_Nov-27-2025.png)
 
-## 🆕 **What's New in v1.2.0**
+## 🆕 **What's New in v1.3.0**
 
 ### **🎉 Latest Features**
 
+- ✨ **Anonymous Chat Widget** - Try AI mentorship without signing up (3 free messages)
+- ✨ **Smart Rate Limiting** - IP-based tracking across browsers and tabs
+- ✨ **Compact Widget UI** - Beautiful floating chat interface with light theme
 - ✨ **Pricing Plans Section** - Modern pricing cards with 3 tiers (Free, Pro, Maxx)
 - ✨ **Designer Attribution** - Prominent badge showcasing project creator
-- ✨ **Client-Side User Sync** - No webhooks needed, works immediately
-- ✨ **Comprehensive Documentation** - Complete user sync guides and troubleshooting
 
 ### **🎉 Core Features**
 
@@ -434,6 +435,22 @@ Contributions are welcome! Please follow these steps:
 
 ## 📝 **Changelog**
 
+### **v1.3.0** (2025-11-30)
+- ✨ **Anonymous Chat Widget**: Try before you sign up!
+  - Floating chat widget on landing page
+  - 3 free messages per IP address
+  - Synced rate limiting across browsers/tabs
+  - Beautiful compact UI with light theme
+  - "Limit reached" badge and status indicators
+- ✨ **Smart Rate Limiting**:
+  - IP-based tracking without login
+  - Automatic status refetching
+  - Visual feedback for remaining quota
+- 🎨 **UI Improvements**:
+  - Forced light theme for widget accessibility
+  - Compact chat header and input components
+  - Optimized mobile responsiveness for widget
+
 ### **v1.2.0** (2025-11-28)
 - ✨ **Pricing Plans Section**: Modern pricing cards inspired by ngrok.com design
   - 3 tiers: Free (10 msgs/day), Pro (100 msgs/day), Maxx (1000 msgs/day)
@@ -523,6 +540,6 @@ For questions, suggestions, or collaboration:
 
 ---
 
-**Built with ❤️ by [Sanjeev Kujur](https://sanjeevkujur.dev) | Version 1.2.0 | November 2025**
+**Built with ❤️ by [Sanjeev Kujur](https://sanjeevkujur.dev) | Version 1.3.0 | November 2025**
 
 *Empowering learners with AI-powered mentorship from 10+ expert personas*
