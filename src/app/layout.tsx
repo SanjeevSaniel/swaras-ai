@@ -83,21 +83,12 @@ export const metadata = {
     title: 'Intelligent AI Persona Chat',
     description:
       'Your personal AI companion for meaningful conversations. Chat, learn, and get expert guidance from AI personas designed to help you grow.',
-    images: [
-      {
-        url: '/opengraph-image.svg',
-        width: 1200,
-        height: 630,
-        alt: 'SwarAI - Intelligent AI Persona Chat',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Intelligent AI Persona Chat',
     description:
       'Your personal AI companion for meaningful conversations. Chat, learn, and get expert guidance from AI personas designed to help you grow.',
-    images: ['/opengraph-image.svg'],
     creator: '@swarasai',
   },
   robots: {
