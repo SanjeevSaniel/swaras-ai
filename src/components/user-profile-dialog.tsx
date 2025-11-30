@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, LogOut, CreditCard, Download, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 import { UpgradeCheckoutDialog } from './upgrade-checkout-dialog';
 
 interface UserProfileDialogProps {
@@ -35,29 +36,100 @@ export function UserProfileDialog({
     tier: 'Free',
   });
   const [loadingUsage, setLoadingUsage] = useState(true);
+  const [subscription, setSubscription] = useState<any>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [planHistory, setPlanHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
   const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
   const [selectedPlanForCheckout, setSelectedPlanForCheckout] =
     useState<any>(null);
 
-  // Fetch usage stats
+  // Fetch usage stats and subscription
   useEffect(() => {
     if (open) {
-      const fetchUsage = async () => {
+      const fetchData = async () => {
         try {
-          const response = await fetch('/api/user/usage');
-          if (response.ok) {
-            const data = await response.json();
+          // Fetch usage stats
+          const usageResponse = await fetch('/api/user/usage');
+          if (usageResponse.ok) {
+            const data = await usageResponse.json();
             setUsageStats(data);
           }
+
+          // Fetch subscription details
+          const subResponse = await fetch('/api/user/subscription');
+          if (subResponse.ok) {
+            const subData = await subResponse.json();
+            setSubscription(subData);
+          }
         } catch (error) {
-          console.error('Failed to fetch usage stats:', error);
+          console.error('Failed to fetch data:', error);
         } finally {
           setLoadingUsage(false);
         }
       };
-      fetchUsage();
+      fetchData();
     }
   }, [open]);
+
+  // Fetch plan history
+  useEffect(() => {
+    if (open && activeTab === 'history') {
+      const fetchHistory = async () => {
+        try {
+          const response = await fetch('/api/user/plan-history');
+          if (response.ok) {
+            const data = await response.json();
+            setPlanHistory(data.history || []);
+          }
+        } catch (error) {
+          console.error('Failed to fetch plan history:', error);
+        } finally {
+          setLoadingHistory(false);
+        }
+      };
+      fetchHistory();
+    }
+  }, [open, activeTab]);
+
+  const handleCancelSubscription = async () => {
+    if (
+      !confirm(
+        'Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.',
+      )
+    ) {
+      return;
+    }
+
+    setCancelling(true);
+    try {
+      const response = await fetch('/api/user/subscription/cancel', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to cancel subscription');
+      }
+
+      // Refresh subscription data
+      const subResponse = await fetch('/api/user/subscription');
+      if (subResponse.ok) {
+        const subData = await subResponse.json();
+        setSubscription(subData);
+        toast.success(
+          'Subscription cancelled. Access retained until ' +
+            new Date(subData.expiresAt).toLocaleDateString(),
+        );
+      } else {
+        toast.success('Subscription cancelled successfully.');
+      }
+    } catch (error) {
+      console.error('Failed to cancel subscription:', error);
+      toast.error('Failed to cancel subscription. Please try again.');
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   const paymentHistory = [
     // Mock payment history - will be populated from Razorpay
@@ -153,7 +225,7 @@ export function UserProfileDialog({
             onValueChange={setActiveTab}
             className='h-full flex flex-col'>
             <div className='px-6'>
-              <TabsList className='grid w-full grid-cols-2 max-w-[400px]'>
+              <TabsList className='grid w-full grid-cols-3 max-w-[600px]'>
                 <TabsTrigger
                   value='profile'
                   className='w-full'>
@@ -163,6 +235,11 @@ export function UserProfileDialog({
                   value='billing'
                   className='w-full'>
                   Billing
+                </TabsTrigger>
+                <TabsTrigger
+                  value='history'
+                  className='w-full'>
+                  History
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -213,33 +290,33 @@ export function UserProfileDialog({
                 </div>
 
                 {/* Usage Stats */}
-                <div className='rounded-lg border border-border bg-card p-4'>
-                  <div className='flex items-center justify-between mb-2'>
-                    <span className='text-sm font-medium text-card-foreground'>
-                      Daily Messages
+                <div className='rounded-xl border border-gray-200 p-5 bg-gray-50/50'>
+                  <div className='flex items-center justify-between mb-3'>
+                    <span className='font-medium text-gray-700'>
+                      Daily Message Quota
                     </span>
-                    <span className='text-sm font-semibold text-card-foreground'>
+                    <span className='text-sm font-medium text-gray-900'>
                       {loadingUsage
                         ? '...'
                         : `${usageStats.used} / ${usageStats.limit}`}
                     </span>
                   </div>
-                  <div className='w-full bg-secondary rounded-full h-2 overflow-hidden'>
+                  <div className='w-full bg-gray-200 rounded-full h-2.5 overflow-hidden'>
                     <motion.div
                       className={`h-full rounded-full ${
                         usageStats.percentage > 90
-                          ? 'bg-destructive'
+                          ? 'bg-red-500'
                           : usageStats.percentage > 75
                           ? 'bg-orange-500'
-                          : 'bg-primary'
+                          : 'bg-gray-900'
                       }`}
                       initial={{ width: 0 }}
                       animate={{ width: `${usageStats.percentage}%` }}
                       transition={{ duration: 0.5 }}
                     />
                   </div>
-                  <p className='text-xs text-muted-foreground mt-2'>
-                    Resets daily at midnight
+                  <p className='text-xs text-gray-500 mt-2'>
+                    Resets daily at midnight. Upgrade for unlimited messages.
                   </p>
                 </div>
 
@@ -353,7 +430,7 @@ export function UserProfileDialog({
               <TabsContent
                 value='billing'
                 className='space-y-6 mt-0'>
-                {usageStats.tier !== 'Premium' ? (
+                {usageStats.tier === 'Free' ? (
                   <div className='flex flex-col items-center justify-center h-[400px] text-center space-y-4'>
                     <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center'>
                       <CreditCard className='h-8 w-8 text-gray-400' />
@@ -363,8 +440,8 @@ export function UserProfileDialog({
                         No Billing History
                       </h3>
                       <p className='text-sm text-gray-500 max-w-[250px] mx-auto mt-1'>
-                        You are currently on the Free plan. Upgrade to Premium
-                        to unlock billing history and invoices.
+                        You are currently on the Free plan. Upgrade to a paid
+                        plan to unlock billing history and invoices.
                       </p>
                     </div>
                     <Button
@@ -377,8 +454,91 @@ export function UserProfileDialog({
                   </div>
                 ) : (
                   <>
+                    {/* Subscription Details Card */}
+                    <div className='bg-white rounded-xl p-4 border border-gray-200 shadow-sm'>
+                      <div className='flex items-center justify-between'>
+                        <div className='flex items-center gap-3'>
+                          <div className='h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600'>
+                            <Sparkles className='h-5 w-5' />
+                          </div>
+                          <div>
+                            <div className='flex items-center gap-2'>
+                              <span className='font-bold text-gray-900'>
+                                {subscription?.planName || 'Free'}
+                              </span>
+                              <Badge
+                                variant={
+                                  subscription?.status === 'active'
+                                    ? 'default'
+                                    : 'secondary'
+                                }
+                                className={`text-xs px-2 py-0.5 h-5 ${
+                                  subscription?.status === 'active'
+                                    ? 'bg-green-600 hover:bg-green-700'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                }`}>
+                                {subscription?.status === 'active'
+                                  ? 'Active'
+                                  : 'Cancelled'}
+                              </Badge>
+                            </div>
+                            <p className='text-xs text-gray-500 mt-0.5'>
+                              {subscription?.status === 'cancelled'
+                                ? 'Expires on '
+                                : 'Renews on '}
+                              {subscription?.status === 'cancelled'
+                                ? subscription?.expiresAt
+                                  ? new Date(
+                                      subscription.expiresAt,
+                                    ).toLocaleDateString(undefined, {
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric',
+                                    })
+                                  : 'N/A'
+                                : subscription?.nextBillingDate
+                                ? new Date(
+                                    subscription.nextBillingDate,
+                                  ).toLocaleDateString(undefined, {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                  })
+                                : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className='flex items-center gap-2'>
+                          <Button
+                            variant='outline'
+                            size='sm'
+                            className='h-8 text-xs border-gray-300'
+                            onClick={() => setActiveTab('profile')}>
+                            Change Plan
+                          </Button>
+                          {subscription?.status === 'active' &&
+                            subscription?.planName !== 'Free' && (
+                              <Button
+                                variant='ghost'
+                                size='sm'
+                                className='h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50'
+                                onClick={handleCancelSubscription}
+                                disabled={cancelling}>
+                                {cancelling ? 'Cancelling...' : 'Cancel'}
+                              </Button>
+                            )}
+                        </div>
+                      </div>
+                      {subscription?.status === 'cancelled' && (
+                        <div className='mt-3 text-xs text-center text-yellow-700 bg-yellow-50 p-1.5 rounded border border-yellow-200'>
+                          Access until expiry
+                        </div>
+                      )}
+                    </div>
+
                     {/* Payment History */}
-                    <div className='space-y-4'>
+                    <div className='space-y-4 mt-6'>
                       <h4 className='font-semibold text-lg'>Payment History</h4>
                       {paymentHistory.length === 0 ? (
                         <div className='text-center py-12 border-2 border-dashed border-gray-200 rounded-xl'>
@@ -418,38 +578,92 @@ export function UserProfileDialog({
                         </div>
                       )}
                     </div>
-
-                    {/* Next Billing */}
-                    <div className='rounded-xl border border-gray-200 p-5 bg-gray-50/50'>
-                      <div className='flex justify-between items-center'>
-                        <div>
-                          <p className='text-sm font-medium text-gray-600'>
-                            Next Billing Date
-                          </p>
-                          <p className='text-lg font-bold text-gray-900'>
-                            Feb 15, 2025
-                          </p>
-                        </div>
-                        <Button
-                          variant='outline'
-                          size='sm'
-                          className='h-9'>
-                          Manage Subscription
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Cancel Subscription */}
-                    <div className='pt-4'>
-                      <Button
-                        variant='ghost'
-                        size='default'
-                        className='w-full text-red-600 hover:text-red-700 hover:bg-red-50 text-sm'>
-                        Cancel Subscription
-                      </Button>
-                    </div>
                   </>
                 )}
+              </TabsContent>
+
+              {/* History Tab */}
+              <TabsContent
+                value='history'
+                className='space-y-6 mt-0'>
+                <div className='space-y-4'>
+                  <h4 className='font-semibold text-lg'>
+                    Subscription History
+                  </h4>
+                  {loadingHistory ? (
+                    <div className='text-center py-8'>
+                      <p className='text-sm text-muted-foreground'>
+                        Loading history...
+                      </p>
+                    </div>
+                  ) : planHistory.length === 0 ? (
+                    <div className='text-center py-12 border-2 border-dashed border-gray-200 rounded-xl'>
+                      <p className='text-sm text-gray-500'>
+                        No subscription history recorded yet.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className='space-y-0 divide-y divide-gray-100 border border-gray-100 rounded-lg overflow-hidden'>
+                      {planHistory.map((audit: any) => {
+                        let message = '';
+                        let dotColor = '';
+
+                        switch (audit.action) {
+                          case 'INITIAL':
+                            message = `Joined ${audit.newPlan} plan`;
+                            dotColor = 'bg-blue-500';
+                            break;
+                          case 'UPGRADE':
+                            message = `Upgraded to ${audit.newPlan}`;
+                            dotColor = 'bg-green-500';
+                            break;
+                          case 'DOWNGRADE':
+                            message = `Downgraded to ${audit.newPlan}`;
+                            dotColor = 'bg-orange-500';
+                            break;
+                          case 'CANCEL':
+                            message = 'Subscription cancelled';
+                            dotColor = 'bg-red-500';
+                            break;
+                          case 'RENEW':
+                            message = 'Subscription renewed';
+                            dotColor = 'bg-purple-500';
+                            break;
+                          default:
+                            message = `Plan changed to ${audit.newPlan}`;
+                            dotColor = 'bg-gray-500';
+                        }
+
+                        return (
+                          <div
+                            key={audit.id}
+                            className='flex items-center justify-between py-2.5 px-3 bg-white hover:bg-gray-50 transition-colors'>
+                            <div className='flex items-center gap-2.5 min-w-0'>
+                              <div
+                                className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotColor}`}
+                              />
+                              <span className='text-sm text-gray-700 truncate font-medium'>
+                                {message}
+                              </span>
+                            </div>
+                            <span className='text-xs text-gray-400 whitespace-nowrap ml-4 flex-shrink-0'>
+                              {new Date(audit.createdAt).toLocaleString(
+                                undefined,
+                                {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                },
+                              )}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </TabsContent>
             </div>
           </Tabs>
@@ -461,20 +675,25 @@ export function UserProfileDialog({
         open={checkoutDialogOpen}
         onOpenChange={setCheckoutDialogOpen}
         selectedPlan={selectedPlanForCheckout}
+        currentSubscription={subscription}
         onSuccess={() => {
-          // Refresh usage stats after successful payment
-          const fetchUsage = async () => {
+          const fetchData = async () => {
             try {
               const response = await fetch('/api/user/usage');
               if (response.ok) {
                 const data = await response.json();
                 setUsageStats(data);
               }
+              const subResponse = await fetch('/api/user/subscription');
+              if (subResponse.ok) {
+                const subData = await subResponse.json();
+                setSubscription(subData);
+              }
             } catch (error) {
-              console.error('Failed to fetch usage stats:', error);
+              console.error('Failed to fetch data:', error);
             }
           };
-          fetchUsage();
+          fetchData();
         }}
       />
     </Dialog>
