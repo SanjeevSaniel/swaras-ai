@@ -27,9 +27,9 @@ const ChatHeader = ({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       className={`flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b ${
-        darkMode
-          ? 'bg-gray-800/90 border-gray-700/60 backdrop-blur-sm'
-          : 'bg-white/90 border-gray-200/60 backdrop-blur-sm'
+        compact || !darkMode
+          ? 'bg-white/90 border-gray-200/60 backdrop-blur-sm'
+          : 'bg-gray-800/90 border-gray-700/60 backdrop-blur-sm'
       }`}>
       {/* Persona info - compact layout */}
       <div className='flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0 ml-14 lg:ml-0'>

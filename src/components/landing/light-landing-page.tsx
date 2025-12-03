@@ -4,12 +4,19 @@ import { Button } from '@/components/ui/button';
 import { getEnabledPersonas } from '@/constants/personas';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Users, Zap, Globe, Clock } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import PricingSection from './pricing-section';
 import { LinkPreview } from '@/components/ui/link-preview';
 import { PersonaGrid } from './persona-grid';
+import { TestimonialsSection } from './testimonials-section';
+import { PersonaListModal } from './persona-list-modal';
+import {
+  TypewriterEffect,
+  TypewriterEffectSmooth,
+} from '@/components/ui/typewriter-effect';
+import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards';
 
 const LightLandingPage = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -308,33 +315,28 @@ const LightLandingPage = () => {
               </div>
             </motion.div>
 
-            {/* Main Heading - Very Large, Light */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.8,
-                delay: 0.1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className='text-6xl md:text-7xl lg:text-8xl font-light leading-[1.1] tracking-tight text-gray-900 mb-6 max-w-5xl'>
-              AI expertise.
-              <br />
-              Personalized{' '}
-              <span className='inline-block relative'>
-                <span className='relative z-10'>personas.</span>
-                <motion.div
-                  className='absolute bottom-2 left-0 right-0 h-3 bg-[#FA8072]/20 -z-0'
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.6,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                />
-              </span>
-            </motion.h1>
+            {/* Main Heading - Typewriter Effect */}
+            <div className='mb-6 min-h-[160px] flex flex-col items-center justify-center'>
+              <h1 className='text-6xl md:text-7xl lg:text-8xl font-light leading-[1.1] tracking-tight text-gray-900 mb-2'>
+                AI expertise.
+              </h1>
+              <TypewriterEffectSmooth
+                words={[
+                  {
+                    text: 'Personalized',
+                    className:
+                      'text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-gray-900',
+                  },
+                  {
+                    text: 'personas.',
+                    className:
+                      'text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-[#FA8072]',
+                  },
+                ]}
+                className='text-6xl md:text-7xl lg:text-8xl font-light tracking-tight'
+                cursorClassName='bg-[#FA8072] !h-[1em]'
+              />
+            </div>
 
             {/* Subtitle */}
             <motion.p
@@ -371,6 +373,10 @@ const LightLandingPage = () => {
             {/* Personas Grid */}
             <div className='flex flex-col items-center justify-center mt-16 w-full'>
               <PersonaGrid />
+
+              <div className='mt-8'>
+                <PersonaListModal />
+              </div>
 
               <motion.div
                 initial={{ opacity: 0 }}
@@ -419,6 +425,74 @@ const LightLandingPage = () => {
               ))}
             </motion.div>
           </div>
+        </div>
+
+        {/* Testimonials Section */}
+        <div className='my-6'>
+          <TestimonialsSection />
+        </div>
+
+        {/* Topics Marquee */}
+        <div className='py-12 flex flex-col items-center justify-center overflow-hidden'>
+          <h3 className='text-2xl md:text-3xl font-light text-gray-900 mb-8 text-center'>
+            Master any domain
+          </h3>
+          <InfiniteMovingCards
+            items={[
+              {
+                quote: 'React',
+                name: 'Technology',
+                title: 'Frontend',
+              },
+              {
+                quote: 'Node.js',
+                name: 'Technology',
+                title: 'Backend',
+              },
+              {
+                quote: 'System Design',
+                name: 'Technology',
+                title: 'Architecture',
+              },
+              {
+                quote: 'Product Management',
+                name: 'Business',
+                title: 'Strategy',
+              },
+              {
+                quote: 'UX Design',
+                name: 'Design',
+                title: 'Creative',
+              },
+              {
+                quote: 'Digital Marketing',
+                name: 'Business',
+                title: 'Growth',
+              },
+              {
+                quote: 'Machine Learning',
+                name: 'Technology',
+                title: 'AI',
+              },
+              {
+                quote: 'Startup Funding',
+                name: 'Business',
+                title: 'Finance',
+              },
+              {
+                quote: 'Career Growth',
+                name: 'Personal',
+                title: 'Development',
+              },
+              {
+                quote: 'Wellness',
+                name: 'Health',
+                title: 'Lifestyle',
+              },
+            ]}
+            direction='right'
+            speed='slow'
+          />
         </div>
 
         {/* How It Works Section */}
@@ -498,47 +572,51 @@ const LightLandingPage = () => {
               </p>
             </motion.div>
 
-            <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto'>
+            <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto'>
               {[
                 {
                   title: 'Multiple AI Mentors',
                   description:
                     '10+ specialized personas covering programming, business strategy, health & wellness, creative arts, and more.',
+                  icon: <Users className='w-6 h-6 text-blue-600' />,
+                  bg: 'bg-blue-50',
+                  border: 'border-blue-100',
                 },
                 {
                   title: 'Real-Time Knowledge',
                   description:
                     'Hybrid web scraping + GPT-4 ensures you get current, accurate information from the latest sources.',
+                  icon: <Globe className='w-6 h-6 text-purple-600' />,
+                  bg: 'bg-purple-50',
+                  border: 'border-purple-100',
                 },
                 {
                   title: 'Instant Responses',
                   description:
                     'Sub-second response times with intelligent query routing. No waiting, just learning.',
+                  icon: <Zap className='w-6 h-6 text-amber-600' />,
+                  bg: 'bg-amber-50',
+                  border: 'border-amber-100',
                 },
-                // {
-                //   title: 'Context Awareness',
-                //   description:
-                //     'Remembers your conversation history for personalized, continuous guidance tailored to you.',
-                // },
                 {
                   title: 'Always Available',
                   description:
                     '24/7 access to expert guidance. Get help whenever inspiration strikes or questions arise.',
+                  icon: <Clock className='w-6 h-6 text-green-600' />,
+                  bg: 'bg-green-50',
+                  border: 'border-green-100',
                 },
-                // {
-                //   title: 'Mobile Optimized',
-                //   description:
-                //     'Seamless experience across all devices with touch-friendly interface and voice input support.',
-                // },
               ].map((feature, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className='px-6 pt-4 pb-2 rounded-2xl bg-white border border-gray-200 hover:shadow-md transition-all duration-300'>
-                  <h3 className='text-lg font-medium text-gray-900 mb-2'>
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2 }}
+                  className={`p-6 rounded-2xl bg-white border ${feature.border} shadow-sm hover:shadow-md transition-all duration-300`}>
+                  <div
+                    className={`w-12 h-12 rounded-xl ${feature.bg} flex items-center justify-center mb-4`}>
+                    {feature.icon}
+                  </div>
+                  <h3 className='text-lg font-semibold text-gray-900 mb-2'>
                     {feature.title}
                   </h3>
                   <p className='text-sm text-gray-600 font-light leading-relaxed'>

@@ -5,13 +5,18 @@ import Image from 'next/image';
 import { getEnabledPersonas } from '@/constants/personas';
 
 // Get all enabled personas
-const allPersonas = Object.values(getEnabledPersonas()).filter(
+const allPersonas: any[] = Object.values(getEnabledPersonas()).filter(
   (p: any) => p.enabled,
 );
 
 export const PersonaGrid = () => {
   // Duplicate personas for seamless infinite loop
-  const duplicatedPersonas = [...allPersonas, ...allPersonas];
+  const duplicatedPersonas = [
+    ...allPersonas,
+    ...allPersonas,
+    ...allPersonas,
+    ...allPersonas,
+  ];
 
   return (
     <div className='w-full overflow-hidden py-6 md:py-8'>
@@ -30,7 +35,7 @@ export const PersonaGrid = () => {
             x: {
               repeat: Infinity,
               repeatType: 'loop',
-              duration: 35,
+              duration: 60,
               ease: 'linear',
             },
           }}>
