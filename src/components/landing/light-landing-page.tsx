@@ -12,10 +12,6 @@ import { LinkPreview } from '@/components/ui/link-preview';
 import { PersonaGrid } from './persona-grid';
 import { TestimonialsSection } from './testimonials-section';
 import { PersonaListModal } from './persona-list-modal';
-import {
-  TypewriterEffect,
-  TypewriterEffectSmooth,
-} from '@/components/ui/typewriter-effect';
 import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards';
 
 const LightLandingPage = () => {
@@ -183,20 +179,20 @@ const LightLandingPage = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className='fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100'>
-        <div className='container mx-auto px-6 py-4'>
+        <div className='container mx-auto px-4 sm:px-6 py-3 sm:py-4'>
           <div className='flex items-center justify-between'>
             {/* Modern logo with icon */}
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className='flex items-center gap-2.5'>
+              className='flex items-center gap-2'>
               {/* Refined Logo Icon */}
               <div
-                className='relative w-9 h-9 rounded-xl overflow-hidden shadow-md'
+                className='relative w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl overflow-hidden shadow-md'
                 style={{
                   background: 'linear-gradient(135deg, #FA8072, #FF8E8E)',
                 }}>
                 <svg
-                  className='w-9 h-9 p-1.5'
+                  className='w-7 h-7 sm:w-9 sm:h-9 p-1 sm:p-1.5'
                   viewBox='0 0 24 24'
                   fill='none'
                   xmlns='http://www.w3.org/2000/svg'>
@@ -247,18 +243,18 @@ const LightLandingPage = () => {
               </div>
               {/* Refined typography with Raleway font */}
               <div className='flex items-center'>
-                <span className='text-lg font-bold tracking-tight text-gray-900 font-[family-name:var(--font-raleway)]'>
+                <span className='text-base sm:text-lg font-bold tracking-tight text-gray-900 font-[family-name:var(--font-raleway)]'>
                   Swar<span className='font-extrabold text-[#FA8072]'>AI</span>
                 </span>
               </div>
             </motion.div>
 
-            <div className='flex items-center gap-3'>
+            <div className='flex items-center gap-2 sm:gap-3'>
               <Link href='/login'>
                 <Button
                   size='lg'
                   variant='default'
-                  className='bg-transparent hover:bg-transparent text-sm text-gray-600 hover:text-gray-900'>
+                  className='bg-transparent hover:bg-transparent text-xs sm:text-sm text-gray-600 hover:text-gray-900 px-2 sm:px-4'>
                   Sign in
                 </Button>
               </Link>
@@ -266,7 +262,7 @@ const LightLandingPage = () => {
                 <Button
                   variant='default'
                   size='lg'
-                  className='text-sm bg-gray-900 text-white hover:bg-gray-800 rounded-full px-6 shadow-sm transition-all'>
+                  className='text-xs sm:text-sm bg-gray-900 text-white hover:bg-gray-800 rounded-full px-4 sm:px-6 py-2 sm:py-2.5 shadow-sm transition-all'>
                   Get started
                 </Button>
               </Link>
@@ -277,21 +273,21 @@ const LightLandingPage = () => {
 
       {/* Hero Section - Centered, Minimal */}
       <main className='relative'>
-        <div className='container mx-auto px-6'>
-          <div className='flex flex-col items-center justify-center min-h-screen text-center pt-20'>
+        <div className='container mx-auto px-4 sm:px-6'>
+          <div className='flex flex-col items-center justify-center min-h-screen text-center pt-16 sm:pt-20'>
             {/* Attribution Badge */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className='mb-6'>
+              className='mb-4 sm:mb-6'>
               <LinkPreview
                 url='https://sanjeevkujur.dev'
-                className='group relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-gray-200 shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300'>
-                <span className='text-xs text-gray-500 font-medium'>
+                className='group relative inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/80 border border-gray-200 shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300'>
+                <span className='text-[10px] sm:text-xs text-gray-500 font-medium'>
                   Crafted by
                 </span>
-                <span className='text-xs font-bold text-gray-900 group-hover:text-[#FA8072] transition-colors'>
+                <span className='text-[10px] sm:text-xs font-bold text-gray-900 group-hover:text-[#FA8072] transition-colors'>
                   Sanjeev Kujur
                 </span>
               </LinkPreview>
@@ -306,46 +302,50 @@ const LightLandingPage = () => {
                 delay: 0.1,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className='mb-8'>
-              <div className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-200'>
-                <Sparkles className='w-3.5 h-3.5 text-gray-600' />
-                <span className='text-xs font-medium text-gray-700'>
+              className='mb-6 sm:mb-8'>
+              <div className='inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-gray-50 border border-gray-200'>
+                <Sparkles className='w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-600' />
+                <span className='text-[10px] sm:text-xs font-medium text-gray-700'>
                   AI Powered Personas
                 </span>
               </div>
             </motion.div>
 
-            {/* Main Heading - Typewriter Effect */}
-            <div className='mb-6 min-h-[160px] flex flex-col items-center justify-center'>
-              <h1 className='text-6xl md:text-7xl lg:text-8xl font-light leading-[1.1] tracking-tight text-gray-900 mb-2'>
+            {/* Main Heading - Elegant Animation */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className='mb-4 sm:mb-6 flex flex-col items-center justify-center w-full px-2 sm:px-4'>
+              <h1 className='text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-light leading-[1.15] sm:leading-[1.1] tracking-tight text-gray-900 text-center'>
                 AI expertise.
+                <br />
+                <span className='inline-block mt-1 sm:mt-2'>
+                  <span className='text-gray-900'>Personalized </span>
+                  <motion.span
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.6,
+                      delay: 0.5,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className='text-[#FA8072] inline-block'>
+                    personas.
+                  </motion.span>
+                </span>
               </h1>
-              <TypewriterEffectSmooth
-                words={[
-                  {
-                    text: 'Personalized',
-                    className:
-                      'text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-gray-900',
-                  },
-                  {
-                    text: 'personas.',
-                    className:
-                      'text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-[#FA8072]',
-                  },
-                ]}
-                className='text-6xl md:text-7xl lg:text-8xl font-light tracking-tight'
-                cursorClassName='bg-[#FA8072] !h-[1em]'
-              />
-            </div>
+            </motion.div>
 
             {/* Subtitle */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className='text-lg md:text-xl text-gray-600 max-w-2xl mb-12 font-light leading-relaxed'>
+              className='text-sm sm:text-lg md:text-xl text-gray-600 max-w-2xl mb-8 sm:mb-12 font-light leading-relaxed px-4'>
               Get instant guidance from specialized AI assistants.
-              <br />
+              <br className='hidden sm:block' />
+              <span className='sm:hidden'> </span>
               Available 24/7, always learning.
             </motion.p>
 
@@ -358,12 +358,12 @@ const LightLandingPage = () => {
                 delay: 0.4,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className='flex flex-col sm:flex-row items-center gap-4'>
-              <Link href='/signup'>
+              className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full px-4 sm:px-0 sm:w-auto'>
+              <Link href='/signup' className='w-full sm:w-auto'>
                 <Button
                   size='lg'
                   variant='default'
-                  className='group bg-gray-900 text-white hover:bg-gray-800 rounded-full px-8 py-6 text-base shadow-lg hover:shadow-xl transition-all duration-300'>
+                  className='w-full sm:w-auto group bg-gray-900 text-white hover:bg-gray-800 rounded-full px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base shadow-lg hover:shadow-xl transition-all duration-300'>
                   Start chatting
                   <ArrowRight className='ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform' />
                 </Button>
@@ -371,10 +371,10 @@ const LightLandingPage = () => {
             </motion.div>
 
             {/* Personas Grid */}
-            <div className='flex flex-col items-center justify-center mt-16 w-full'>
+            <div className='flex flex-col items-center justify-center mt-12 sm:mt-16 w-full'>
               <PersonaGrid />
 
-              <div className='mt-8'>
+              <div className='mt-6 sm:mt-8'>
                 <PersonaListModal />
               </div>
 
@@ -382,7 +382,7 @@ const LightLandingPage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1, duration: 0.8 }}
-                className='text-sm text-gray-500 mt-6'>
+                className='text-xs sm:text-sm text-gray-500 mt-4 sm:mt-6'>
                 <span className='font-semibold text-gray-900'>
                   10+ AI Personas
                 </span>
@@ -395,7 +395,7 @@ const LightLandingPage = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className='grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 max-w-4xl'>
+              className='grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-12 sm:mt-16 max-w-4xl px-4 sm:px-0'>
               {[
                 {
                   title: 'Instant answers',
@@ -414,11 +414,11 @@ const LightLandingPage = () => {
                   key={index}
                   whileHover={{ y: -4, scale: 1.02 }}
                   transition={{ duration: 0.2 }}
-                  className='p-8 rounded-2xl bg-white border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300'>
-                  <h3 className='text-lg font-medium text-gray-900 mb-2'>
+                  className='p-6 sm:p-8 rounded-xl sm:rounded-2xl bg-white border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300'>
+                  <h3 className='text-base sm:text-lg font-medium text-gray-900 mb-1.5 sm:mb-2'>
                     {card.title}
                   </h3>
-                  <p className='text-sm text-gray-600 font-light leading-relaxed'>
+                  <p className='text-xs sm:text-sm text-gray-600 font-light leading-relaxed'>
                     {card.description}
                   </p>
                 </motion.div>
