@@ -17,25 +17,13 @@ import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards';
 const LightLandingPage = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  // Curated selection of featured personas for landing page
-  const featuredPersonaIds = [
-    'hitesh',
-    'saptarshiux',
-    'piyush',
-    'puneetkumar',
-    'samantha',
-    'mkbhd',
-    'aliabdaal',
-    'kunalshah',
-  ];
-
   // Get personas dynamically from personas.js - only featured ones
   const personas = useMemo(() => {
     const allPersonas = getEnabledPersonas();
-    return featuredPersonaIds
-      .map((id, index) => {
-        const persona = allPersonas[id];
-        if (!persona || !persona.avatarUrl) return null;
+    return Object.values(allPersonas)
+      .filter((p: any) => p.featured)
+      .map((persona: any, index) => {
+        if (!persona.avatarUrl) return null;
         return {
           id: index + 1,
           name: persona.name,
@@ -43,7 +31,6 @@ const LightLandingPage = () => {
         };
       })
       .filter(Boolean);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Calculate how many more personas are available
@@ -52,9 +39,8 @@ const LightLandingPage = () => {
     const totalCount = Object.values(allPersonas).filter(
       (p: any) => p.enabled,
     ).length;
-    return totalCount - featuredPersonaIds.length;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    return totalCount - personas.length;
+  }, [personas]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -315,7 +301,11 @@ const LightLandingPage = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 0.8,
+                delay: 0.2,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className='mb-4 sm:mb-6 flex flex-col items-center justify-center w-full px-2 sm:px-4'>
               <h1 className='text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-light leading-[1.15] sm:leading-[1.1] tracking-tight text-gray-900 text-center'>
                 AI expertise.
@@ -359,7 +349,9 @@ const LightLandingPage = () => {
                 ease: [0.16, 1, 0.3, 1],
               }}
               className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full px-4 sm:px-0 sm:w-auto'>
-              <Link href='/signup' className='w-full sm:w-auto'>
+              <Link
+                href='/signup'
+                className='w-full sm:w-auto'>
                 <Button
                   size='lg'
                   variant='default'
