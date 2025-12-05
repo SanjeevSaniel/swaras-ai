@@ -34,16 +34,16 @@ const LightLandingPage = () => {
   }, []);
 
   // Calculate how many more personas are available
-  const remainingCount = useMemo(() => {
-    const allPersonas = getEnabledPersonas();
-    const totalCount = Object.values(allPersonas).filter(
-      (p: any) => p.enabled,
-    ).length;
-    return totalCount - personas.length;
-  }, [personas]);
+  // const remainingCount = useMemo(() => {
+  //   const allPersonas = getEnabledPersonas();
+  //   const totalCount = Object.values(allPersonas).filter(
+  //     (p: any) => p.enabled,
+  //   ).length;
+  //   return totalCount - personas.length;
+  // }, [personas]);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: any) => {
       setMousePosition({
         x: e.clientX,
         y: e.clientY,
