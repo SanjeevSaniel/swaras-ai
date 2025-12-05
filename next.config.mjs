@@ -34,6 +34,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'api.microlink.io',
       },
+      {
+        protocol: 'https',
+        hostname: 'media.licdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.miduty.in',
+      },
     ],
   },
 };

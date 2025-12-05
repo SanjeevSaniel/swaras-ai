@@ -22,7 +22,8 @@
       "Bash(npm run clean:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
